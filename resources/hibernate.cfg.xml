@@ -24,15 +24,15 @@
 		</property>
 
 		<!-- List of XML mapping files -->
-		<mapping class="FireEngine.Characters.Player.Player_Character" />
-		<mapping class="FireEngine.Characters.Player.PC_Settings" />
-		<mapping class="FireEngine.Characters.Condition.PC_Condition" />
-		<mapping class="FireEngine.Characters.Condition.Level" />
-		<mapping class="FireEngine.Characters.Condition.Health" />
-		<mapping class="FireEngine.Characters.Condition.Mana" />
+		<mapping class="fireengine.characters.player.Player_Character" />
+		<mapping class="fireengine.characters.player.PC_Settings" />
+		<mapping class="fireengine.characters.condition.PC_Condition" />
+		<mapping class="fireengine.characters.condition.Level" />
+		<mapping class="fireengine.characters.condition.Health" />
+		<mapping class="fireengine.characters.condition.Mana" />
 
-		<mapping class="FireEngine.gameworld.maps.GameMap" />
-		<mapping class="FireEngine.gameworld.maps.BaseRoom" />
-		<mapping class="FireEngine.gameworld.maps.Base_Room_Exit" />
+		<mapping class="fireengine.gameworld.maps.GameMap" />
+		<mapping class="fireengine.gameworld.maps.BaseRoom" />
+		<mapping class="fireengine.gameworld.maps.Base_Room_Exit" />
 	</session-factory>
 </hibernate-configuration>
