@@ -1,73 +1,113 @@
-CREATE TABLE PLAYER_CHARACTER (
-	PC_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PC_NAME VARCHAR(40) NOT NULL,
-	PC_PASSWORD VARCHAR(40) NOT NULL,
-    PC_PC_SETTINGS_ID INT UNSIGNED NOT NULL,
-    PC_PC_COND_ID INT UNSIGNED NOT NULL,
-	PRIMARY KEY ( PC_ID )
-);
+create
+	table
+		PLAYER_CHARACTER(
+			PC_ID int unsigned not null AUTO_INCREMENT,
+			PC_NAME varchar(40) not null,
+			PC_PASSWORD varchar(40) not null,
+			PC_PC_SETTINGS_ID int unsigned not null,
+			PC_PC_COND_ID int unsigned not null,
+			primary key(PC_ID)
+		);
 
-CREATE TABLE PC_SETTINGS (
-	PC_SETTINGS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    PC_SETTINGS_MAP_EDITOR BOOLEAN NOT NULL,
-	PRIMARY KEY ( PC_SETTINGS_ID )
-);
+create
+	table
+		PC_SETTINGS(
+			PC_SETTINGS_ID int unsigned not null AUTO_INCREMENT,
+			PC_SETTINGS_MAP_EDITOR boolean not null,
+			primary key(PC_SETTINGS_ID)
+		);
 
-CREATE TABLE PC_CONDITION (
-	PC_COND_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    PC_COND_CHAR_HEALTH_ID INT UNSIGNED NOT NULL,
-    PC_COND_CHAR_MANA_ID INT UNSIGNED NOT NULL,
-    PC_COND_CHAR_LEVEL_ID INT UNSIGNED NOT NULL,
-	PRIMARY KEY ( PC_COND_ID )
-);
+create
+	table
+		PC_CONDITION(
+			PC_COND_ID int unsigned not null AUTO_INCREMENT,
+			PC_COND_CHAR_HEALTH_ID int unsigned not null,
+			PC_COND_CHAR_MANA_ID int unsigned not null,
+			PC_COND_CHAR_LEVEL_ID int unsigned not null,
+			primary key(PC_COND_ID)
+		);
 
-CREATE TABLE CHAR_LEVEL (
-	CHAR_LEVEL_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	CHAR_LEVEL_LEVEL INT UNSIGNED NOT NULL,
-	CHAR_LEVEL_EXPERIENCE INT UNSIGNED NOT NULL,
-	PRIMARY KEY ( CHAR_LEVEL_ID )
-);
+create
+	table
+		CHAR_LEVEL(
+			CHAR_LEVEL_ID int unsigned not null AUTO_INCREMENT,
+			CHAR_LEVEL_LEVEL int unsigned not null,
+			CHAR_LEVEL_EXPERIENCE int unsigned not null,
+			primary key(CHAR_LEVEL_ID)
+		);
 
-CREATE TABLE CHAR_HEALTH (
-	CHAR_HEALTH_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    CHAR_HEALTH_HEALTH INT UNSIGNED NOT NULL,
-	PRIMARY KEY ( CHAR_HEALTH_ID )
-);
+create
+	table
+		CHAR_HEALTH(
+			CHAR_HEALTH_ID int unsigned not null AUTO_INCREMENT,
+			CHAR_HEALTH_HEALTH int unsigned not null,
+			primary key(CHAR_HEALTH_ID)
+		);
 
-CREATE TABLE CHAR_MANA (
-	CHAR_MANA_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    CHAR_MANA_MANA INT UNSIGNED NOT NULL,
-	PRIMARY KEY ( CHAR_MANA_ID )
-);
+create
+	table
+		CHAR_MANA(
+			CHAR_MANA_ID int unsigned not null AUTO_INCREMENT,
+			CHAR_MANA_MANA int unsigned not null,
+			primary key(CHAR_MANA_ID)
+		);
 
-CREATE TABLE MAP (
-	MAP_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	MAP_NAME VARCHAR(100) NOT NULL,
-	PRIMARY KEY ( MAP_ID )
-);
-INSERT INTO MAP VALUES (null, "Mainland");
+create
+	table
+		map(
+			MAP_ID int unsigned not null AUTO_INCREMENT,
+			MAP_NAME varchar(100) not null,
+			primary key(MAP_ID)
+		);
 
-CREATE TABLE BASE_ROOM (
-	B_ROOM_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-    B_ROOM_MAP_ID INT UNSIGNED NOT NULL,
-    B_ROOM_X INT NOT NULL,
-    B_ROOM_Y INT NOT NULL,
-	B_ROOM_NAME VARCHAR(100) NOT NULL,
-    B_ROOM_DESC VARCHAR(2000) NOT NULL,
-    B_ROOM_EXIT_N INT UNSIGNED DEFAULT NULL,
-    B_ROOM_EXIT_NE INT UNSIGNED DEFAULT NULL,
-    B_ROOM_EXIT_E INT UNSIGNED DEFAULT NULL,
-    B_ROOM_EXIT_SE INT UNSIGNED DEFAULT NULL,
-    B_ROOM_EXIT_S INT UNSIGNED DEFAULT NULL,
-    B_ROOM_EXIT_SW INT UNSIGNED DEFAULT NULL,
-    B_ROOM_EXIT_W INT UNSIGNED DEFAULT NULL,
-    B_ROOM_EXIT_NW INT UNSIGNED DEFAULT NULL,
-	PRIMARY KEY ( B_ROOM_ID )
-);
-INSERT INTO BASE_ROOM (B_ROOM_MAP_ID, B_ROOM_X, B_ROOM_Y, B_ROOM_NAME, B_ROOM_DESC)
-VALUES (1, 0, 0, "The Lounge", "Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server.");
+insert
+	into
+		map
+	values(
+		null,
+		"Mainland"
+	);
 
-CREATE TABLE BASE_ROOM_EXIT (
-	B_ROOM_EXIT_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-	PRIMARY KEY ( B_ROOM_EXIT_ID )
-);
+create
+	table
+		BASE_ROOM(
+			B_ROOM_ID int unsigned not null AUTO_INCREMENT,
+			B_ROOM_MAP_ID int unsigned not null,
+			B_ROOM_X int not null,
+			B_ROOM_Y int not null,
+			B_ROOM_NAME varchar(100) not null,
+			B_ROOM_DESC varchar(2000) not null,
+			B_ROOM_EXIT_N int unsigned default null,
+			B_ROOM_EXIT_NE int unsigned default null,
+			B_ROOM_EXIT_E int unsigned default null,
+			B_ROOM_EXIT_SE int unsigned default null,
+			B_ROOM_EXIT_S int unsigned default null,
+			B_ROOM_EXIT_SW int unsigned default null,
+			B_ROOM_EXIT_W int unsigned default null,
+			B_ROOM_EXIT_NW int unsigned default null,
+			primary key(B_ROOM_ID)
+		);
+
+insert
+	into
+		BASE_ROOM(
+			B_ROOM_MAP_ID,
+			B_ROOM_X,
+			B_ROOM_Y,
+			B_ROOM_NAME,
+			B_ROOM_DESC
+		)
+	values(
+		1,
+		0,
+		0,
+		"The Lounge",
+		"Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server."
+	);
+
+create
+	table
+		BASE_ROOM_EXIT(
+			B_ROOM_EXIT_ID int unsigned not null AUTO_INCREMENT,
+			primary key(B_ROOM_EXIT_ID)
+		);
