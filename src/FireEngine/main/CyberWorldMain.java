@@ -56,7 +56,7 @@ public class CyberWorldMain {
 
 	static ClientIOTelnet telnet;
 	static int client_IO_Telnet_Failures = 0;
-	static final String telnetAddress = "192.168.1.179";
+	static final String telnetAddress = "192.168.1.100";
 	static final int telnetPort = 1024;
 
 	/**
