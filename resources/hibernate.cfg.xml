@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<!-- DB Info -->
+		<property name="hibernate.dialect">
+			org.hibernate.dialect.MySQLDialect
+		</property>
+		<property name="hibernate.connection.driver_class">
+			com.mysql.jdbc.Driver
+		</property>
+
+		<!-- Connection Info -->
+		<property name="hibernate.connection.url">
+			jdbc:mysql://127.0.0.1:5555/Cyber_World_DB
+		</property>
+		<property name="hibernate.connection.username">
+			root
+		</property>
+		<property name="hibernate.connection.password">
+			rootpassword
+		</property>
+
+		<!-- List of XML mapping files -->
+		<mapping class="Cyber_World.Characters.Player.Player_Character" />
+		<mapping class="Cyber_World.Characters.Player.PC_Settings" />
+		<mapping class="Cyber_World.Characters.Condition.PC_Condition" />
+		<mapping class="Cyber_World.Characters.Condition.Level" />
+		<mapping class="Cyber_World.Characters.Condition.Health" />
+		<mapping class="Cyber_World.Characters.Condition.Mana" />
+
+		<mapping class="Cyber_World.Gameworld.Maps.Game_Map" />
+		<mapping class="Cyber_World.Gameworld.Maps.Base_Room" />
+		<mapping class="Cyber_World.Gameworld.Maps.Base_Room_Exit" />
+	</session-factory>
+</hibernate-configuration>
