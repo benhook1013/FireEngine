@@ -1,7 +1,6 @@
 package fireengine.session.phase;
 
 import fireengine.characters.commands.menu_commands.*;
-import fireengine.characters.player.state.parser.Menu_Parser;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.client_io.Client_IO_Colour;
 import fireengine.session.Session;
@@ -26,12 +25,14 @@ import fireengine.session.Session;
 /**
  * Phase of {@link Session} that the player first sees.
  * 
+ * IMPLEMENT: Must replace this class with your own implementation.
+ * 
  * @author Ben Hook
  */
 public class PhaseWelcome implements PhaseInterface {
 	private Session sess;
 	// private PhaseManager phaseManager;
-	private Menu_Parser parser = Menu_Parser.getInstance();
+	// private Menu_Parser parser = Menu_Parser.getInstance();
 
 	/**
 	 * Private no-arg constructor to avoid accidental instantiation.
@@ -55,7 +56,8 @@ public class PhaseWelcome implements PhaseInterface {
 
 	@Override
 	public void acceptInput(String input) {
-		Menu_Command command = parser.parse(input);
+		// Menu_Command command = parser.parse(input);
+		Menu_Command command = null;
 		menuAction(command);
 	}
 
