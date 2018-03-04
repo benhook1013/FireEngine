@@ -25,7 +25,7 @@ import fireengine.session.Session;
 /**
  * Phase of {@link Session} that the player first sees.
  * 
- * IMPLEMENT: Must replace this class with your own implementation.
+ * IMPLEMENTATION: Must replace this class with your own implementation.
  * 
  * @author Ben Hook
  */
