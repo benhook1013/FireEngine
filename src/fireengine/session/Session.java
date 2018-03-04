@@ -29,7 +29,6 @@ import fireengine.client_io.Client_IO_Colour;
 import fireengine.client_io.exceptions.Client_Connection_Exception;
 import fireengine.main.FireEngineMain;
 import fireengine.session.phase.PhaseManager;
-import fireengine.session.phase.PhaseWelcome;
 import fireengine.utils.MyLogger;
 
 /**
@@ -80,7 +79,7 @@ public class Session {
 					closing = false;
 					closed = false;
 					phaseManager = new PhaseManager(sess);
-					phaseManager.setPhase(new PhaseWelcome(sess, phaseManager));
+					phaseManager.setWelcomePhase();
 					ccon.acceptInput();
 					return 0;
 				}

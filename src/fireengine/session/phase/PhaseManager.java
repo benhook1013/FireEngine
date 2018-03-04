@@ -1,6 +1,7 @@
 package fireengine.session.phase;
 
 import fireengine.session.Session;
+import fireengine.session.phase.PhaseWelcome;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -44,6 +45,14 @@ public class PhaseManager implements PhaseInterface {
 			this.phase = phase;
 		}
 	}
+	
+
+	/**
+	 * phaseManager.setPhase(new PhaseWelcome(sess, phaseManager));
+	 */
+	public void setWelcomePhase() {
+		setPhase(new PhaseWelcome(sess, this));
+	}
 
 	@Override
 	public void acceptInput(String input) {
@@ -57,7 +66,7 @@ public class PhaseManager implements PhaseInterface {
 	public void disconnect() {
 		phase.disconnect();
 		phase = null;
-		setPhase(new PhaseWelcome(sess, this));
+		setWelcomePhase();
 	}
 
 	/**
