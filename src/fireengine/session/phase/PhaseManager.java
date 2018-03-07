@@ -1,7 +1,10 @@
 package fireengine.session.phase;
 
+import java.util.logging.Level;
+
 import fireengine.session.Session;
-import fireengine.session.phase.PhaseWelcome;
+import fireengine.utils.ConfigLoader;
+import fireengine.utils.MyLogger;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -30,28 +33,56 @@ public class PhaseManager implements PhaseInterface {
 	Session sess;
 	private PhaseInterface phase;
 
-	public PhaseManager(Session sess) {
+	private MyClassLoader loader;
+	private Class<PhaseInterface> welcomePhaseClass;
+
+	public PhaseManager(Session sess) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		this.sess = sess;
 		phase = null;
+
+		loadWelcomePhase(ConfigLoader.getSetting("welcomePhaseClassName"));
+	}
+
+	class MyClassLoader extends ClassLoader {
+
+		public MyClassLoader(ClassLoader parent) {
+			super(parent);
+		}
+
+		@SuppressWarnings("unchecked")
+		public Class<PhaseInterface> loadClass(String name) throws ClassNotFoundException {
+			return (Class<PhaseInterface>) super.loadClass(name);
+		}
+
+	}
+
+	public void loadWelcomePhase(String name)
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		loader = new MyClassLoader(MyClassLoader.class.getClassLoader());
+		welcomePhaseClass = loader.loadClass(name);
 	}
 
 	/**
 	 * Assigns a phase to the {@link PhaseManager}.
 	 * 
-	 * @param phase phase to set current
+	 * @param phase
+	 *            phase to set current
 	 */
 	public void setPhase(PhaseInterface phase) {
 		synchronized (this) {
 			this.phase = phase;
 		}
 	}
-	
 
 	/**
 	 * phaseManager.setPhase(new PhaseWelcome(sess, phaseManager));
 	 */
 	public void setWelcomePhase() {
-		setPhase(new PhaseWelcome(sess, this));
+		try {
+			setPhase(welcomePhaseClass.newInstance());
+		} catch (InstantiationException | IllegalAccessException e) {
+			MyLogger.log(Level.INFO, "PhaseManager: Failed to instantiate welcomePhase.", e);
+		}
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package fireengine.main;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -15,6 +16,7 @@ import fireengine.client_io.exceptions.Client_IO_Telnet_Exception;
 import fireengine.gameworld.Gameworld;
 import fireengine.session.Session;
 import fireengine.utils.CheckedHibernateException;
+import fireengine.utils.ConfigLoader;
 import fireengine.utils.MyLogger;
 
 /*
@@ -41,7 +43,7 @@ import fireengine.utils.MyLogger;
  */
 public class FireEngineMain {
 	static volatile boolean running;
-	
+
 	public static final String serverName = "FireEngine";
 
 	// Hibernate stuff
@@ -96,6 +98,12 @@ public class FireEngineMain {
 	 */
 	private static void setUp() throws Exception {
 		MyLogger.log(Level.INFO, "FireEngineMain: Bootstrapping FireEngine!");
+
+		try {
+			ConfigLoader.loadSettings();
+		} catch (IOException e) {
+			throw new FireEngineMainSetupException("FireEngineMain: Failed to load config file", e);
+		}
 
 		try {
 			MyLogger.log(Level.INFO, "FireEngineMain: Initiating Hibernate");
