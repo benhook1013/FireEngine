@@ -44,6 +44,7 @@ import fireengine.utils.MyLogger;
 public class FireEngineMain {
 	static volatile boolean running;
 
+	public static String configFilePath;
 	public static final String serverName = "FireEngine";
 
 	// Hibernate stuff
@@ -74,6 +75,8 @@ public class FireEngineMain {
 	static public final int SESSION_EXECUTOR_POOL = 10;
 
 	public static void main(String[] args) {
+		configFilePath = args[0];
+
 		try {
 			setUp();
 		} catch (Exception e) {
@@ -100,7 +103,7 @@ public class FireEngineMain {
 		MyLogger.log(Level.INFO, "FireEngineMain: Bootstrapping FireEngine!");
 
 		try {
-			ConfigLoader.loadSettings();
+			ConfigLoader.loadSettings(configFilePath);
 		} catch (IOException e) {
 			throw new FireEngineMainSetupException("FireEngineMain: Failed to load config file", e);
 		}

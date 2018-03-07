@@ -40,9 +40,9 @@ public class ConfigLoader {
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	public static void loadSettings() throws FileNotFoundException, IOException {
+	public static void loadSettings(String filePath) throws FileNotFoundException, IOException {
 		config = new Properties();
-		File configFile = new File("config.txt");
+		File configFile = new File(filePath);
 		FileInputStream configFileInputStream = new FileInputStream(configFile);
 
 		config.load(configFileInputStream);
