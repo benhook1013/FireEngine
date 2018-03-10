@@ -1,10 +1,8 @@
 package fireengine.session.phase;
 
-import java.util.logging.Level;
-
 import fireengine.session.Session;
 import fireengine.utils.ConfigLoader;
-import fireengine.utils.MyLogger;
+import fireengine.utils.MyClassLoader;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -36,29 +34,21 @@ public class PhaseManager implements PhaseInterface {
 	private MyClassLoader loader;
 	private Class<PhaseInterface> welcomePhaseClass;
 
-	public PhaseManager(Session sess) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		this.sess = sess;
-		phase = null;
-
+	public PhaseManager() throws ClassNotFoundException {
 		loadWelcomePhase(ConfigLoader.getSetting("welcomePhaseClassName"));
 	}
 
-	class MyClassLoader extends ClassLoader {
-
-		public MyClassLoader(ClassLoader parent) {
-			super(parent);
-		}
-
-		@SuppressWarnings("unchecked")
-		public Class<PhaseInterface> loadClass(String name) throws ClassNotFoundException {
-			return (Class<PhaseInterface>) super.loadClass(name);
-		}
-
+	/**
+	 * @see fireengine.session.phase.PhaseInterface#setSession(fireengine.session.Session,
+	 *      fireengine.session.phase.PhaseManager)
+	 */
+	@Override
+	public void setSession(Session session, PhaseManager phaseManager) {
+		sess = session;
 	}
 
-	public void loadWelcomePhase(String name)
-			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		loader = new MyClassLoader(MyClassLoader.class.getClassLoader());
+	public void loadWelcomePhase(String name) throws ClassNotFoundException {
+		loader = new MyClassLoader();
 		welcomePhaseClass = loader.loadClass(name);
 	}
 
@@ -71,18 +61,21 @@ public class PhaseManager implements PhaseInterface {
 	public void setPhase(PhaseInterface phase) {
 		synchronized (this) {
 			this.phase = phase;
+			this.phase.setSession(sess, this);
 		}
 	}
 
 	/**
-	 * phaseManager.setPhase(new PhaseWelcome(sess, phaseManager));
+	 * 
+	 * 
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
 	 */
-	public void setWelcomePhase() {
-		try {
-			setPhase(welcomePhaseClass.newInstance());
-		} catch (InstantiationException | IllegalAccessException e) {
-			MyLogger.log(Level.INFO, "PhaseManager: Failed to instantiate welcomePhase.", e);
-		}
+	public void setWelcomePhase() throws InstantiationException, IllegalAccessException {
+		PhaseInterface welcomePhaseInstance;
+
+		welcomePhaseInstance = welcomePhaseClass.newInstance();
+		setPhase(welcomePhaseInstance);
 	}
 
 	@Override
@@ -97,7 +90,6 @@ public class PhaseManager implements PhaseInterface {
 	public void disconnect() {
 		phase.disconnect();
 		phase = null;
-		setWelcomePhase();
 	}
 
 	/**

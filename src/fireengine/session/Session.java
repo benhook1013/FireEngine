@@ -78,8 +78,27 @@ public class Session {
 					MyLogger.log(Level.INFO, "Session: Instantiating Session...");
 					closing = false;
 					closed = false;
-					phaseManager = new PhaseManager(sess);
-					phaseManager.setWelcomePhase();
+					try {
+						phaseManager = new PhaseManager();
+					} catch (ClassNotFoundException e) {
+						MyLogger.log(Level.SEVERE, "Session: Error thrown while trying to phaseManager() in call().",
+								e);
+						send(new ClientConnectionOutput(
+								"Error occured: This has been logged and will be reviewed by a developer.", null,
+								null));
+						end();
+					}
+					phaseManager.setSession(sess, null);
+					try {
+						phaseManager.setWelcomePhase();
+					} catch (InstantiationException | IllegalAccessException e) {
+						MyLogger.log(Level.SEVERE,
+								"Session: Error thrown while trying to phaseManager.setWelcomePhase() in call().", e);
+						send(new ClientConnectionOutput(
+								"Error occured: This has been logged and will be reviewed by a developer.", null,
+								null));
+						end();
+					}
 					ccon.acceptInput();
 					return 0;
 				}
@@ -149,6 +168,15 @@ public class Session {
 	 */
 	public void disconnect() {
 		phaseManager.disconnect();
+		try {
+			phaseManager.setWelcomePhase();
+		} catch (InstantiationException | IllegalAccessException e) {
+			MyLogger.log(Level.SEVERE,
+					"Session: Error thrown while trying to phaseManager.setWelcomePhase() in disconnect().", e);
+			send(new ClientConnectionOutput("Error occured: This has been logged and will be reviewed by a developer.",
+					null, null));
+			end();
+		}
 	}
 
 	/**

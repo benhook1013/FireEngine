@@ -28,6 +28,14 @@ import fireengine.session.Session;
 public interface PhaseInterface {
 
 	/**
+	 * Set the {@link Session} and {@link PhaseManager} for the Phase.
+	 * 
+	 * @param session
+	 * @param phaseManager
+	 */
+	public void setSession(Session session, PhaseManager phaseManager);
+
+	/**
 	 * Passes input into the relevant Session phase, such as {@link PhaseLogin} to
 	 * handle logging in or {@link PhaseInWorld} to do actions with your
 	 * {@link Player_Character}.
