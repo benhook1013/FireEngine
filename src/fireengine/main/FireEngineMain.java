@@ -45,7 +45,7 @@ public class FireEngineMain {
 	static volatile boolean running;
 
 	public static String configFilePath;
-	public static final String serverName = "FireEngine";
+	public static String serverName;
 
 	// Hibernate stuff
 	public static SessionFactory hibSessFactory;
@@ -61,8 +61,8 @@ public class FireEngineMain {
 
 	static ClientIOTelnet telnet;
 	static int client_IO_Telnet_Failures = 0;
-	static final String telnetAddress = "192.168.1.100";
-	static final int telnetPort = 1024;
+	static String telnetAddress;
+	static int telnetPort;
 
 	/**
 	 * Executor used to process user input.
@@ -107,6 +107,10 @@ public class FireEngineMain {
 		} catch (IOException e) {
 			throw new FireEngineMainSetupException("FireEngineMain: Failed to load config file", e);
 		}
+
+		serverName = ConfigLoader.getSetting("serverName");
+		telnetAddress = ConfigLoader.getSetting("serverIP");
+		telnetPort = Integer.parseInt(ConfigLoader.getSetting("telnetPort"));
 
 		try {
 			MyLogger.log(Level.INFO, "FireEngineMain: Initiating Hibernate");
