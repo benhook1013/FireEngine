@@ -2,7 +2,7 @@ package fireengine.characters.classes;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Fighting.java
+ *    Fighter.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -17,6 +17,6 @@ package fireengine.characters.classes;
  *    limitations under the License.
  */
 
-public class Fighting {
+public class Fighter {
 
 }

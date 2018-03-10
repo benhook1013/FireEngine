@@ -404,6 +404,10 @@ public class Player_Character extends Base_Character {
 		}
 	}
 
+	public static ArrayList<Player_Character> getPlayerList() {
+		return playerList;
+	}
+
 	public static void sendToAllPlayers(ClientConnectionOutput output) {
 		for (Player_Character player : playerList) {
 			player.sendToListeners(output);

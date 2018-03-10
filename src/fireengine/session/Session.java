@@ -238,6 +238,28 @@ public class Session {
 	}
 
 	/**
+	 * Returns number of alive Sessions.
+	 * 
+	 * @return number of open Sessions
+	 */
+	public static int numSessions() {
+		synchronized (sessionList) {
+			return sessionList.size();
+		}
+	}
+
+	/**
+	 * Returns number of alive Sessions.
+	 * 
+	 * @return number of open Sessions
+	 */
+	public static ArrayList<Session> getSessions() {
+		synchronized (sessionList) {
+			return sessionList;
+		}
+	}
+
+	/**
 	 * Asks all open Sessions to end, typically used in graceful application
 	 * shutdown.
 	 */
@@ -261,16 +283,5 @@ public class Session {
 			}
 		}
 		MyLogger.log(Level.INFO, "Session: Finished forced shutdown of Sessions.");
-	}
-
-	/**
-	 * Returns number of alive Sessions.
-	 * 
-	 * @return number of open Sessions
-	 */
-	public static int numSessions() {
-		synchronized (sessionList) {
-			return sessionList.size();
-		}
 	}
 }

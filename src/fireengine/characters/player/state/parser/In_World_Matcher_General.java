@@ -8,6 +8,7 @@ import fireengine.characters.commands.character_commands.general.Look;
 import fireengine.characters.commands.character_commands.general.Map;
 import fireengine.characters.commands.character_commands.general.Move;
 import fireengine.characters.commands.character_commands.general.Say;
+import fireengine.characters.commands.character_commands.general.Who;
 import fireengine.characters.commands.character_commands.general.player_only.Quit_Game;
 import fireengine.utils.MathUtils;
 
@@ -35,6 +36,7 @@ public class In_World_Matcher_General implements Input_Parser_Matcher_Interface 
 			"(?i)(?:(?:MOVE|GO|WALK) )?(N(?:ORTH)?(?:(?:W(?:EST)?)?|E(?:AST)?)|E(?:AST)?|S(?:OUTH)?(?:(?:W(?:EST)?)?|E(?:AST)?)|W(?:EST)?)");
 	private Pattern quitGamePattern = Pattern.compile("(?i)QQ|QUIT(?: GAME)");
 	private Pattern sayPattern = Pattern.compile("(?i)SAY? (.+)");
+	private Pattern whoPattern = Pattern.compile("(?i)WHO");
 
 	public In_World_Matcher_General() {
 	}
@@ -61,6 +63,8 @@ public class In_World_Matcher_General implements Input_Parser_Matcher_Interface 
 			return new Quit_Game();
 		} else if ((matcher = sayPattern.matcher(text)).matches()) {
 			return new Say(matcher.group(1));
+		} else if ((matcher = whoPattern.matcher(text)).matches()) {
+			return new Who();
 		} else {
 			return null;
 		}
