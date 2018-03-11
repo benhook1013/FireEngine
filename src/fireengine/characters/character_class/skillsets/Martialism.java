@@ -1,4 +1,4 @@
-package fireengine.characters.classes;
+package fireengine.characters.character_class.skillsets;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -17,6 +17,16 @@ package fireengine.characters.classes;
  *    limitations under the License.
  */
 
-public class Fighter {
+public class Martialism extends Base_Skillset {
 
+	public Martialism() {
+		this.skillsetName = "Martialism";
+	}
+
+	protected class Weaponry extends Base_Skill {
+
+		protected Weaponry() {
+			this.skillName = "Weaponry";
+		}
+	}
 }

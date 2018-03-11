@@ -1,8 +1,12 @@
-package fireengine.characters.classes;
+package fireengine.characters.character_class;
+
+import java.util.ArrayList;
+
+import fireengine.characters.character_class.skillsets.Base_Skillset;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Class_Base.java
+ *    Class.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -17,6 +21,20 @@ package fireengine.characters.classes;
  *    limitations under the License.
  */
 
-public abstract class Class_Base {
+public abstract class Class {
+	protected String className;
 
+	protected ArrayList<Base_Skillset> skillsetList;
+
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String name) {
+		this.className = name;
+	}
+
+	protected void addSkillset(Base_Skillset skillset) {
+		skillsetList.add(skillset);
+	}
 }
