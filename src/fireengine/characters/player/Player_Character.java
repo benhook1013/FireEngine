@@ -23,6 +23,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.query.Query;
 
 import fireengine.characters.Base_Character;
+import fireengine.characters.character_class.Character_Class;
 import fireengine.characters.commands.Action_Command;
 import fireengine.characters.commands.character_commands.general.Look;
 import fireengine.characters.condition.Base_Condition;
@@ -76,6 +77,11 @@ public class Player_Character extends Base_Character {
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_PC_SETTINGS_ID")
 	private PC_Settings settings;
+
+	@OneToOne(fetch = FetchType.EAGER)
+	@Cascade(CascadeType.ALL)
+	@JoinColumn(name = "PC_CHAR_CLASS_ID")
+	private Character_Class charClass;
 
 	@Transient
 	private PC_State_Interface pcState;
@@ -340,6 +346,16 @@ public class Player_Character extends Base_Character {
 	@Override
 	public int getMaxMana() {
 		return condition.getMaxMana();
+	}
+
+	@Override
+	public Character_Class getCharClass() {
+		return this.charClass;
+	}
+
+	@Override
+	public void setCharClass(Character_Class charClass) {
+		this.charClass = charClass;
 	}
 
 	public static Player_Character findCharacter(String name) throws CheckedHibernateException {

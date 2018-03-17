@@ -33,6 +33,6 @@
 
 		<mapping class="fireengine.gameworld.maps.GameMap" />
 		<mapping class="fireengine.gameworld.maps.BaseRoom" />
-		<mapping class="fireengine.gameworld.maps.Base_Room_Exit" />
+		<mapping class="fireengine.gameworld.maps.BaseRoomExit" />
 	</session-factory>
 </hibernate-configuration>

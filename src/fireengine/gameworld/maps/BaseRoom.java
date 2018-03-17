@@ -80,35 +80,35 @@ public class BaseRoom {
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_N")
-	private Base_Room_Exit northExit;
+	private BaseRoomExit northExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_NE")
-	private Base_Room_Exit northEastExit;
+	private BaseRoomExit northEastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_E")
-	private Base_Room_Exit eastExit;
+	private BaseRoomExit eastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_SE")
-	private Base_Room_Exit southEastExit;
+	private BaseRoomExit southEastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_S")
-	private Base_Room_Exit southExit;
+	private BaseRoomExit southExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_SW")
-	private Base_Room_Exit southWestExit;
+	private BaseRoomExit southWestExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_W")
-	private Base_Room_Exit westExit;
+	private BaseRoomExit westExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_NW")
-	private Base_Room_Exit northWestExit;
+	private BaseRoomExit northWestExit;
 
 	@Transient
 	private ArrayList<Player_Character> playerList;
@@ -282,13 +282,13 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Returns {@link Base_Room_Exit} of room for given {@link DIRECTION}.
+	 * Returns {@link BaseRoomExit} of room for given {@link DIRECTION}.
 	 * 
 	 * @param direction
 	 * @return
 	 * @throws Map_Exception_Direction_Not_Supported
 	 */
-	public Base_Room_Exit getExit(Directions.DIRECTION direction) throws Map_Exception_Direction_Not_Supported {
+	public BaseRoomExit getExit(Directions.DIRECTION direction) throws Map_Exception_Direction_Not_Supported {
 		switch (direction) {
 		case NORTH: {
 			return northExit;
@@ -322,13 +322,13 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Assigns {@link Base_Room_Exit} to room, of given {@link DIRECTION}.
+	 * Assigns {@link BaseRoomExit} to room, of given {@link DIRECTION}.
 	 * 
 	 * @param direction
 	 * @param newExit
 	 * @throws Map_Exception_Direction_Not_Supported
 	 */
-	public void setExit(Directions.DIRECTION direction, Base_Room_Exit newExit)
+	public void setExit(Directions.DIRECTION direction, BaseRoomExit newExit)
 			throws Map_Exception_Direction_Not_Supported {
 		switch (direction) {
 		case NORTH: {
@@ -495,7 +495,7 @@ public class BaseRoom {
 		}
 	}
 
-	protected static void deleteExit(Base_Room_Exit exit) throws Map_Exception_Room_Null, CheckedHibernateException {
+	protected static void deleteExit(BaseRoomExit exit) throws Map_Exception_Room_Null, CheckedHibernateException {
 		if (exit == null) {
 			throw new Map_Exception_Room_Null("BaseRoom: Tried to deleteExit on a null exit.");
 		}
@@ -507,7 +507,7 @@ public class BaseRoom {
 			hibSess = FireEngineMain.hibSessFactory.openSession();
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("DELETE FROM Base_Room_Exit WHERE B_ROOM_EXIT_ID = :id");
+			Query<?> query = hibSess.createQuery("DELETE FROM BaseRoomExit WHERE B_ROOM_EXIT_ID = :id");
 			query.setParameter("id", exit.getId());
 			query.executeUpdate();
 

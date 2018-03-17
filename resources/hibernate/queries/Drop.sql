@@ -1,35 +1,19 @@
-drop
-	table
-		if exists PLAYER_CHARACTER;
+DROP TABLE IF EXISTS PLAYER_CHARACTER;
 
-drop
-	table
-		if exists PC_SETTINGS;
+DROP TABLE IF EXISTS PC_SETTINGS;
 
-drop
-	table
-		if exists PC_CONDITION;
+DROP TABLE IF EXISTS CHARACTER_CLASS;
 
-drop
-	table
-		if exists CHAR_LEVEL;
+DROP TABLE IF EXISTS PC_CONDITION;
 
-drop
-	table
-		if exists CHAR_HEALTH;
+DROP TABLE IF EXISTS CHAR_LEVEL;
 
-drop
-	table
-		if exists CHAR_MANA;
+DROP TABLE IF EXISTS CHAR_HEALTH;
 
-drop
-	table
-		if exists GAMEMAP;
+DROP TABLE IF EXISTS CHAR_MANA;
 
-drop
-	table
-		if exists BASE_ROOM;
+DROP TABLE IF EXISTS GAME_MAP;
 
-drop
-	table
-		if exists BASE_ROOM_EXIT;
+DROP TABLE IF EXISTS BASE_ROOM;
+
+DROP TABLE IF EXISTS BASE_ROOM_EXIT;

@@ -6,7 +6,7 @@ import fireengine.characters.character_class.skillsets.Base_Skillset;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Class.java
+ *    Character_Class.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import fireengine.characters.character_class.skillsets.Base_Skillset;
  *    limitations under the License.
  */
 
-public abstract class Class {
+public abstract class Character_Class {
 	protected String className;
 
 	protected ArrayList<Base_Skillset> skillsetList;

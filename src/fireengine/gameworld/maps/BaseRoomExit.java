@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Base_Room_Exit.java
+ *    BaseRoomExit.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "BASE_ROOM_EXIT")
-public class Base_Room_Exit {
+public class BaseRoomExit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "B_ROOM_EXIT_ID")
 	private int id;
 
-	public Base_Room_Exit() {
+	public BaseRoomExit() {
 	}
 
 	public int getId() {

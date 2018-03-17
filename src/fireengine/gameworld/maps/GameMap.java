@@ -53,7 +53,7 @@ import fireengine.utils.MyLogger;
  * @author Ben Hook
  */
 @Entity
-@Table(name = "GAMEMAP")
+@Table(name = "GAME_MAP")
 public class GameMap {
 	// From centre point 0,0 the most far away room will be
 	// MAP_DIMENSION,MAP_DIMENSION
@@ -66,9 +66,9 @@ public class GameMap {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "MAP_ID")
+	@Column(name = "GAME_MAP_ID")
 	private int id;
-	@Column(name = "MAP_NAME")
+	@Column(name = "GAME_MAP_NAME")
 	private String name;
 
 	@Transient
@@ -362,7 +362,7 @@ public class GameMap {
 					+ Directions.oppositeDirection(direction).toString() + " of " + otherRoom.getRoomName());
 		}
 
-		Base_Room_Exit newExit = new Base_Room_Exit();
+		BaseRoomExit newExit = new BaseRoomExit();
 		room.setExit(direction, newExit);
 		BaseRoom.saveRoom(room);
 		otherRoom.setExit(Directions.oppositeDirection(direction), newExit);
@@ -386,13 +386,13 @@ public class GameMap {
 		if (room == null) {
 			throw new Map_Exception_Room_Null("GameMap: Tried to remove exit on null room.");
 		}
-		Base_Room_Exit roomExit = room.getExit(direction);
+		BaseRoomExit roomExit = room.getExit(direction);
 
 		BaseRoom otherRoom = getRoom(room, direction);
 		if (otherRoom == null) {
 			throw new Map_Exception_Exit_Room_Null("GameMap: Tried to remove exit to a null room.");
 		}
-		Base_Room_Exit otherRoomExit = otherRoom.getExit(Directions.oppositeDirection(direction));
+		BaseRoomExit otherRoomExit = otherRoom.getExit(Directions.oppositeDirection(direction));
 
 		if ((roomExit != null) && (otherRoomExit != null)) {
 			if (roomExit.getId() == otherRoomExit.getId()) {

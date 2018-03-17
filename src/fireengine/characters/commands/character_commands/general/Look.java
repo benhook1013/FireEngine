@@ -8,7 +8,7 @@ import fireengine.characters.commands.character_commands.Character_Command;
 import fireengine.characters.player.Player_Character;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.BaseRoom;
-import fireengine.gameworld.maps.Base_Room_Exit;
+import fireengine.gameworld.maps.BaseRoomExit;
 import fireengine.gameworld.maps.Directions;
 import fireengine.gameworld.maps.Exceptions.Map_Exception_Direction_Not_Supported;
 import fireengine.gameworld.maps.Exceptions.Map_Exception_Out_Of_Bounds;
@@ -82,7 +82,7 @@ public class Look extends Character_Command {
 		BaseRoom lookRoom = character.getRoom();
 		if (direction != null) {
 			try {
-				Base_Room_Exit exit = lookRoom.getExit(direction);
+				BaseRoomExit exit = lookRoom.getExit(direction);
 				if (exit != null) {
 					if (exit.isOpen()) {
 						lookRoom = character.getMap().getRoom(lookRoom, direction);

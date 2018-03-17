@@ -1,5 +1,6 @@
 package fireengine.characters;
 
+import fireengine.characters.character_class.Character_Class;
 import fireengine.characters.commands.Action_Command;
 import fireengine.characters.player.Player_Character;
 import fireengine.characters.player.exceptions.PC_Exception_Null_Room;
@@ -25,6 +26,11 @@ import fireengine.gameworld.maps.GameMap;
  *    limitations under the License.
  */
 
+/**
+ * TODO Add get class method to loosely enforce all character types having class
+ * 
+ * @author Ben Hook
+ */
 public abstract class Base_Character {
 	protected Base_Character() {
 	}
@@ -60,6 +66,10 @@ public abstract class Base_Character {
 	public abstract int getCurrentMana();
 
 	public abstract int getMaxMana();
+
+	public abstract Character_Class getCharClass();
+
+	public abstract void setCharClass(Character_Class charClass);
 
 	public GameMap getMap() {
 		BaseRoom room = getRoom();
