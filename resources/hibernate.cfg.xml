@@ -16,6 +16,9 @@
 		<property name="hibernate.connection.url">
 			jdbc:mysql://127.0.0.1:5555/Cyber_World_DB
 		</property>
+		<property name="hibernate.connection.verifyServerCertificate">
+			false
+		</property>
 		<property name="hibernate.connection.username">
 			root
 		</property>
