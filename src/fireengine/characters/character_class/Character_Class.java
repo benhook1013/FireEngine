@@ -2,6 +2,13 @@ package fireengine.characters.character_class;
 
 import java.util.ArrayList;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 import fireengine.characters.character_class.skillsets.Base_Skillset;
 
 /*
@@ -21,7 +28,14 @@ import fireengine.characters.character_class.skillsets.Base_Skillset;
  *    limitations under the License.
  */
 
+@Entity
+@Table(name = "CHARACTER_CLASS")
 public abstract class Character_Class {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "CHAR_CLASS_ID")
+	private int id;
+
 	protected String className;
 
 	protected ArrayList<Base_Skillset> skillsetList;

@@ -31,7 +31,6 @@ public class PC_Settings {
 	@Column(name = "PC_SETTINGS_ID")
 	private int id;
 
-
 	@Column(name = "PC_SETTINGS_MAP_EDITOR")
 	private boolean mapEditor;
 
