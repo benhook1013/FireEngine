@@ -14,10 +14,48 @@
 
 		<!-- Connection Info -->
 		<property name="hibernate.connection.url">
-			jdbc:mysql://127.0.0.1:5555/Cyber_World_DB
+			jdbc:mysql://127.0.0.1:5555/Cyber_World_DB?useSSL=false
 		</property>
 		<property name="hibernate.connection.verifyServerCertificate">
 			false
+		</property>
+		<property name="hibernate.connection.username">
+			root
+		</property>
+		<property name="hibernate.connection.password">
+			rootpassword
+		</property>
+
+		<!-- List of XML mapping files -->
+		<mapping class="fireengine.characters.player.Player_Character" />
+		<mapping class="fireengine.characters.player.PC_Settings" />
+		<mapping class="fireengine.characters.character_class.Character_Class" />
+		<mapping class="fireengine.characters.condition.PC_Condition" />
+		<mapping class="fireengine.characters.condition.Level" />
+		<mapping class="fireengine.characters.condition.Health" />
+		<mapping class="fireengine.characters.condition.Mana" />
+
+		<mapping class="fireengine.gameworld.maps.GameMap" />
+		<mapping class="fireengine.gameworld.maps.BaseRoom" />
+		<mapping class="fireengine.gameworld.maps.BaseRoomExit" />
+	</session-factory>
+</hibernate-configuration><?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM 
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+	<session-factory>
+		<!-- DB Info -->
+		<property name="hibernate.dialect">
+			org.hibernate.dialect.MySQLDialect
+		</property>
+		<property name="hibernate.connection.driver_class">
+			com.mysql.jdbc.Driver
+		</property>
+
+		<!-- Connection Info -->
+		<property name="hibernate.connection.url">
+			jdbc:mysql://127.0.0.1:5555/Cyber_World_DB
 		</property>
 		<property name="hibernate.connection.username">
 			root
