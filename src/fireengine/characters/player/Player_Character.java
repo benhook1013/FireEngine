@@ -132,24 +132,12 @@ public class Player_Character extends Base_Character {
 		this.name = name;
 	}
 
-	@Override
 	public String getPassword() {
 		return password;
 	}
 
-	@Override
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	@SuppressWarnings("unused")
-	private Base_Condition getCondition() {
-		return condition;
-	}
-
-	@SuppressWarnings("unused")
-	private void setCondition(PC_Condition condition) {
-		this.condition = condition;
 	}
 
 	public PC_Settings getSettings() {
@@ -159,6 +147,26 @@ public class Player_Character extends Base_Character {
 	@SuppressWarnings("unused")
 	private void setSettings(PC_Settings settings) {
 		this.settings = settings;
+	}
+
+	@Override
+	public Character_Class getCharClass() {
+		return this.charClass;
+	}
+
+	@Override
+	public void setCharClass(Character_Class charClass) {
+		this.charClass = charClass;
+	}
+
+	@Override
+	public Base_Condition getCondition() {
+		return condition;
+	}
+
+	@Override
+	public void setCondition(PC_Condition condition) {
+		this.condition = condition;
 	}
 
 	public void setSession(Session session) {
@@ -317,6 +325,7 @@ public class Player_Character extends Base_Character {
 		return condition.getLevelNumber();
 	}
 
+	@Override
 	public void setLevel(int level) {
 		condition.setLevelNumber(level);
 	}
@@ -347,16 +356,6 @@ public class Player_Character extends Base_Character {
 	@Override
 	public int getMaxMana() {
 		return condition.getMaxMana();
-	}
-
-	@Override
-	public Character_Class getCharClass() {
-		return this.charClass;
-	}
-
-	@Override
-	public void setCharClass(Character_Class charClass) {
-		this.charClass = charClass;
 	}
 
 	public static Player_Character findCharacter(String name) throws CheckedHibernateException {
@@ -496,10 +495,12 @@ public class Player_Character extends Base_Character {
 
 				for (Iterator<?> iterator = players.iterator(); iterator.hasNext();) {
 					Player_Character player = (Player_Character) iterator.next();
-					info.addPart("ID: " + player.getId() + ", Name: '" + player.getName() + "', Password: '"
-							+ player.getPassword() + "', Level: '" + player.getLevel() + "', Experience: '"
-							+ player.getExperience() + "', Health: '" + player.getCurrentHealth() + "', Mana: '"
-							+ player.getCurrentMana() + "'", null, null);
+					info.addPart(
+							"ID: " + player.getId() + ", Name: '" + player.getName() + "', Password: '"
+									+ player.getPassword() + "', Class: '" + player.getCharClass() + "', Level: '"
+									+ player.getLevel() + "', Experience: '" + player.getExperience() + "', Health: '"
+									+ player.getCurrentHealth() + "', Mana: '" + player.getCurrentMana() + "'",
+							null, null);
 					if (iterator.hasNext()) {
 						info.newLine();
 					}

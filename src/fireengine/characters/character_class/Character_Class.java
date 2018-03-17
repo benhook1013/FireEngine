@@ -42,7 +42,7 @@ public class Character_Class {
 	protected ArrayList<Base_Skillset> skillsetList;
 
 	public Character_Class() {
-
+		className = "Novice";
 	}
 
 	public int getId() {

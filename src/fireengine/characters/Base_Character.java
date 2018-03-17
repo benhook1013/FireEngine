@@ -2,6 +2,8 @@ package fireengine.characters;
 
 import fireengine.characters.character_class.Character_Class;
 import fireengine.characters.commands.Action_Command;
+import fireengine.characters.condition.Base_Condition;
+import fireengine.characters.condition.PC_Condition;
 import fireengine.characters.player.Player_Character;
 import fireengine.characters.player.exceptions.PC_Exception_Null_Room;
 import fireengine.client_io.ClientConnectionOutput;
@@ -43,9 +45,13 @@ public abstract class Base_Character {
 
 	public abstract void setName(String name);
 
-	public abstract String getPassword();
+	public abstract Character_Class getCharClass();
 
-	public abstract void setPassword(String password);
+	public abstract void setCharClass(Character_Class charClass);
+
+	public abstract Base_Condition getCondition();
+
+	public abstract void setCondition(PC_Condition condition);
 
 	public abstract BaseRoom getRoom();
 
@@ -59,6 +65,8 @@ public abstract class Base_Character {
 
 	public abstract int getLevel();
 
+	public abstract void setLevel(int level);
+
 	public abstract int getCurrentHealth();
 
 	public abstract int getMaxHealth();
@@ -66,10 +74,6 @@ public abstract class Base_Character {
 	public abstract int getCurrentMana();
 
 	public abstract int getMaxMana();
-
-	public abstract Character_Class getCharClass();
-
-	public abstract void setCharClass(Character_Class charClass);
 
 	public GameMap getMap() {
 		BaseRoom room = getRoom();
