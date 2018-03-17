@@ -40,6 +40,14 @@ public abstract class Character_Class {
 
 	protected ArrayList<Base_Skillset> skillsetList;
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
 	public String getClassName() {
 		return className;
 	}
