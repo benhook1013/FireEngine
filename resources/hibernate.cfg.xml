@@ -26,6 +26,7 @@
 		<!-- List of XML mapping files -->
 		<mapping class="fireengine.characters.player.Player_Character" />
 		<mapping class="fireengine.characters.player.PC_Settings" />
+		<mapping class="fireengine.characters.player.Character_Class" />
 		<mapping class="fireengine.characters.condition.PC_Condition" />
 		<mapping class="fireengine.characters.condition.Level" />
 		<mapping class="fireengine.characters.condition.Health" />
