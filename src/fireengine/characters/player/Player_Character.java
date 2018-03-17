@@ -108,6 +108,7 @@ public class Player_Character extends Base_Character {
 		this.name = name;
 		this.password = password;
 		settings = new PC_Settings();
+		charClass = new Character_Class();
 		condition = new PC_Condition(1);
 	}
 

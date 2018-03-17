@@ -30,15 +30,20 @@ import fireengine.characters.character_class.skillsets.Base_Skillset;
 
 @Entity
 @Table(name = "CHARACTER_CLASS")
-public abstract class Character_Class {
+public class Character_Class {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CHAR_CLASS_ID")
 	private int id;
 
+	@Column(name = "CHAR_CLASS_NAME")
 	protected String className;
 
 	protected ArrayList<Base_Skillset> skillsetList;
+
+	public Character_Class() {
+
+	}
 
 	public int getId() {
 		return id;
