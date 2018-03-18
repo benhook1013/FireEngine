@@ -2,9 +2,11 @@ package fireengine.characters.character_class.skillsets;
 
 import java.util.ArrayList;
 
+import javax.persistence.*;
+
 /*
  *    Copyright 2017 Ben Hook
- *    Fighter.java
+ *    Base_Skillet.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -19,22 +21,50 @@ import java.util.ArrayList;
  *    limitations under the License.
  */
 
-public class Base_Skillset {
+@Entity
+@Table(name = "BASE_SKILLSET")
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class Base_Skillset {
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "BASE_SKILLSET_ID")
+	private int id;
+
+	@Column(name = "BASE_SKILLSET_NAME")
 	protected String skillsetName;
+	@Column(name = "BASE_SKILLSET_SKILLSET_EXPERIENCE")
 	private int skillsetExperience;
 
+	@Transient
 	protected ArrayList<Base_Skill> skillList;
 
 	protected class Base_Skill {
 		protected String skillName;
 	}
 
-	public Base_Skillset() {
+	protected Base_Skillset() {
 		setSkillsetExperience(0);
+	}
+
+	protected Base_Skillset(String skillsetName) {
+		this();
+		this.skillsetName = skillsetName;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	public String getSkillsetName() {
 		return skillsetName;
+	}
+
+	public void setSkillsetName(String skillsetName) {
+		this.skillsetName = skillsetName;
 	}
 
 	public int getSkillsetExperience() {

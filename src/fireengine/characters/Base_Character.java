@@ -29,8 +29,6 @@ import fireengine.gameworld.maps.GameMap;
  */
 
 /**
- * TODO Add get class method to loosely enforce all character types having class
- * 
  * @author Ben Hook
  */
 public abstract class Base_Character {

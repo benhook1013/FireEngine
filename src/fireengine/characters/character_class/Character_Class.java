@@ -2,13 +2,7 @@ package fireengine.characters.character_class;
 
 import java.util.ArrayList;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 
 import fireengine.characters.character_class.skillsets.Base_Skillset;
 
@@ -33,7 +27,7 @@ import fireengine.characters.character_class.skillsets.Base_Skillset;
 @Table(name = "CHARACTER_CLASS")
 public class Character_Class {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	@Column(name = "CHAR_CLASS_ID")
 	private int id;
 

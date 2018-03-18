@@ -1,8 +1,10 @@
 package fireengine.characters.character_class.skillsets;
 
+import javax.persistence.*;
+
 /*
  *    Copyright 2017 Ben Hook
- *    Fighter.java
+ *    Skillset_Martialism.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -17,14 +19,28 @@ package fireengine.characters.character_class.skillsets;
  *    limitations under the License.
  */
 
-public class Martialism extends Base_Skillset {
+@Entity
+@Table(name = "SKILLSET_MARTIALISM")
+@PrimaryKeyJoinColumn(name = "SKILLSET_MARTIALISM_BASE_SKILLSET_ID")
+public class Skillset_Martialism extends Base_Skillset {
+	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@Column(name = "SKILLSET_MARTIALISM_ID")
+	private int id;
 
-	public Martialism() {
-		this.skillsetName = "Martialism";
+	public Skillset_Martialism() {
+		setSkillsetName("Martialism");
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 
 	protected class Weaponry extends Base_Skill {
-
 		protected Weaponry() {
 			this.skillName = "Weaponry";
 		}
