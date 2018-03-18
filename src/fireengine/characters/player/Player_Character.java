@@ -496,8 +496,8 @@ public class Player_Character extends Base_Character {
 				for (Iterator<?> iterator = players.iterator(); iterator.hasNext();) {
 					Player_Character player = (Player_Character) iterator.next();
 					info.addPart("ID: " + player.getId() + ", Name: '" + player.getName() + "', Class: '"
-							+ player.getCharClass().getClassName() + "', Level: '" + player.getLevel()
-							+ "', Experience: '" + player.getExperience() + "'", null, null);
+							+ player.getCharClass().getClassName() + "', Level: " + player.getLevel() + ", Experience: "
+							+ player.getExperience() + "", null, null);
 					if (iterator.hasNext()) {
 						info.newLine();
 					}
