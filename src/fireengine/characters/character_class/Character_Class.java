@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import fireengine.characters.character_class.skillsets.Base_Skillset;
 
@@ -39,6 +40,7 @@ public class Character_Class {
 	@Column(name = "CHAR_CLASS_NAME")
 	protected String className;
 
+	@Transient
 	protected ArrayList<Base_Skillset> skillsetList;
 
 	public Character_Class() {
