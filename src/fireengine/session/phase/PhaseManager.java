@@ -31,11 +31,11 @@ public class PhaseManager implements PhaseInterface {
 	Session sess;
 	private PhaseInterface phase;
 
-	private MyClassLoader loader;
+	private MyClassLoader classLoader;
 	private Class<PhaseInterface> welcomePhaseClass;
 
 	public PhaseManager() throws ClassNotFoundException {
-		loadWelcomePhase(ConfigLoader.getSetting("welcomePhaseClassName"));
+		loadWelcomePhase();
 	}
 
 	/**
@@ -47,9 +47,11 @@ public class PhaseManager implements PhaseInterface {
 		sess = session;
 	}
 
-	public void loadWelcomePhase(String name) throws ClassNotFoundException {
-		loader = new MyClassLoader();
-		welcomePhaseClass = loader.loadClass(name);
+	@SuppressWarnings("unchecked")
+	public void loadWelcomePhase() throws ClassNotFoundException {
+		classLoader = new MyClassLoader();
+		welcomePhaseClass = (Class<PhaseInterface>) classLoader
+				.loadClass(ConfigLoader.getSetting("welcomePhaseClassName"));
 	}
 
 	/**

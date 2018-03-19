@@ -1,10 +1,8 @@
 package fireengine.utils;
 
-import fireengine.session.phase.PhaseInterface;
-
 /*
  *    Copyright 2017 Ben Hook
- *    PhaseWelcome.java
+ *    MyClassLoader.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -20,7 +18,11 @@ import fireengine.session.phase.PhaseInterface;
  */
 
 public class MyClassLoader {
-	private Loader loader = new Loader(MyClassLoader.class.getClassLoader());
+	private Loader loader;
+
+	public MyClassLoader() {
+		loader = new Loader(this.getClass().getClassLoader());
+	}
 
 	private class Loader extends ClassLoader {
 
@@ -28,14 +30,13 @@ public class MyClassLoader {
 			super(parent);
 		}
 
-		@SuppressWarnings("unchecked")
-		public Class<PhaseInterface> loadClass(String name) throws ClassNotFoundException {
-			return (Class<PhaseInterface>) super.loadClass(name);
+		public Class<?> loadClass(String name) throws ClassNotFoundException {
+			return super.loadClass(name);
 		}
 
 	}
 
-	public Class<PhaseInterface> loadClass(String name) throws ClassNotFoundException {
-		return (Class<PhaseInterface>) loader.loadClass(name);
+	public Class<?> loadClass(String name) throws ClassNotFoundException {
+		return loader.loadClass(name);
 	}
 }

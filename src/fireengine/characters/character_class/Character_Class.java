@@ -1,10 +1,13 @@
 package fireengine.characters.character_class;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.persistence.*;
 
 import fireengine.characters.character_class.skillsets.Base_Skillset;
+import fireengine.utils.ConfigLoader;
+import fireengine.utils.MyClassLoader;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -35,7 +38,27 @@ public class Character_Class {
 	protected String className;
 
 	@Transient
+	private static MyClassLoader classLoader;
+
+	@Transient
+	protected static ArrayList<Class<Base_Skillset>> skillsetClassList;
+
+	@Transient
 	protected ArrayList<Base_Skillset> skillsetList;
+
+	@SuppressWarnings("unchecked")
+	public static void loadSkillsets() throws ClassNotFoundException {
+		classLoader = new MyClassLoader();
+
+		String skillsetNameString = ConfigLoader.getSetting("charClassSkillsetList");
+		ArrayList<String> skillsetNameArray = new ArrayList<>();
+		Collections.addAll(skillsetNameArray, skillsetNameString.split(";"));
+
+		for (String skillsetName : skillsetNameArray) {
+			System.out.println("skillsetName: '" + skillsetName + "'");
+			skillsetClassList.add((Class<Base_Skillset>) classLoader.loadClass(skillsetName));
+		}
+	}
 
 	public Character_Class() {
 		className = "Novice";

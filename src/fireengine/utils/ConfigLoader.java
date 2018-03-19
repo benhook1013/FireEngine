@@ -8,7 +8,7 @@ import java.util.Properties;
 
 /*
  *    Copyright 2017 Ben Hook
- *    MathUtils.java
+ *    ConfigLoader.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class ConfigLoader {
 	}
 
 	/**
-	 * TODO fill in file location File lives at xxx.
+	 * File lives at top level of project (TODO check where on built app).
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
