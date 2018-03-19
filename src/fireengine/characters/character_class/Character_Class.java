@@ -30,7 +30,7 @@ import fireengine.utils.MyClassLoader;
 @Table(name = "CHARACTER_CLASS")
 public class Character_Class {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CHAR_CLASS_ID")
 	private int id;
 

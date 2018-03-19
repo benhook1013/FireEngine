@@ -24,7 +24,7 @@ import javax.persistence.*;
 @PrimaryKeyJoinColumn(name = "SKILLSET_MARTIALISM_BASE_SKILLSET_ID")
 public class Skillset_Martialism extends Base_Skillset {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "SKILLSET_MARTIALISM_ID")
 	private int id;
 
