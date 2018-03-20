@@ -54,6 +54,7 @@ public class Character_Class {
 		ArrayList<String> skillsetNameArray = new ArrayList<>();
 		Collections.addAll(skillsetNameArray, skillsetNameString.split(";"));
 
+		skillsetClassList = new ArrayList<>();
 		for (String skillsetName : skillsetNameArray) {
 			System.out.println("skillsetName: '" + skillsetName + "'");
 			skillsetClassList.add((Class<Base_Skillset>) classLoader.loadClass(skillsetName));
