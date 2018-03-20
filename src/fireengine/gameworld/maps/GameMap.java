@@ -259,9 +259,8 @@ public class GameMap {
 	 * @throws CheckedHibernateException
 	 * @throws Map_Exception_Direction_Not_Supported
 	 */
-	public void createRoom(BaseRoom baseRoom, Directions.DIRECTION direction)
-			throws Map_Exception_Out_Of_Bounds, Map_Exception_Room_Exists, Map_Exception_Room_Null,
-			CheckedHibernateException, Map_Exception_Direction_Not_Supported {
+	public void createRoom(BaseRoom baseRoom, Directions.DIRECTION direction) throws Map_Exception_Out_Of_Bounds,
+			Map_Exception_Room_Exists, CheckedHibernateException, Map_Exception_Direction_Not_Supported {
 		createRoom(xAdjustDirection(baseRoom.getX(), direction), yAdjustDirection(baseRoom.getY(), direction));
 	}
 

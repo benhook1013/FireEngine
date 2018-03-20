@@ -78,16 +78,7 @@ public class Session {
 					MyLogger.log(Level.INFO, "Session: Instantiating Session...");
 					closing = false;
 					closed = false;
-					try {
-						phaseManager = new PhaseManager();
-					} catch (ClassNotFoundException e) {
-						MyLogger.log(Level.SEVERE, "Session: Error thrown while trying to phaseManager() in call().",
-								e);
-						send(new ClientConnectionOutput(
-								"Error occured: This has been logged and will be reviewed by a developer.", null,
-								null));
-						end();
-					}
+					phaseManager = new PhaseManager();
 					phaseManager.setSession(sess, null);
 					try {
 						phaseManager.setWelcomePhase();

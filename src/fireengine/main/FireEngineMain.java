@@ -9,6 +9,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import fireengine.characters.character_class.Character_Class;
 import fireengine.characters.player.Player_Character;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.client_io.ClientIOTelnet;
@@ -121,6 +122,8 @@ public class FireEngineMain {
 
 		MyLogger.log(Level.INFO, "FireEngineMain: Setting up Gameworld");
 		Gameworld.setupGameworld();
+
+		Character_Class.loadSkillsets();
 
 		MyLogger.log(Level.INFO, "FireEngineMain: Initiating Session Executors");
 		session_Executor = Executors.newFixedThreadPool(SESSION_EXECUTOR_POOL);

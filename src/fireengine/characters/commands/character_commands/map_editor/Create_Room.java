@@ -9,7 +9,6 @@ import fireengine.gameworld.maps.Directions;
 import fireengine.gameworld.maps.Exceptions.Map_Exception_Direction_Not_Supported;
 import fireengine.gameworld.maps.Exceptions.Map_Exception_Out_Of_Bounds;
 import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Exists;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Null;
 import fireengine.main.FireEngineMain;
 import fireengine.utils.CheckedHibernateException;
 import fireengine.utils.MyLogger;
@@ -59,12 +58,6 @@ public class Create_Room extends Character_Command {
 			} catch (Map_Exception_Room_Exists e) {
 				character.sendToListeners(new ClientConnectionOutput(
 						"Cannot create room in the direction, room already exists there.", null, null));
-				return;
-			} catch (Map_Exception_Room_Null e) {
-				MyLogger.log(Level.WARNING, "Create_Room: Map_Exception_Room_Null while trying to createRoom.", e);
-				character.sendToListeners(new ClientConnectionOutput(
-						"Unusual error (Map_Exception_Room_Null) while trying to createRoom, report to a God.", null,
-						null));
 				return;
 			} catch (Map_Exception_Direction_Not_Supported e) {
 				MyLogger.log(Level.WARNING,
