@@ -16,6 +16,7 @@ import fireengine.client_io.ClientIOTelnet;
 import fireengine.client_io.exceptions.Client_IO_Telnet_Exception;
 import fireengine.gameworld.Gameworld;
 import fireengine.session.Session;
+import fireengine.session.phase.PhaseManager;
 import fireengine.utils.CheckedHibernateException;
 import fireengine.utils.ConfigLoader;
 import fireengine.utils.MyLogger;
@@ -123,6 +124,7 @@ public class FireEngineMain {
 		MyLogger.log(Level.INFO, "FireEngineMain: Setting up Gameworld");
 		Gameworld.setupGameworld();
 
+		PhaseManager.loadWelcomePhase();
 		Character_Class.loadSkillsets();
 
 		MyLogger.log(Level.INFO, "FireEngineMain: Initiating Session Executors");
