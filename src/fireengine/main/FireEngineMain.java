@@ -178,7 +178,7 @@ public class FireEngineMain {
 		running = true;
 
 		while (running) {
-			// MyLogger.log(Level.INFO, "Running main thread loop...");
+			MyLogger.log(Level.FINE, "Running main thread loop...");
 
 			if (!telnet.isAlive()) {
 				MyLogger.log(Level.SEVERE,
