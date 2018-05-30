@@ -76,6 +76,9 @@ public class FireEngineMain {
 	 */
 	static public final int SESSION_EXECUTOR_POOL = 10;
 
+	/**
+	 * @param args File path of config file.
+	 */
 	public static void main(String[] args) {
 		configFilePath = args[0];
 
