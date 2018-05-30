@@ -25,7 +25,7 @@ import java.util.logging.Level;
  */
 
 /**
- * A class to load settings from text file.
+ * A class to load settings from text (.properties) file.
  * 
  * @author Ben Hook
  */
