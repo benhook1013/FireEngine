@@ -1,7 +1,7 @@
 package fireengine.characters.player.state;
 
 import fireengine.characters.commands.Action_Command;
-import fireengine.characters.player.state.parser.InWorldParser;
+import fireengine.characters.player.state.parser.InputParserInWorld;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -21,14 +21,14 @@ import fireengine.characters.player.state.parser.InWorldParser;
  */
 
 public class InWorld implements PCStateInterface {
-	InWorldParser inWorldParser;
+	InputParserInWorld inputParserInWorld;
 
 	public InWorld() {
-		inWorldParser = InWorldParser.getInstance();
+		inputParserInWorld = InputParserInWorld.getInstance();
 	}
 
 	@Override
 	public Action_Command acceptInput(String text) {
-		return inWorldParser.parse(text);
+		return inputParserInWorld.parse(text);
 	}
 }

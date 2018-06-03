@@ -4,7 +4,7 @@ import fireengine.characters.commands.Action_Command;
 
 /*
  *    Copyright 2017 Ben Hook
- *    InWorldParser.java
+ *    InputParserInWorld.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ import fireengine.characters.commands.Action_Command;
  *    limitations under the License.
  */
 
-public class InWorldParser implements InputParserInterface {
-	private static InWorldParser instance = new InWorldParser();
+public class InputParserInWorld implements InputParser {
+	private static InputParserInWorld instance = new InputParserInWorld();
 	private static Object instanceLock = new Object();
 
-	private InWorldMatcherGeneral generalMatcher = new InWorldMatcherGeneral();
-	private InWorldMatcherMapEditor mapEditorMatcher = new InWorldMatcherMapEditor();
+	private InputParserMatcherInWorldGeneral generalMatcher = new InputParserMatcherInWorldGeneral();
+	private InputParserMatcherInWorldMapEditor mapEditorMatcher = new InputParserMatcherInWorldMapEditor();
 
-	private InWorldParser() {
+	private InputParserInWorld() {
 	}
 
 	public Action_Command parse(String text) {
-		text = InputParserInterface.clean(text);
+		text = InputParser.clean(text);
 		Action_Command foundCommand;
 
 		foundCommand = generalMatcher.match(text);
@@ -49,11 +49,11 @@ public class InWorldParser implements InputParserInterface {
 		return "I don't know what you mean.";
 	}
 
-	public static InWorldParser getInstance() {
+	public static InputParserInWorld getInstance() {
 		if (instance == null) {
 			synchronized (instanceLock) {
 				if (instance == null) {
-					instance = new InWorldParser();
+					instance = new InputParserInWorld();
 					return instance;
 				} else {
 					return instance;

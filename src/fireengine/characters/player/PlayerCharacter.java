@@ -31,7 +31,7 @@ import fireengine.characters.condition.PC_Condition;
 import fireengine.characters.player.exceptions.PC_Exception_Null_Room;
 import fireengine.characters.player.state.InWorld;
 import fireengine.characters.player.state.PCStateInterface;
-import fireengine.characters.player.state.parser.InWorldParser;
+import fireengine.characters.player.state.parser.InputParserInWorld;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
 import fireengine.gameworld.maps.BaseRoom;
@@ -207,7 +207,7 @@ public class PlayerCharacter extends BaseCharacter {
 		try {
 			if (command == null) {
 				ClientConnectionOutput output = new ClientConnectionOutput(2);
-				output.addPart(InWorldParser.getUnkownCommandText(), null, null);
+				output.addPart(InputParserInWorld.getUnkownCommandText(), null, null);
 				output.newLine();
 				sendToListeners(output);
 			} else {

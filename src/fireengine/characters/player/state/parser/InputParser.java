@@ -4,7 +4,7 @@ import fireengine.characters.commands.Base_Command;
 
 /*
  *    Copyright 2017 Ben Hook
- *    InputParserMatcherInterface.java
+ *    InputParser.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,11 @@ import fireengine.characters.commands.Base_Command;
  *    limitations under the License.
  */
 
-public interface InputParserMatcherInterface {
-	public abstract Base_Command match(String text);
+public interface InputParser {
+	// TODO clean, trim etc
+	static String clean(String text) {
+		return text;
+	}
+
+	public abstract Base_Command parse(String text);
 }
