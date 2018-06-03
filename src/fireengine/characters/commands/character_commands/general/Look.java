@@ -3,9 +3,9 @@ package fireengine.characters.commands.character_commands.general;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import fireengine.characters.Base_Character;
+import fireengine.characters.BaseCharacter;
 import fireengine.characters.commands.character_commands.Character_Command;
-import fireengine.characters.player.Player_Character;
+import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.BaseRoom;
 import fireengine.gameworld.maps.BaseRoomExit;
@@ -50,11 +50,11 @@ public class Look extends Character_Command {
 	}
 
 	@Override
-	public void doAction(Base_Character character) {
+	public void doAction(BaseCharacter character) {
 		doAction(character, null);
 	}
 
-	public ClientConnectionOutput doAction(Base_Character character, ClientConnectionOutput returnOutput) {
+	public ClientConnectionOutput doAction(BaseCharacter character, ClientConnectionOutput returnOutput) {
 		ClientConnectionOutput output;
 		if (returnOutput == null) {
 			output = new ClientConnectionOutput(4);
@@ -115,13 +115,13 @@ public class Look extends Character_Command {
 		output.newLine();
 		output.addPart(lookRoom.getRoomDesc(), null, null);
 		output.newLine();
-		ArrayList<Player_Character> playerList = lookRoom.getPCs();
+		ArrayList<PlayerCharacter> playerList = lookRoom.getPCs();
 		if (playerList.isEmpty()) {
 			output.addPart("You see no one here.", null, null);
 		} else {
 			int seen = 0;
 			output.addPart("You see ", null, null);
-			for (Iterator<Player_Character> iter = playerList.iterator(); iter.hasNext();) {
+			for (Iterator<PlayerCharacter> iter = playerList.iterator(); iter.hasNext();) {
 				output.addPart(iter.next().getName(), null, null);
 				seen++;
 				if (iter.hasNext()) {

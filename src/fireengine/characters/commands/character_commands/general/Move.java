@@ -2,7 +2,7 @@ package fireengine.characters.commands.character_commands.general;
 
 import java.util.logging.Level;
 
-import fireengine.characters.Base_Character;
+import fireengine.characters.BaseCharacter;
 import fireengine.characters.commands.character_commands.Character_Command;
 import fireengine.characters.player.exceptions.PC_Exception_Null_Room;
 import fireengine.client_io.ClientConnectionOutput;
@@ -42,7 +42,7 @@ public class Move extends Character_Command {
 	}
 
 	@Override
-	public void doAction(Base_Character character) {
+	public void doAction(BaseCharacter character) {
 		Directions.DIRECTION direction = Directions.parseDirection(directionText);
 
 		if (direction != null) {
@@ -50,11 +50,11 @@ public class Move extends Character_Command {
 				BaseRoom oldRoom = character.getRoom();
 				if (oldRoom.getExit(direction) == null) {
 					throw new Map_Exception_Exit_Null(
-							"Base_Character: Cannot move in specified direction, exit is null.");
+							"BaseCharacter: Cannot move in specified direction, exit is null.");
 				}
 				BaseRoom newRoom = character.getMap().getRoom(character.getRoom(), direction);
 				if (newRoom == null) {
-					throw new Map_Exception_Exit_Room_Null("Base_Character: Somehow room to the " + direction + " of "
+					throw new Map_Exception_Exit_Room_Null("BaseCharacter: Somehow room to the " + direction + " of "
 							+ character.getRoom().getRoomName() + " had exit leading to it but room is null.");
 				}
 
@@ -65,7 +65,7 @@ public class Move extends Character_Command {
 					character.setRoom(newRoom);
 				} catch (PC_Exception_Null_Room e) {
 					MyLogger.log(Level.WARNING,
-							"Base_Character: PC_Exception_Null_Room during move AFTER null check happened.");
+							"BaseCharacter: PC_Exception_Null_Room during move AFTER null check happened.");
 					return;
 				}
 				oldRoom.removeCharacter(character);

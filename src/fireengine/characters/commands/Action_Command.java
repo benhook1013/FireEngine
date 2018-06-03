@@ -1,6 +1,6 @@
 package fireengine.characters.commands;
 
-import fireengine.characters.Base_Character;
+import fireengine.characters.BaseCharacter;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -24,5 +24,5 @@ public abstract class Action_Command extends Base_Command {
 		super();
 	}
 
-	public abstract void doAction(Base_Character character);
+	public abstract void doAction(BaseCharacter character);
 }

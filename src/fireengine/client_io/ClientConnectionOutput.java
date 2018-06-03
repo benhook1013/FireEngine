@@ -70,7 +70,7 @@ public class ClientConnectionOutput {
 	 * @param colourFG
 	 * @param colourBG
 	 */
-	public ClientConnectionOutput(String text, Client_IO_Colour.COLOURS colourFG, Client_IO_Colour.COLOURS colourBG) {
+	public ClientConnectionOutput(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG) {
 		this(1);
 		addPart(text, colourFG, colourBG);
 	}
@@ -113,7 +113,7 @@ public class ClientConnectionOutput {
 	 * @param colourFG
 	 * @param colourBG
 	 */
-	public void addPart(String text, Client_IO_Colour.COLOURS colourFG, Client_IO_Colour.COLOURS colourBG) {
+	public void addPart(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG) {
 		if (lineList.size() == 0) {
 			newLine();
 		}
@@ -166,7 +166,7 @@ public class ClientConnectionOutput {
 	 * 
 	 * @return
 	 */
-	public Client_IO_Colour.COLOURS getColourFG() {
+	public ClientIOColour.COLOURS getColourFG() {
 		return lineList.get(0).getColourFG();
 	}
 
@@ -175,7 +175,7 @@ public class ClientConnectionOutput {
 	 * 
 	 * @return
 	 */
-	public Client_IO_Colour.COLOURS getColourBG() {
+	public ClientIOColour.COLOURS getColourBG() {
 		return lineList.get(0).getColourBG();
 	}
 
@@ -218,7 +218,7 @@ public class ClientConnectionOutput {
 			partList = new ArrayList<>();
 		}
 
-		public void addPart(String text, Client_IO_Colour.COLOURS colourFG, Client_IO_Colour.COLOURS colourBG) {
+		public void addPart(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG) {
 			partList.add(new Client_Connection_Output_Part(text, colourFG, colourBG));
 		}
 
@@ -234,11 +234,11 @@ public class ClientConnectionOutput {
 			return partList.get(0).getText();
 		}
 
-		public Client_IO_Colour.COLOURS getColourFG() {
+		public ClientIOColour.COLOURS getColourFG() {
 			return partList.get(0).getColourFG();
 		}
 
-		public Client_IO_Colour.COLOURS getColourBG() {
+		public ClientIOColour.COLOURS getColourBG() {
 			return partList.get(0).getColourBG();
 		}
 
@@ -254,11 +254,11 @@ public class ClientConnectionOutput {
 
 		private class Client_Connection_Output_Part {
 			private String text;
-			private Client_IO_Colour.COLOURS colourFG;
-			private Client_IO_Colour.COLOURS colourBG;
+			private ClientIOColour.COLOURS colourFG;
+			private ClientIOColour.COLOURS colourBG;
 
-			private Client_Connection_Output_Part(String text, Client_IO_Colour.COLOURS colourFG,
-					Client_IO_Colour.COLOURS colourBG) {
+			private Client_Connection_Output_Part(String text, ClientIOColour.COLOURS colourFG,
+					ClientIOColour.COLOURS colourBG) {
 				this.text = text;
 				this.colourFG = colourFG;
 				this.colourBG = colourBG;
@@ -268,11 +268,11 @@ public class ClientConnectionOutput {
 				return this.text;
 			}
 
-			public Client_IO_Colour.COLOURS getColourFG() {
+			public ClientIOColour.COLOURS getColourFG() {
 				return this.colourFG;
 			}
 
-			public Client_IO_Colour.COLOURS getColourBG() {
+			public ClientIOColour.COLOURS getColourBG() {
 				return this.colourBG;
 			}
 		}

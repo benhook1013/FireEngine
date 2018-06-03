@@ -1,10 +1,10 @@
-package fireengine.characters.player.state.parser;
+package fireengine.client_io.exceptions;
 
-import fireengine.characters.commands.Base_Command;
+import java.io.IOException;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Input_Parser_Interface.java
+ *    ClientConnectionException.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -19,11 +19,18 @@ import fireengine.characters.commands.Base_Command;
  *    limitations under the License.
  */
 
-public interface Input_Parser_Interface {
-	// TODO clean, trim etc
-	static String clean(String text) {
-		return text;
+public class ClientConnectionException extends IOException {
+	private static final long serialVersionUID = 1L;
+
+	public ClientConnectionException(String message) {
+		super(message);
 	}
 
-	public abstract Base_Command parse(String text);
+	public ClientConnectionException(Throwable throwable) {
+		super(throwable);
+	}
+
+	public ClientConnectionException(String message, Throwable throwable) {
+		super(message, throwable);
+	}
 }

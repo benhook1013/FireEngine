@@ -10,10 +10,10 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import fireengine.characters.character_class.Character_Class;
-import fireengine.characters.player.Player_Character;
+import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.client_io.ClientIOTelnet;
-import fireengine.client_io.exceptions.Client_IO_Telnet_Exception;
+import fireengine.client_io.exceptions.ClientIOTelnetException;
 import fireengine.gameworld.Gameworld;
 import fireengine.session.Session;
 import fireengine.session.phase.PhaseManager;
@@ -154,7 +154,7 @@ public class FireEngineMain {
 			telnet = null;
 			telnet = new ClientIOTelnet(telnetAddress, telnetPort);
 			telnet.start();
-		} catch (Client_IO_Telnet_Exception e) {
+		} catch (ClientIOTelnetException e) {
 			throw new FireEngineMainSetupException("FireEngineMain: Failed to create and start Client_Telnet_IO.", e);
 		}
 		while (telnet.getState() != Thread.State.RUNNABLE) {
@@ -320,7 +320,7 @@ public class FireEngineMain {
 	public static void hibernateException(CheckedHibernateException e) {
 		ClientConnectionOutput playerMessage = new ClientConnectionOutput(1);
 		playerMessage.addPart("Fatal Database error detected, shutting down.", null, null);
-		Player_Character.sendToAllPlayers(playerMessage);
+		PlayerCharacter.sendToAllPlayers(playerMessage);
 		stop();
 		MyLogger.log(Level.SEVERE, "FireEngineMain: Fatal Hibernate exception caught, initiating shutdown.", e);
 	}

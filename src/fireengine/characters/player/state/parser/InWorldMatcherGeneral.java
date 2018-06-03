@@ -14,7 +14,7 @@ import fireengine.utils.MathUtils;
 
 /*
  *    Copyright 2017 Ben Hook
- *    In_World_Matcher_General.java
+ *    InWorldMatcherGeneral.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import fireengine.utils.MathUtils;
  *    limitations under the License.
  */
 
-public class In_World_Matcher_General implements Input_Parser_Matcher_Interface {
+public class InWorldMatcherGeneral implements InputParserMatcherInterface {
 	private Pattern lookPattern = Pattern.compile("(?i)L(?:OOK)?(?: (\\w+))?");
 	private Pattern mapPattern = Pattern.compile("(?i)MAP(?: (\\w+))?");
 	private Pattern movePattern = Pattern.compile(
@@ -38,7 +38,7 @@ public class In_World_Matcher_General implements Input_Parser_Matcher_Interface 
 	private Pattern sayPattern = Pattern.compile("(?i)SAY? (.+)");
 	private Pattern whoPattern = Pattern.compile("(?i)WHO");
 
-	public In_World_Matcher_General() {
+	public InWorldMatcherGeneral() {
 	}
 
 	@Override

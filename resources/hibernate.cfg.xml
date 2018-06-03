@@ -27,8 +27,8 @@
 		</property>
 
 		<!-- List of XML mapping files -->
-		<mapping class="fireengine.characters.player.Player_Character" />
-		<mapping class="fireengine.characters.player.PC_Settings" />
+		<mapping class="fireengine.characters.player.PlayerCharacter" />
+		<mapping class="fireengine.characters.player.PCSettings" />
 		<mapping class="fireengine.characters.character_class.Character_Class" />
 		<mapping
 			class="fireengine.characters.character_class.skillsets.Base_Skillset" />

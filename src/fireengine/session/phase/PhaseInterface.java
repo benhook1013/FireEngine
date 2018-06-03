@@ -1,6 +1,6 @@
 package fireengine.session.phase;
 
-import fireengine.characters.player.Player_Character;
+import fireengine.characters.player.PlayerCharacter;
 import fireengine.session.Session;
 
 /*
@@ -38,7 +38,7 @@ public interface PhaseInterface {
 	/**
 	 * Passes input into the relevant Session phase, such as {@link PhaseLogin} to
 	 * handle logging in or {@link PhaseInWorld} to do actions with your
-	 * {@link Player_Character}.
+	 * {@link PlayerCharacter}.
 	 * 
 	 * @param input
 	 *            String input passed into Phase for processing.
@@ -47,7 +47,7 @@ public interface PhaseInterface {
 
 	/**
 	 * Used in the process of disconnecting the {@link Session} from the
-	 * {@link Player_Character}.
+	 * {@link PlayerCharacter}.
 	 */
 	public void disconnect();
 

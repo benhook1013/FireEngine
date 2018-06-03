@@ -4,7 +4,7 @@ import java.io.IOException;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Client_IO_Telnet_Exception.java
+ *    ClientIOTelnetException.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -19,18 +19,18 @@ import java.io.IOException;
  *    limitations under the License.
  */
 
-public class Client_IO_Telnet_Exception extends IOException {
+public class ClientIOTelnetException extends IOException {
 	private static final long serialVersionUID = 1L;
 
-	public Client_IO_Telnet_Exception(String message) {
+	public ClientIOTelnetException(String message) {
 		super(message);
 	}
 
-	public Client_IO_Telnet_Exception(Throwable throwable) {
+	public ClientIOTelnetException(Throwable throwable) {
 		super(throwable);
 	}
 
-	public Client_IO_Telnet_Exception(String message, Throwable throwable) {
+	public ClientIOTelnetException(String message, Throwable throwable) {
 		super(message, throwable);
 	}
 }

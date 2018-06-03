@@ -22,24 +22,24 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
-import fireengine.characters.player.Player_Character;
+import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.client_io.Client_Connection_Interface;
-import fireengine.client_io.Client_IO_Colour;
-import fireengine.client_io.exceptions.Client_Connection_Exception;
+import fireengine.client_io.ClientConnectionInterface;
+import fireengine.client_io.ClientIOColour;
+import fireengine.client_io.exceptions.ClientConnectionException;
 import fireengine.main.FireEngineMain;
 import fireengine.session.phase.PhaseManager;
 import fireengine.utils.MyLogger;
 
 /**
- * Session of the connection for a {@link Player_Character}.
+ * Session of the connection for a {@link PlayerCharacter}.
  * 
  * @author Ben Hook
  */
 public class Session {
 	private static ArrayList<Session> sessionList = new ArrayList<>();
 	private Session sess;
-	private Client_Connection_Interface ccon;
+	private ClientConnectionInterface ccon;
 	private PhaseManager phaseManager;
 
 	// TODO Options for ANSI.
@@ -51,12 +51,12 @@ public class Session {
 	private volatile Object sessionFutureLock = new Object();
 
 	/**
-	 * Creates a new Session for the provided {@link Client_Connection_Interface}
+	 * Creates a new Session for the provided {@link ClientConnectionInterface}
 	 * 
 	 * @param ccon
-	 *            Client_Connection_Interface to make the session for
+	 *            ClientConnectionInterface to make the session for
 	 */
-	public Session(Client_Connection_Interface ccon) {
+	public Session(ClientConnectionInterface ccon) {
 		synchronized (sessionFutureLock) {
 			this.ccon = ccon;
 			this.sess = this;
@@ -69,8 +69,8 @@ public class Session {
 				public Integer call() throws Exception {
 					try {
 						ccon.setupConnection(sess);
-					} catch (Client_Connection_Exception e) {
-						MyLogger.log(Level.WARNING, "Session: Failed to setup Client_Connection_Interface.", e);
+					} catch (ClientConnectionException e) {
+						MyLogger.log(Level.WARNING, "Session: Failed to setup ClientConnectionInterface.", e);
 						sess.close();
 						return 1;
 					}
@@ -99,7 +99,7 @@ public class Session {
 
 	/**
 	 * Function to pass on {@link ClientConnectionOutput} from the Session to the
-	 * {@link Client_Connection_Interface}.
+	 * {@link ClientConnectionInterface}.
 	 * 
 	 * @param output
 	 *            ClientConnectionOutput to be sent
@@ -112,7 +112,7 @@ public class Session {
 	// TODO Keep alive thread.
 	/**
 	 * Let the Session know that input has been received by the
-	 * {@link Client_Connection_Interface}.
+	 * {@link ClientConnectionInterface}.
 	 */
 	public void notifyInput() {
 		synchronized (sessionFutureLock) {
@@ -153,7 +153,7 @@ public class Session {
 	}
 
 	/**
-	 * Used to disconnect a Session from the {@link Player_Character} but not end
+	 * Used to disconnect a Session from the {@link PlayerCharacter} but not end
 	 * the Session, in such situations as someone logging in overtop another
 	 * Session. Returns the Session to the {@link PhaseWelcome}.
 	 */
@@ -172,7 +172,7 @@ public class Session {
 
 	/**
 	 * Used to signal the Session to gracefully finish parsing input and close down.
-	 * Will lead to the Session telling the {@link Client_Connection_Interface} to
+	 * Will lead to the Session telling the {@link ClientConnectionInterface} to
 	 * respond once writing out is finished, allowing the Session to close down.
 	 */
 	private void end() {
@@ -189,12 +189,12 @@ public class Session {
 	 */
 	private ClientConnectionOutput endMsg() {
 		ClientConnectionOutput goodbyeMsg = new ClientConnectionOutput(1);
-		goodbyeMsg.addPart("Goodbye!", Client_IO_Colour.COLOURS.BRIGHTCYAN, null);
+		goodbyeMsg.addPart("Goodbye!", ClientIOColour.COLOURS.BRIGHTCYAN, null);
 		return goodbyeMsg;
 	}
 
 	/**
-	 * Used by the {@link Client_Connection_Interface} to let the Session know that
+	 * Used by the {@link ClientConnectionInterface} to let the Session know that
 	 * it has finished writing out all data, to allow graceful closing of Session.
 	 */
 	public void notifyCconFinished() {

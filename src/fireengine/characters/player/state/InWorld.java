@@ -1,10 +1,11 @@
-package fireengine.client_io.exceptions;
+package fireengine.characters.player.state;
 
-import java.io.IOException;
+import fireengine.characters.commands.Action_Command;
+import fireengine.characters.player.state.parser.InWorldParser;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Client_Connection_Exception.java
+ *    InWorld.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -19,18 +20,15 @@ import java.io.IOException;
  *    limitations under the License.
  */
 
-public class Client_Connection_Exception extends IOException {
-	private static final long serialVersionUID = 1L;
+public class InWorld implements PCStateInterface {
+	InWorldParser inWorldParser;
 
-	public Client_Connection_Exception(String message) {
-		super(message);
+	public InWorld() {
+		inWorldParser = InWorldParser.getInstance();
 	}
 
-	public Client_Connection_Exception(Throwable throwable) {
-		super(throwable);
-	}
-
-	public Client_Connection_Exception(String message, Throwable throwable) {
-		super(message, throwable);
+	@Override
+	public Action_Command acceptInput(String text) {
+		return inWorldParser.parse(text);
 	}
 }

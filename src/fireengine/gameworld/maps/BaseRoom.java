@@ -20,8 +20,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.query.Query;
 
-import fireengine.characters.Base_Character;
-import fireengine.characters.player.Player_Character;
+import fireengine.characters.BaseCharacter;
+import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.Directions.DIRECTION;
 import fireengine.gameworld.maps.Exceptions.Map_Exception_Direction_Not_Supported;
@@ -111,7 +111,7 @@ public class BaseRoom {
 	private BaseRoomExit northWestExit;
 
 	@Transient
-	private ArrayList<Player_Character> playerList;
+	private ArrayList<PlayerCharacter> playerList;
 
 	private BaseRoom() {
 		playerList = new ArrayList<>();
@@ -188,71 +188,71 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Adds a {@link Base_Character} to the rooms player list (typically on room
-	 * enter), so far only used to add {@link Player_Character}s. Always use AFTER
+	 * Adds a {@link BaseCharacter} to the rooms player list (typically on room
+	 * enter), so far only used to add {@link PlayerCharacter}s. Always use AFTER
 	 * setting room on Character, as this will check to make sure both match(check
 	 * will result in hidden-to-player error).
 	 * 
 	 * @param player
 	 */
-	public void addCharacter(Base_Character player) {
+	public void addCharacter(BaseCharacter player) {
 		if (player.getRoom() != this) {
 			MyLogger.log(Level.WARNING, "BaseRoom: addCharacter onto room that is not BaseCharacter's current room.");
 		}
 
-		if (player instanceof Player_Character) {
+		if (player instanceof PlayerCharacter) {
 			synchronized (playerList) {
-				if (!playerList.contains((Player_Character) player)) {
-					playerList.add((Player_Character) player);
+				if (!playerList.contains((PlayerCharacter) player)) {
+					playerList.add((PlayerCharacter) player);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Removes a {@link Base_Character} from the rooms player list (typically on
-	 * room exit), so far only used to remove {@link Player_Character}s. Always use
+	 * Removes a {@link BaseCharacter} from the rooms player list (typically on
+	 * room exit), so far only used to remove {@link PlayerCharacter}s. Always use
 	 * AFTER setting room on Character, as this will check to make sure isn't
 	 * removing current player room(check will result in hidden-to-player error).
 	 * 
 	 * @param player
 	 */
-	public void removeCharacter(Base_Character player) {
+	public void removeCharacter(BaseCharacter player) {
 		if (player.getRoom() == this) {
 			MyLogger.log(Level.WARNING,
 					"BaseRoom: removeCharacter from room that is still BaseCharacter's current room.");
 		}
 
-		if (player instanceof Player_Character) {
+		if (player instanceof PlayerCharacter) {
 			synchronized (playerList) {
-				playerList.remove((Player_Character) player);
+				playerList.remove((PlayerCharacter) player);
 			}
 		}
 	}
 
 	/**
-	 * Returns list of {@link Player_Character}s in the room.
+	 * Returns list of {@link PlayerCharacter}s in the room.
 	 * 
 	 * @return
 	 */
-	public ArrayList<Player_Character> getPCs() {
+	public ArrayList<PlayerCharacter> getPCs() {
 		synchronized (playerList) {
-			for (Player_Character pc : playerList) {
+			for (PlayerCharacter pc : playerList) {
 				if (pc.getRoom() != this) {
 					MyLogger.log(Level.WARNING,
-							"BaseRoom: Player_Character found in playerList of room, that is not current room of Player_Character. Player_Character id: "
+							"BaseRoom: PlayerCharacter found in playerList of room, that is not current room of PlayerCharacter. PlayerCharacter id: "
 									+ pc.getId());
 				}
 			}
 
-			return new ArrayList<Player_Character>(playerList);
+			return new ArrayList<PlayerCharacter>(playerList);
 		}
 	}
 
 	/**
 	 * Sends to listeners of room, without any exclusion.
 	 * 
-	 * @see BaseRoom#sendToRoom(ClientConnectionOutput, Player_Character)
+	 * @see BaseRoom#sendToRoom(ClientConnectionOutput, PlayerCharacter)
 	 * 
 	 * @param output
 	 */
@@ -262,15 +262,15 @@ public class BaseRoom {
 
 	/**
 	 * Sends to listeners of the room, apart from notPlayer, if one is specified.
-	 * Currently only {@link Player_Character}s inside the room.
+	 * Currently only {@link PlayerCharacter}s inside the room.
 	 * 
 	 * @param output
 	 *            Output to be sent.
 	 * @param notPlayer
 	 *            Player, if specified, to be excluded from output.
 	 */
-	public void sendToRoom(ClientConnectionOutput output, Base_Character ignoreCharacter) {
-		for (Player_Character player : playerList) {
+	public void sendToRoom(ClientConnectionOutput output, BaseCharacter ignoreCharacter) {
+		for (PlayerCharacter player : playerList) {
 			if (ignoreCharacter == null) {
 				player.sendToListeners(new ClientConnectionOutput(output));
 			} else {

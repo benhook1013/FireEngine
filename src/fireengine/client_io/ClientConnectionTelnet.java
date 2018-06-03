@@ -8,14 +8,14 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import fireengine.client_io.exceptions.Client_Connection_Exception;
+import fireengine.client_io.exceptions.ClientConnectionException;
 import fireengine.main.FireEngineMain;
 import fireengine.session.Session;
 import fireengine.utils.MyLogger;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Client_Connection_Telnet.java
+ *    ClientConnectionTelnet.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ import fireengine.utils.MyLogger;
  *    limitations under the License.
  */
 
-public class Client_Connection_Telnet implements Client_Connection_Interface {
-	private Client_Connection_Telnet ccon;
+public class ClientConnectionTelnet implements ClientConnectionInterface {
+	private ClientConnectionTelnet ccon;
 	private ClientIOTelnet telnet;
 	private final SocketChannel sc;
 	private String address;
@@ -52,9 +52,9 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 	private static final String colourReset = "\u001B[0m";
 	private static final String EOL = "\r\n";
 
-	public Client_Connection_Telnet(ClientIOTelnet telnet, SocketChannel sc) {
+	public ClientConnectionTelnet(ClientIOTelnet telnet, SocketChannel sc) {
 		synchronized (this) {
-			MyLogger.log(Level.INFO, "Client_Connection_Telnet: Telnet_IO_Connection created!");
+			MyLogger.log(Level.INFO, "ClientConnectionTelnet: Telnet_IO_Connection created!");
 			ccon = this;
 			this.telnet = telnet;
 			this.sc = sc;
@@ -64,24 +64,24 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 	}
 
 	@Override
-	public void setupConnection(Session sess) throws Client_Connection_Exception {
+	public void setupConnection(Session sess) throws ClientConnectionException {
 		synchronized (this) {
 			this.sess = sess;
 			try {
 				// Set SocketChannel flag to keep connections alive.
 				ccon.sc.setOption(StandardSocketOptions.SO_KEEPALIVE, true);
 			} catch (IOException e) {
-				throw new Client_Connection_Exception("Client_Connection_Telnet: Failed to set SO_KEEPALIVE.", e);
+				throw new ClientConnectionException("ClientConnectionTelnet: Failed to set SO_KEEPALIVE.", e);
 			}
 			try {
 				ccon.address = ccon.sc.getLocalAddress().toString();
 			} catch (IOException e) {
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Failed to get address for SocketChannel.", e);
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Failed to get address for SocketChannel.", e);
 				ccon.address = "error retrieving address";
 			}
 			ccon.sendList = new ArrayList<>();
 			ccon.recieveList = new ArrayList<>();
-			MyLogger.log(Level.INFO, "Client_Connection_Telnet: Telnet_IO_Connection set up: '" + address + "'.");
+			MyLogger.log(Level.INFO, "ClientConnectionTelnet: Telnet_IO_Connection set up: '" + address + "'.");
 		}
 	}
 
@@ -106,8 +106,8 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 		String string = "";
 		while (output.hasNextPart()) {
 			String addText = output.getText();
-			Client_IO_Colour.COLOURS colourFG = output.getColourFG();
-			Client_IO_Colour.COLOURS colourBG = output.getColourBG();
+			ClientIOColour.COLOURS colourFG = output.getColourFG();
+			ClientIOColour.COLOURS colourBG = output.getColourBG();
 			output.nextPart();
 
 			if (ansi) {
@@ -118,7 +118,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 						addText = addText + colourReset;
 					} else {
 						// string = string + colourSeperator +
-						// parseOutputColour(Client_IO_Colour.COLOURS.BLACK)
+						// parseOutputColour(ClientIOColour.COLOURS.BLACK)
 						// + colourSuffix;
 						string = string + colourSuffix;
 						addText = addText + colourReset;
@@ -135,7 +135,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 		return string;
 	}
 
-	private String parseOutputColour(Client_IO_Colour.COLOURS colour, boolean isFG) {
+	private String parseOutputColour(ClientIOColour.COLOURS colour, boolean isFG) {
 		String code = null;
 
 		switch (colour) {
@@ -208,7 +208,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 				code = "30" + colourSeperator + "1";
 			} else {
 				code = "40";
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Tried to call Bright colour on Background.");
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Tried to call Bright colour on Background.");
 			}
 			break;
 		}
@@ -217,7 +217,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 				code = "31" + colourSeperator + "1";
 			} else {
 				code = "41";
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Tried to call Bright colour on Background.");
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Tried to call Bright colour on Background.");
 			}
 			break;
 		}
@@ -226,7 +226,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 				code = "32" + colourSeperator + "1";
 			} else {
 				code = "42";
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Tried to call Bright colour on Background.");
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Tried to call Bright colour on Background.");
 			}
 			break;
 		}
@@ -235,7 +235,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 				code = "33" + colourSeperator + "1";
 			} else {
 				code = "43";
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Tried to call Bright colour on Background.");
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Tried to call Bright colour on Background.");
 			}
 			break;
 		}
@@ -244,7 +244,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 				code = "34" + colourSeperator + "1";
 			} else {
 				code = "44";
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Tried to call Bright colour on Background.");
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Tried to call Bright colour on Background.");
 			}
 			break;
 		}
@@ -253,7 +253,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 				code = "35" + colourSeperator + "1";
 			} else {
 				code = "45";
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Tried to call Bright colour on Background.");
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Tried to call Bright colour on Background.");
 			}
 			break;
 		}
@@ -262,7 +262,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 				code = "36" + colourSeperator + "1";
 			} else {
 				code = "46";
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Tried to call Bright colour on Background.");
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Tried to call Bright colour on Background.");
 			}
 			break;
 		}
@@ -271,7 +271,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 				code = "37" + colourSeperator + "1";
 			} else {
 				code = "47";
-				MyLogger.log(Level.WARNING, "Client_Connection_Telnet: Tried to call Bright colour on Background.");
+				MyLogger.log(Level.WARNING, "ClientConnectionTelnet: Tried to call Bright colour on Background.");
 			}
 			break;
 		}
@@ -330,7 +330,7 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 	public void readToConnection(String string) {
 		if (string.length() > FireEngineMain.CLIENT_IO_INPUT_MAX_LENGTH) {
 			MyLogger.log(Level.WARNING,
-					"Client_Connection_Telnet: Input recieved exceeded maximum input length; input dropped.");
+					"ClientConnectionTelnet: Input recieved exceeded maximum input length; input dropped.");
 			return;
 		}
 
@@ -387,14 +387,14 @@ public class Client_Connection_Telnet implements Client_Connection_Interface {
 		synchronized (this) {
 			if (sc.isOpen()) {
 				try {
-					MyLogger.log(Level.INFO, "Client_Connection_Telnet: Client_Connection_Telnet shutdown: '"
+					MyLogger.log(Level.INFO, "ClientConnectionTelnet: ClientConnectionTelnet shutdown: '"
 							+ sc.getLocalAddress().toString() + "'(local).");
-					MyLogger.log(Level.INFO, "Client_Connection_Telnet: Client_Connection_Telnet shutdown: '"
+					MyLogger.log(Level.INFO, "ClientConnectionTelnet: ClientConnectionTelnet shutdown: '"
 							+ sc.getRemoteAddress().toString() + "'(remote).");
 					sc.close();
 				} catch (IOException e) {
 					MyLogger.log(Level.WARNING,
-							"Client_Connection_Telnet: IOException while trying to close Client_Connection_Telnet.", e);
+							"ClientConnectionTelnet: IOException while trying to close ClientConnectionTelnet.", e);
 				}
 			}
 		}

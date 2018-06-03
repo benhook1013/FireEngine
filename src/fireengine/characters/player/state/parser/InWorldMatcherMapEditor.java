@@ -11,7 +11,7 @@ import fireengine.characters.commands.character_commands.map_editor.Destroy_Room
 
 /*
  *    Copyright 2017 Ben Hook
- *    In_World_Matcher_Map_Editor.java
+ *    InWorldMatcherMapEditor.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ import fireengine.characters.commands.character_commands.map_editor.Destroy_Room
  *    limitations under the License.
  */
 
-public class In_World_Matcher_Map_Editor implements Input_Parser_Matcher_Interface {
+public class InWorldMatcherMapEditor implements InputParserMatcherInterface {
 	private Pattern createExitsPattern = Pattern.compile("(?i)CREATE EXITS? (\\w+)");
 	private Pattern createRoomPattern = Pattern.compile("(?i)CREATE ROOM (\\w+)");
 	private Pattern destroyExitsPattern = Pattern.compile("(?i)DESTROY EXITS? (\\w+)");
 	private Pattern destroyRoomPattern = Pattern.compile("(?i)DESTROY ROOM (\\w+)");
 
-	public In_World_Matcher_Map_Editor() {
+	public InWorldMatcherMapEditor() {
 	}
 
 	@Override

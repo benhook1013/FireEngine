@@ -2,7 +2,7 @@ package fireengine.characters.commands.character_commands.map_editor;
 
 import java.util.logging.Level;
 
-import fireengine.characters.Base_Character;
+import fireengine.characters.BaseCharacter;
 import fireengine.characters.commands.character_commands.Character_Command;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.Directions;
@@ -41,8 +41,8 @@ public class Create_Exit extends Character_Command {
 	}
 
 	@Override
-	public void doAction(Base_Character character) {
-		if (Base_Character.checkMapEditorPrivs(character) == false) {
+	public void doAction(BaseCharacter character) {
+		if (BaseCharacter.checkMapEditorPrivs(character) == false) {
 			return;
 		}
 

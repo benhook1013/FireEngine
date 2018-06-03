@@ -1,10 +1,10 @@
-package fireengine.characters.player.state;
+package fireengine.characters.player.state.parser;
 
-import fireengine.characters.commands.Action_Command;
+import fireengine.characters.commands.Base_Command;
 
 /*
  *    Copyright 2017 Ben Hook
- *    PC_State_Interface.java
+ *    InputParserInterface.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,11 @@ import fireengine.characters.commands.Action_Command;
  *    limitations under the License.
  */
 
-public interface PC_State_Interface {
-	public Action_Command acceptInput(String text);
+public interface InputParserInterface {
+	// TODO clean, trim etc
+	static String clean(String text) {
+		return text;
+	}
+
+	public abstract Base_Command parse(String text);
 }

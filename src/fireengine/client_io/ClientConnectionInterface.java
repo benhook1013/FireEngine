@@ -1,11 +1,11 @@
 package fireengine.client_io;
 
-import fireengine.client_io.exceptions.Client_Connection_Exception;
+import fireengine.client_io.exceptions.ClientConnectionException;
 import fireengine.session.Session;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Client_Connection_Interface.java
+ *    ClientConnectionInterface.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import fireengine.session.Session;
  * 
  * @author Ben Hook
  */
-public interface Client_Connection_Interface {
-	public void setupConnection(Session sess) throws Client_Connection_Exception;
+public interface ClientConnectionInterface {
+	public void setupConnection(Session sess) throws ClientConnectionException;
 
 	public void writeToConnection(ClientConnectionOutput output, boolean ansi);
 

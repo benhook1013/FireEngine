@@ -1,8 +1,8 @@
 package fireengine.characters.commands.character_commands.general.player_only;
 
-import fireengine.characters.Base_Character;
+import fireengine.characters.BaseCharacter;
 import fireengine.characters.commands.character_commands.Character_Command;
-import fireengine.characters.player.Player_Character;
+import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.main.FireEngineMain;
 import fireengine.utils.CheckedHibernateException;
@@ -27,7 +27,7 @@ import fireengine.utils.CheckedHibernateException;
 public class Quit_Game extends Character_Command {
 
 	@Override
-	public void doAction(Base_Character character) {
+	public void doAction(BaseCharacter character) {
 		ClientConnectionOutput output = new ClientConnectionOutput(2);
 
 		output.addPart(character.getName() + " phases out of existance.", null, null);
@@ -35,10 +35,10 @@ public class Quit_Game extends Character_Command {
 		character.getRoom().sendToRoom(output);
 
 		try {
-			Player_Character.saveCharacter((Player_Character) character);
+			PlayerCharacter.saveCharacter((PlayerCharacter) character);
 		} catch (CheckedHibernateException e) {
 			FireEngineMain.hibernateException(e);
 		}
-		((Player_Character) character).getSession().disconnect();
+		((PlayerCharacter) character).getSession().disconnect();
 	}
 }

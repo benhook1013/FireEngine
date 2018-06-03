@@ -4,7 +4,7 @@ import fireengine.characters.character_class.Character_Class;
 import fireengine.characters.commands.Action_Command;
 import fireengine.characters.condition.Base_Condition;
 import fireengine.characters.condition.PC_Condition;
-import fireengine.characters.player.Player_Character;
+import fireengine.characters.player.PlayerCharacter;
 import fireengine.characters.player.exceptions.PC_Exception_Null_Room;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
@@ -13,7 +13,7 @@ import fireengine.gameworld.maps.GameMap;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Base_Character.java
+ *    BaseCharacter.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import fireengine.gameworld.maps.GameMap;
 /**
  * @author Ben Hook
  */
-public abstract class Base_Character {
-	protected Base_Character() {
+public abstract class BaseCharacter {
+	protected BaseCharacter() {
 	}
 
 	public abstract int getId();
@@ -83,9 +83,9 @@ public abstract class Base_Character {
 		}
 	}
 
-	public static boolean checkMapEditorPrivs(Base_Character character) {
-		if (character instanceof Player_Character) {
-			if (!((Player_Character) character).getSettings().isMapEditor()) {
+	public static boolean checkMapEditorPrivs(BaseCharacter character) {
+		if (character instanceof PlayerCharacter) {
+			if (!((PlayerCharacter) character).getSettings().isMapEditor()) {
 				character.sendToListeners(
 						new ClientConnectionOutput("You don't have GameMap Editor privileges!", null, null));
 				return false;

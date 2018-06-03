@@ -1,6 +1,6 @@
 package fireengine.characters.commands.character_commands.general;
 
-import fireengine.characters.Base_Character;
+import fireengine.characters.BaseCharacter;
 import fireengine.characters.commands.character_commands.Character_Command;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.utils.StringUtils;
@@ -32,7 +32,7 @@ public class Say extends Character_Command {
 	}
 
 	@Override
-	public void doAction(Base_Character character) {
+	public void doAction(BaseCharacter character) {
 		ClientConnectionOutput output = new ClientConnectionOutput(2);
 
 		output.addPart(character.getName() + " says, \"" + text + "\"", null, null);

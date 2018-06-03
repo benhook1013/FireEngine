@@ -1,11 +1,10 @@
-package fireengine.characters.player.state;
+package fireengine.characters.player.state.parser;
 
-import fireengine.characters.commands.Action_Command;
-import fireengine.characters.player.state.parser.In_World_Parser;
+import fireengine.characters.commands.Base_Command;
 
 /*
  *    Copyright 2017 Ben Hook
- *    In_World.java
+ *    InputParserMatcherInterface.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -20,15 +19,6 @@ import fireengine.characters.player.state.parser.In_World_Parser;
  *    limitations under the License.
  */
 
-public class In_World implements PC_State_Interface {
-	In_World_Parser inWorldParser;
-
-	public In_World() {
-		inWorldParser = In_World_Parser.getInstance();
-	}
-
-	@Override
-	public Action_Command acceptInput(String text) {
-		return inWorldParser.parse(text);
-	}
+public interface InputParserMatcherInterface {
+	public abstract Base_Command match(String text);
 }
