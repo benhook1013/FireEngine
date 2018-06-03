@@ -9,10 +9,10 @@ import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.BaseRoom;
 import fireengine.gameworld.maps.Directions;
 import fireengine.gameworld.maps.GameMap;
-import fireengine.gameworld.maps.Exceptions.MapExceptionDirectionNotSupported;
-import fireengine.gameworld.maps.Exceptions.MapExceptionExitNull;
-import fireengine.gameworld.maps.Exceptions.MapExceptionExitRoomNull;
-import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
+import fireengine.gameworld.maps.exceptions.MapExceptionDirectionNotSupported;
+import fireengine.gameworld.maps.exceptions.MapExceptionExitNull;
+import fireengine.gameworld.maps.exceptions.MapExceptionExitRoomNull;
+import fireengine.gameworld.maps.exceptions.MapExceptionOutOfBounds;
 import fireengine.utils.MyLogger;
 import fireengine.utils.StringUtils;
 

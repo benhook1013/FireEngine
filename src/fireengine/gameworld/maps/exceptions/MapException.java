@@ -1,8 +1,8 @@
-package fireengine.gameworld.maps.Exceptions;
+package fireengine.gameworld.maps.exceptions;
 
 /*
  *    Copyright 2017 Ben Hook
- *    MapExceptionExitRoomNull.java
+ *    MapException.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@ package fireengine.gameworld.maps.Exceptions;
  *    limitations under the License.
  */
 
-public class MapExceptionExitRoomNull extends MapException {
+public abstract class MapException extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public MapExceptionExitRoomNull(String message) {
+	public MapException(String message) {
 		super(message);
 	}
 
-	public MapExceptionExitRoomNull(Throwable throwable) {
+	public MapException(Throwable throwable) {
 		super(throwable);
 	}
 
-	public MapExceptionExitRoomNull(String message, Throwable throwable) {
+	public MapException(String message, Throwable throwable) {
 		super(message, throwable);
 	}
 }

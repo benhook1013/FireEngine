@@ -3,10 +3,10 @@ package fireengine.gameworld.maps;
 import java.util.ArrayList;
 import java.util.List;
 
-import fireengine.gameworld.maps.Exceptions.MapExceptionExitExists;
-import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
-import fireengine.gameworld.maps.Exceptions.MapExceptionRoomExists;
-import fireengine.gameworld.maps.Exceptions.MapExceptionRoomNull;
+import fireengine.gameworld.maps.exceptions.MapExceptionExitExists;
+import fireengine.gameworld.maps.exceptions.MapExceptionOutOfBounds;
+import fireengine.gameworld.maps.exceptions.MapExceptionRoomExists;
+import fireengine.gameworld.maps.exceptions.MapExceptionRoomNull;
 import fireengine.utils.CheckedHibernateException;
 
 /*

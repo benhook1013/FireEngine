@@ -10,8 +10,8 @@ import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.BaseRoom;
 import fireengine.gameworld.maps.BaseRoomExit;
 import fireengine.gameworld.maps.Directions;
-import fireengine.gameworld.maps.Exceptions.MapExceptionDirectionNotSupported;
-import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
+import fireengine.gameworld.maps.exceptions.MapExceptionDirectionNotSupported;
+import fireengine.gameworld.maps.exceptions.MapExceptionOutOfBounds;
 import fireengine.utils.StringUtils;
 
 /*

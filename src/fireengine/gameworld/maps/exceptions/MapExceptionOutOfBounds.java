@@ -1,8 +1,8 @@
-package fireengine.gameworld.maps.Exceptions;
+package fireengine.gameworld.maps.exceptions;
 
 /*
  *    Copyright 2017 Ben Hook
- *    MapExceptionMapLoad.java
+ *    MapExceptionOutOfBounds.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@ package fireengine.gameworld.maps.Exceptions;
  *    limitations under the License.
  */
 
-public class MapExceptionMapLoad extends MapException {
+public class MapExceptionOutOfBounds extends MapException {
 	private static final long serialVersionUID = 1L;
 
-	public MapExceptionMapLoad(String message) {
+	public MapExceptionOutOfBounds(String message) {
 		super(message);
 	}
 
-	public MapExceptionMapLoad(Throwable throwable) {
+	public MapExceptionOutOfBounds(Throwable throwable) {
 		super(throwable);
 	}
 
-	public MapExceptionMapLoad(String message, Throwable throwable) {
+	public MapExceptionOutOfBounds(String message, Throwable throwable) {
 		super(message, throwable);
 	}
 }

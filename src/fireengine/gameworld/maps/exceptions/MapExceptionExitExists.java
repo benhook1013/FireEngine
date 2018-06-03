@@ -1,8 +1,8 @@
-package fireengine.gameworld.maps.Exceptions;
+package fireengine.gameworld.maps.exceptions;
 
 /*
  *    Copyright 2017 Ben Hook
- *    MapExceptionDirectionNotSupported.java
+ *    MapExceptionExitExists.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@ package fireengine.gameworld.maps.Exceptions;
  *    limitations under the License.
  */
 
-public class MapExceptionDirectionNotSupported extends MapException {
+public class MapExceptionExitExists extends MapException {
 	private static final long serialVersionUID = 1L;
 
-	public MapExceptionDirectionNotSupported(String message) {
+	public MapExceptionExitExists(String message) {
 		super(message);
 	}
 
-	public MapExceptionDirectionNotSupported(Throwable throwable) {
+	public MapExceptionExitExists(Throwable throwable) {
 		super(throwable);
 	}
 
-	public MapExceptionDirectionNotSupported(String message, Throwable throwable) {
+	public MapExceptionExitExists(String message, Throwable throwable) {
 		super(message, throwable);
 	}
 }

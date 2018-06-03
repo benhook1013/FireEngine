@@ -2,7 +2,7 @@ package fireengine.gameworld.maps;
 
 import java.util.regex.Pattern;
 
-import fireengine.gameworld.maps.Exceptions.MapExceptionDirectionNotSupported;
+import fireengine.gameworld.maps.exceptions.MapExceptionDirectionNotSupported;
 
 /*
  *    Copyright 2017 Ben Hook

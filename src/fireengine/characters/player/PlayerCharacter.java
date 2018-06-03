@@ -35,7 +35,7 @@ import fireengine.characters.player.state.parser.InputParserInWorld;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
 import fireengine.gameworld.maps.BaseRoom;
-import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
+import fireengine.gameworld.maps.exceptions.MapExceptionOutOfBounds;
 import fireengine.main.FireEngineMain;
 import fireengine.session.Session;
 import fireengine.utils.CheckedHibernateException;

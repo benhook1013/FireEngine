@@ -10,10 +10,10 @@ import org.hibernate.query.Query;
 
 import fireengine.gameworld.maps.BaseRoom;
 import fireengine.gameworld.maps.GameMap;
-import fireengine.gameworld.maps.Exceptions.MapExceptionMapLoad;
-import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
-import fireengine.gameworld.maps.Exceptions.MapExceptionRoomExists;
-import fireengine.gameworld.maps.Exceptions.MapExceptionRoomLoad;
+import fireengine.gameworld.maps.exceptions.MapExceptionMapLoad;
+import fireengine.gameworld.maps.exceptions.MapExceptionOutOfBounds;
+import fireengine.gameworld.maps.exceptions.MapExceptionRoomExists;
+import fireengine.gameworld.maps.exceptions.MapExceptionRoomLoad;
 import fireengine.main.FireEngineMain;
 import fireengine.utils.CheckedHibernateException;
 import fireengine.utils.MyLogger;

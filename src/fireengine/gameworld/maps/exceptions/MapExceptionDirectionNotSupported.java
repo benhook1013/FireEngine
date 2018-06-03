@@ -1,8 +1,8 @@
-package fireengine.gameworld.maps.Exceptions;
+package fireengine.gameworld.maps.exceptions;
 
 /*
  *    Copyright 2017 Ben Hook
- *    MapExceptionRoomLoad.java
+ *    MapExceptionDirectionNotSupported.java
  *    
  *    Licensed under the Apache License, Version 2.0 (the "License"); 
  *    you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@ package fireengine.gameworld.maps.Exceptions;
  *    limitations under the License.
  */
 
-public class MapExceptionRoomLoad extends MapException {
+public class MapExceptionDirectionNotSupported extends MapException {
 	private static final long serialVersionUID = 1L;
 
-	public MapExceptionRoomLoad(String message) {
+	public MapExceptionDirectionNotSupported(String message) {
 		super(message);
 	}
 
-	public MapExceptionRoomLoad(Throwable throwable) {
+	public MapExceptionDirectionNotSupported(Throwable throwable) {
 		super(throwable);
 	}
 
-	public MapExceptionRoomLoad(String message, Throwable throwable) {
+	public MapExceptionDirectionNotSupported(String message, Throwable throwable) {
 		super(message, throwable);
 	}
 }
