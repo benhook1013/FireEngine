@@ -7,7 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import fireengine.characters.condition.exceptions.Mana_Exception_0_Mana;
+import fireengine.characters.condition.exceptions.ManaExceptionZeroMana;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -96,19 +96,19 @@ public class Mana {
 		}
 	}
 
-	public void removeMana(int maxMana, int removeMana) throws Mana_Exception_0_Mana {
+	public void removeMana(int maxMana, int removeMana) throws ManaExceptionZeroMana {
 		synchronized (this) {
 			int newMana = this.mana - removeMana;
 			if (newMana < 1) {
 				this.mana = 0;
-				throw new Mana_Exception_0_Mana("Mana: removeMana resulted in 0 mana.");
+				throw new ManaExceptionZeroMana("Mana: removeMana resulted in 0 mana.");
 			} else {
 				this.mana = newMana;
 			}
 		}
 	}
 
-	public void removeManaPercentMax(int maxMana, int percent) throws Mana_Exception_0_Mana {
+	public void removeManaPercentMax(int maxMana, int percent) throws ManaExceptionZeroMana {
 		synchronized (this) {
 			int removeMana = (int) Math.round((maxMana / 100.0) * percent);
 
@@ -116,7 +116,7 @@ public class Mana {
 		}
 	}
 
-	public void removeManaPercentCurrent(int maxMana, int percent) throws Mana_Exception_0_Mana {
+	public void removeManaPercentCurrent(int maxMana, int percent) throws ManaExceptionZeroMana {
 		synchronized (this) {
 			int removeMana = (int) Math.round((this.mana / 100.0) * percent);
 

@@ -3,10 +3,10 @@ package fireengine.gameworld.maps;
 import java.util.ArrayList;
 import java.util.List;
 
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Exit_Exists;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Out_Of_Bounds;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Exists;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Null;
+import fireengine.gameworld.maps.Exceptions.MapExceptionExitExists;
+import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
+import fireengine.gameworld.maps.Exceptions.MapExceptionRoomExists;
+import fireengine.gameworld.maps.Exceptions.MapExceptionRoomNull;
 import fireengine.utils.CheckedHibernateException;
 
 /*
@@ -90,9 +90,9 @@ public class MapColumn {
 	 * 
 	 * @param y
 	 * @return
-	 * @throws Map_Exception_Out_Of_Bounds
+	 * @throws MapExceptionOutOfBounds
 	 */
-	protected BaseRoom getRoom(int y) throws Map_Exception_Out_Of_Bounds {
+	protected BaseRoom getRoom(int y) throws MapExceptionOutOfBounds {
 		GameMap.checkRoomCoordinate(y);
 		y = yAdjust(y);
 		return roomList.get(y);
@@ -104,10 +104,10 @@ public class MapColumn {
 	 * 
 	 * @param y
 	 * @param room
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Room_Exists
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionRoomExists
 	 */
-	protected void setRoom(int y, BaseRoom room) throws Map_Exception_Out_Of_Bounds, Map_Exception_Room_Exists {
+	protected void setRoom(int y, BaseRoom room) throws MapExceptionOutOfBounds, MapExceptionRoomExists {
 		synchronized (roomList) {
 			GameMap.checkRoomCoordinate(y);
 			y = yAdjust(y);
@@ -115,7 +115,7 @@ public class MapColumn {
 			BaseRoom foundRoom = roomList.get(y);
 
 			if (foundRoom != null) {
-				throw new Map_Exception_Room_Exists("MapColumn: setRoom found room already at designated coordinates.");
+				throw new MapExceptionRoomExists("MapColumn: setRoom found room already at designated coordinates.");
 			} else {
 				roomList.set(y, room);
 			}
@@ -128,13 +128,13 @@ public class MapColumn {
 	 * coordinate is null, the room still has exits, or upon Hibernate problem.
 	 * 
 	 * @param y
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Room_Null
-	 * @throws Map_Exception_Exit_Exists
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionRoomNull
+	 * @throws MapExceptionExitExists
 	 * @throws CheckedHibernateException
 	 */
-	protected void deleteRoom(int y) throws Map_Exception_Out_Of_Bounds, Map_Exception_Room_Null,
-			Map_Exception_Exit_Exists, CheckedHibernateException {
+	protected void deleteRoom(int y) throws MapExceptionOutOfBounds, MapExceptionRoomNull,
+			MapExceptionExitExists, CheckedHibernateException {
 		synchronized (roomList) {
 			GameMap.checkRoomCoordinate(y);
 			y = yAdjust(y);
@@ -144,7 +144,7 @@ public class MapColumn {
 				BaseRoom.deleteRoom(foundRoom);
 				roomList.set(y, null);
 			} else {
-				throw new Map_Exception_Room_Null("MapColumn: Tried to deleteRoom on a null room");
+				throw new MapExceptionRoomNull("MapColumn: Tried to deleteRoom on a null room");
 			}
 		}
 	}

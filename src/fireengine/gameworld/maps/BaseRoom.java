@@ -24,9 +24,9 @@ import fireengine.characters.BaseCharacter;
 import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.Directions.DIRECTION;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Direction_Not_Supported;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Exit_Exists;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Null;
+import fireengine.gameworld.maps.Exceptions.MapExceptionDirectionNotSupported;
+import fireengine.gameworld.maps.Exceptions.MapExceptionExitExists;
+import fireengine.gameworld.maps.Exceptions.MapExceptionRoomNull;
 import fireengine.main.FireEngineMain;
 import fireengine.utils.CheckedHibernateException;
 import fireengine.utils.MyLogger;
@@ -286,9 +286,9 @@ public class BaseRoom {
 	 * 
 	 * @param direction
 	 * @return
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public BaseRoomExit getExit(Directions.DIRECTION direction) throws Map_Exception_Direction_Not_Supported {
+	public BaseRoomExit getExit(Directions.DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTH: {
 			return northExit;
@@ -315,7 +315,7 @@ public class BaseRoom {
 			return northWestExit;
 		}
 		default: {
-			throw new Map_Exception_Direction_Not_Supported(
+			throw new MapExceptionDirectionNotSupported(
 					"BaseRoom: getExit missing case for direction " + direction.toString() + ".");
 		}
 		}
@@ -326,10 +326,10 @@ public class BaseRoom {
 	 * 
 	 * @param direction
 	 * @param newExit
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionDirectionNotSupported
 	 */
 	public void setExit(Directions.DIRECTION direction, BaseRoomExit newExit)
-			throws Map_Exception_Direction_Not_Supported {
+			throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTH: {
 			this.northExit = newExit;
@@ -356,7 +356,7 @@ public class BaseRoom {
 			this.northWestExit = newExit;
 		}
 		default: {
-			throw new Map_Exception_Direction_Not_Supported(
+			throw new MapExceptionDirectionNotSupported(
 					"BaseRoom: setExit missing case for direction " + direction.toString() + ".");
 		}
 		}
@@ -374,9 +374,9 @@ public class BaseRoom {
 				if (getExit(direction) != null) {
 					return true;
 				}
-			} catch (Map_Exception_Direction_Not_Supported e) {
+			} catch (MapExceptionDirectionNotSupported e) {
 				MyLogger.log(Level.WARNING,
-						"BaseRoom: Map_Exception_Direction_Not_Supported while trying to hasExit; direction: "
+						"BaseRoom: MapExceptionDirectionNotSupported while trying to hasExit; direction: "
 								+ direction.toString(),
 						e);
 			}
@@ -394,11 +394,11 @@ public class BaseRoom {
 	 * @param x
 	 * @param y
 	 * @return
-	 * @throws Map_Exception_Room_Null
+	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
 	protected static BaseRoom createRoom(int mapId, int x, int y)
-			throws Map_Exception_Room_Null, CheckedHibernateException {
+			throws MapExceptionRoomNull, CheckedHibernateException {
 		BaseRoom newRoom = new BaseRoom(mapId, x, y);
 		saveRoom(newRoom);
 		return newRoom;
@@ -408,12 +408,12 @@ public class BaseRoom {
 	 * Saves/persists the {@link BaseRoom} into the database.
 	 * 
 	 * @param room
-	 * @throws Map_Exception_Room_Null
+	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	protected static void saveRoom(BaseRoom room) throws Map_Exception_Room_Null, CheckedHibernateException {
+	protected static void saveRoom(BaseRoom room) throws MapExceptionRoomNull, CheckedHibernateException {
 		if (room == null) {
-			throw new Map_Exception_Room_Null("BaseRoom: Tried to deleteRoom on a null room.");
+			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteRoom on a null room.");
 		}
 
 		org.hibernate.Session hibSess = null;
@@ -443,10 +443,10 @@ public class BaseRoom {
 	 * 
 	 * Saves all rooms on list of all rooms.
 	 * 
-	 * @throws Map_Exception_Room_Null
+	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	protected static void saveRooms() throws Map_Exception_Room_Null, CheckedHibernateException {
+	protected static void saveRooms() throws MapExceptionRoomNull, CheckedHibernateException {
 		for (BaseRoom room : roomList) {
 			saveRoom(room);
 		}
@@ -458,17 +458,17 @@ public class BaseRoom {
 	 * room destroy function in {@link GameMap} instead.
 	 * 
 	 * @param room
-	 * @throws Map_Exception_Room_Null
-	 * @throws Map_Exception_Exit_Exists
+	 * @throws MapExceptionRoomNull
+	 * @throws MapExceptionExitExists
 	 * @throws CheckedHibernateException
 	 */
 	protected static void deleteRoom(BaseRoom room)
-			throws Map_Exception_Room_Null, Map_Exception_Exit_Exists, CheckedHibernateException {
+			throws MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
 		if (room == null) {
-			throw new Map_Exception_Room_Null("BaseRoom: Tried to deleteRoom on a null room.");
+			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteRoom on a null room.");
 		}
 		if (room.hasExit()) {
-			throw new Map_Exception_Exit_Exists("BaseRoom: Tried to deleteRoom that still had exits.");
+			throw new MapExceptionExitExists("BaseRoom: Tried to deleteRoom that still had exits.");
 		}
 
 		org.hibernate.Session hibSess = null;
@@ -495,9 +495,9 @@ public class BaseRoom {
 		}
 	}
 
-	protected static void deleteExit(BaseRoomExit exit) throws Map_Exception_Room_Null, CheckedHibernateException {
+	protected static void deleteExit(BaseRoomExit exit) throws MapExceptionRoomNull, CheckedHibernateException {
 		if (exit == null) {
-			throw new Map_Exception_Room_Null("BaseRoom: Tried to deleteExit on a null exit.");
+			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteExit on a null exit.");
 		}
 
 		org.hibernate.Session hibSess = null;

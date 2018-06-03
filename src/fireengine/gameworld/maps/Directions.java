@@ -2,7 +2,7 @@ package fireengine.gameworld.maps;
 
 import java.util.regex.Pattern;
 
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Direction_Not_Supported;
+import fireengine.gameworld.maps.Exceptions.MapExceptionDirectionNotSupported;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -87,9 +87,9 @@ public class Directions {
 	 * 
 	 * @param direction
 	 * @return
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public static DIRECTION oppositeDirection(DIRECTION direction) throws Map_Exception_Direction_Not_Supported {
+	public static DIRECTION oppositeDirection(DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTH: {
 			return DIRECTION.SOUTH;
@@ -116,7 +116,7 @@ public class Directions {
 			return DIRECTION.SOUTHEAST;
 		}
 		default: {
-			throw new Map_Exception_Direction_Not_Supported(
+			throw new MapExceptionDirectionNotSupported(
 					"Directions: oppositeDirection missing case for direction " + direction.toString());
 		}
 		}

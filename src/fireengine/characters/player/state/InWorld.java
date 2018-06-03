@@ -1,6 +1,6 @@
 package fireengine.characters.player.state;
 
-import fireengine.characters.commands.Action_Command;
+import fireengine.characters.commands.ActionCommand;
 import fireengine.characters.player.state.parser.InputParserInWorld;
 
 /*
@@ -20,7 +20,7 @@ import fireengine.characters.player.state.parser.InputParserInWorld;
  *    limitations under the License.
  */
 
-public class InWorld implements PCStateInterface {
+public class InWorld implements PCState {
 	InputParserInWorld inputParserInWorld;
 
 	public InWorld() {
@@ -28,7 +28,7 @@ public class InWorld implements PCStateInterface {
 	}
 
 	@Override
-	public Action_Command acceptInput(String text) {
+	public ActionCommand acceptInput(String text) {
 		return inputParserInWorld.parse(text);
 	}
 }

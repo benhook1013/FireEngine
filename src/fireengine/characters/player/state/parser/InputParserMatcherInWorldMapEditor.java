@@ -3,11 +3,11 @@ package fireengine.characters.player.state.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fireengine.characters.commands.Action_Command;
-import fireengine.characters.commands.character_commands.map_editor.Create_Exit;
-import fireengine.characters.commands.character_commands.map_editor.Create_Room;
-import fireengine.characters.commands.character_commands.map_editor.Destroy_Exit;
-import fireengine.characters.commands.character_commands.map_editor.Destroy_Room;
+import fireengine.characters.commands.ActionCommand;
+import fireengine.characters.commands.character_commands.map_editor.CreateExit;
+import fireengine.characters.commands.character_commands.map_editor.CreateRoom;
+import fireengine.characters.commands.character_commands.map_editor.DestroyExit;
+import fireengine.characters.commands.character_commands.map_editor.DestroyRoom;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -36,17 +36,17 @@ public class InputParserMatcherInWorldMapEditor implements InputParserMatcher {
 	}
 
 	@Override
-	public Action_Command match(String text) {
+	public ActionCommand match(String text) {
 		Matcher matcher;
 
 		if ((matcher = createExitsPattern.matcher(text)).matches()) {
-			return new Create_Exit(matcher.group(1));
+			return new CreateExit(matcher.group(1));
 		} else if ((matcher = createRoomPattern.matcher(text)).matches()) {
-			return new Create_Room(matcher.group(1));
+			return new CreateRoom(matcher.group(1));
 		} else if ((matcher = destroyExitsPattern.matcher(text)).matches()) {
-			return new Destroy_Exit(matcher.group(1));
+			return new DestroyExit(matcher.group(1));
 		} else if ((matcher = destroyRoomPattern.matcher(text)).matches()) {
-			return new Destroy_Room(matcher.group(1));
+			return new DestroyRoom(matcher.group(1));
 		} else {
 			return null;
 		}

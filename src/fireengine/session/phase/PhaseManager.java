@@ -23,22 +23,22 @@ import fireengine.utils.MyClassLoader;
 
 /**
  * Class to contain and manage/switch between Session phases
- * ({@link PhaseInterface}).
+ * ({@link Phase}).
  * 
  * @author Ben Hook
  */
-public class PhaseManager implements PhaseInterface {
+public class PhaseManager implements Phase {
 	Session sess;
-	private PhaseInterface phase;
+	private Phase phase;
 
 	private static MyClassLoader classLoader;
-	private static Class<PhaseInterface> welcomePhaseClass;
+	private static Class<Phase> welcomePhaseClass;
 
 	public PhaseManager() {
 	}
 
 	/**
-	 * @see fireengine.session.phase.PhaseInterface#setSession(fireengine.session.Session,
+	 * @see fireengine.session.phase.Phase#setSession(fireengine.session.Session,
 	 *      fireengine.session.phase.PhaseManager)
 	 */
 	@Override
@@ -49,7 +49,7 @@ public class PhaseManager implements PhaseInterface {
 	@SuppressWarnings("unchecked")
 	public static void loadWelcomePhase() throws ClassNotFoundException {
 		classLoader = new MyClassLoader();
-		welcomePhaseClass = (Class<PhaseInterface>) classLoader
+		welcomePhaseClass = (Class<Phase>) classLoader
 				.loadClass(ConfigLoader.getSetting("welcomePhaseClassName"));
 	}
 
@@ -59,7 +59,7 @@ public class PhaseManager implements PhaseInterface {
 	 * @param phase
 	 *            phase to set current
 	 */
-	public void setPhase(PhaseInterface phase) {
+	public void setPhase(Phase phase) {
 		synchronized (this) {
 			this.phase = phase;
 			this.phase.setSession(sess, this);
@@ -73,7 +73,7 @@ public class PhaseManager implements PhaseInterface {
 	 * @throws InstantiationException
 	 */
 	public void setWelcomePhase() throws InstantiationException, IllegalAccessException {
-		PhaseInterface welcomePhaseInstance;
+		Phase welcomePhaseInstance;
 
 		welcomePhaseInstance = welcomePhaseClass.newInstance();
 		setPhase(welcomePhaseInstance);
@@ -94,7 +94,7 @@ public class PhaseManager implements PhaseInterface {
 	}
 
 	/**
-	 * Closes current {@link PhaseInterface} and closes PhaseManager.
+	 * Closes current {@link Phase} and closes PhaseManager.
 	 */
 	@Override
 	public void close() {

@@ -1,7 +1,7 @@
 package fireengine.characters.commands.character_commands.general;
 
 import fireengine.characters.BaseCharacter;
-import fireengine.characters.commands.character_commands.Character_Command;
+import fireengine.characters.commands.character_commands.CharacterCommand;
 import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 
@@ -22,7 +22,7 @@ import fireengine.client_io.ClientConnectionOutput;
  *    limitations under the License.
  */
 
-public class Who extends Character_Command {
+public class Who extends CharacterCommand {
 
 	public Who() {
 		super();

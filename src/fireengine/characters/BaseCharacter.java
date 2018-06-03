@@ -1,11 +1,11 @@
 package fireengine.characters;
 
-import fireengine.characters.character_class.Character_Class;
-import fireengine.characters.commands.Action_Command;
-import fireengine.characters.condition.Base_Condition;
-import fireengine.characters.condition.PC_Condition;
+import fireengine.characters.character_class.CharacterClass;
+import fireengine.characters.commands.ActionCommand;
+import fireengine.characters.condition.BaseCondition;
+import fireengine.characters.condition.PCCondition;
 import fireengine.characters.player.PlayerCharacter;
-import fireengine.characters.player.exceptions.PC_Exception_Null_Room;
+import fireengine.characters.player.exceptions.PCExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
 import fireengine.gameworld.maps.BaseRoom;
@@ -43,21 +43,21 @@ public abstract class BaseCharacter {
 
 	public abstract void setName(String name);
 
-	public abstract Character_Class getCharClass();
+	public abstract CharacterClass getCharClass();
 
-	public abstract void setCharClass(Character_Class charClass);
+	public abstract void setCharClass(CharacterClass charClass);
 
-	public abstract Base_Condition getCondition();
+	public abstract BaseCondition getCondition();
 
-	public abstract void setCondition(PC_Condition condition);
+	public abstract void setCondition(PCCondition condition);
 
 	public abstract BaseRoom getRoom();
 
-	public abstract void setRoom(BaseRoom room) throws PC_Exception_Null_Room;
+	public abstract void setRoom(BaseRoom room) throws PCExceptionNullRoom;
 
 	public abstract void acceptInput(String text);
 
-	public abstract void acceptInput(Action_Command command);
+	public abstract void acceptInput(ActionCommand command);
 
 	public abstract void sendToListeners(ClientConnectionOutput output);
 

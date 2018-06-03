@@ -1,6 +1,6 @@
 package fireengine.characters.player.state.parser;
 
-import fireengine.characters.commands.Base_Command;
+import fireengine.characters.commands.BaseCommand;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -20,5 +20,5 @@ import fireengine.characters.commands.Base_Command;
  */
 
 public interface InputParserMatcher {
-	public abstract Base_Command match(String text);
+	public abstract BaseCommand match(String text);
 }

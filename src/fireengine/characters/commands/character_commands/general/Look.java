@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import fireengine.characters.BaseCharacter;
-import fireengine.characters.commands.character_commands.Character_Command;
+import fireengine.characters.commands.character_commands.CharacterCommand;
 import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.BaseRoom;
 import fireengine.gameworld.maps.BaseRoomExit;
 import fireengine.gameworld.maps.Directions;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Direction_Not_Supported;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Out_Of_Bounds;
+import fireengine.gameworld.maps.Exceptions.MapExceptionDirectionNotSupported;
+import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
 import fireengine.utils.StringUtils;
 
 /*
@@ -31,7 +31,7 @@ import fireengine.utils.StringUtils;
  *    limitations under the License.
  */
 
-public class Look extends Character_Command {
+public class Look extends CharacterCommand {
 	private String directionText;
 	Directions.DIRECTION direction;
 
@@ -98,12 +98,12 @@ public class Look extends Character_Command {
 							+ " as there is no exit that-a-way.", null, null);
 					return output;
 				}
-			} catch (Map_Exception_Out_Of_Bounds e) {
+			} catch (MapExceptionOutOfBounds e) {
 				output.addPart("Could not look " + StringUtils.capitalise(direction.toString())
 						+ " as the doom in that direction is out of map boundary."
 						+ " If you think there is a room in that direction, contact a God.", null, null);
 				return output;
-			} catch (Map_Exception_Direction_Not_Supported e) {
+			} catch (MapExceptionDirectionNotSupported e) {
 				output.addPart("Could not look " + StringUtils.capitalise(direction.toString())
 						+ " as the direction is no supported for LOOK." + " Please contact a God to get this fixed.",
 						null, null);

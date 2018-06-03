@@ -3,16 +3,16 @@ package fireengine.characters.commands.character_commands.general;
 import java.util.logging.Level;
 
 import fireengine.characters.BaseCharacter;
-import fireengine.characters.commands.character_commands.Character_Command;
-import fireengine.characters.player.exceptions.PC_Exception_Null_Room;
+import fireengine.characters.commands.character_commands.CharacterCommand;
+import fireengine.characters.player.exceptions.PCExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.BaseRoom;
 import fireengine.gameworld.maps.Directions;
 import fireengine.gameworld.maps.GameMap;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Direction_Not_Supported;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Exit_Null;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Exit_Room_Null;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Out_Of_Bounds;
+import fireengine.gameworld.maps.Exceptions.MapExceptionDirectionNotSupported;
+import fireengine.gameworld.maps.Exceptions.MapExceptionExitNull;
+import fireengine.gameworld.maps.Exceptions.MapExceptionExitRoomNull;
+import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
 import fireengine.utils.MyLogger;
 import fireengine.utils.StringUtils;
 
@@ -33,7 +33,7 @@ import fireengine.utils.StringUtils;
  *    limitations under the License.
  */
 
-public class Move extends Character_Command {
+public class Move extends CharacterCommand {
 	private String directionText;
 
 	public Move(String directionText) {
@@ -49,12 +49,12 @@ public class Move extends Character_Command {
 			try {
 				BaseRoom oldRoom = character.getRoom();
 				if (oldRoom.getExit(direction) == null) {
-					throw new Map_Exception_Exit_Null(
+					throw new MapExceptionExitNull(
 							"BaseCharacter: Cannot move in specified direction, exit is null.");
 				}
 				BaseRoom newRoom = character.getMap().getRoom(character.getRoom(), direction);
 				if (newRoom == null) {
-					throw new Map_Exception_Exit_Room_Null("BaseCharacter: Somehow room to the " + direction + " of "
+					throw new MapExceptionExitRoomNull("BaseCharacter: Somehow room to the " + direction + " of "
 							+ character.getRoom().getRoomName() + " had exit leading to it but room is null.");
 				}
 
@@ -63,9 +63,9 @@ public class Move extends Character_Command {
 				// Actual moving //
 				try {
 					character.setRoom(newRoom);
-				} catch (PC_Exception_Null_Room e) {
+				} catch (PCExceptionNullRoom e) {
 					MyLogger.log(Level.WARNING,
-							"BaseCharacter: PC_Exception_Null_Room during move AFTER null check happened.");
+							"BaseCharacter: PCExceptionNullRoom during move AFTER null check happened.");
 					return;
 				}
 				oldRoom.removeCharacter(character);
@@ -85,21 +85,21 @@ public class Move extends Character_Command {
 						character.getName() + " enters from the " + StringUtils.capitalise(direction.toString()) + ".",
 						null, null), character);
 
-			} catch (Map_Exception_Exit_Null e) {
+			} catch (MapExceptionExitNull e) {
 				character.sendToListeners(
 						new ClientConnectionOutput("You see no way to move in that direction.", null, null));
 				return;
-			} catch (Map_Exception_Out_Of_Bounds e) {
-				MyLogger.log(Level.WARNING, "Move: Map_Exception_Out_Of_Bounds after check for exit.", e);
+			} catch (MapExceptionOutOfBounds e) {
+				MyLogger.log(Level.WARNING, "Move: MapExceptionOutOfBounds after check for exit.", e);
 				character.sendToListeners(
 						new ClientConnectionOutput("You see no room to move into that a-way.", null, null));
 				return;
-			} catch (Map_Exception_Direction_Not_Supported e) {
-				MyLogger.log(Level.WARNING, "Move: Map_Exception_Direction_Not_Supported while trying to move.", e);
+			} catch (MapExceptionDirectionNotSupported e) {
+				MyLogger.log(Level.WARNING, "Move: MapExceptionDirectionNotSupported while trying to move.", e);
 				character.sendToListeners(new ClientConnectionOutput("You can't move in that direction.", null, null));
 				return;
-			} catch (Map_Exception_Exit_Room_Null e) {
-				MyLogger.log(Level.WARNING, "Move: Map_Exception_Exit_Room_Null after check for exit.", e);
+			} catch (MapExceptionExitRoomNull e) {
+				MyLogger.log(Level.WARNING, "Move: MapExceptionExitRoomNull after check for exit.", e);
 				character.sendToListeners(
 						new ClientConnectionOutput("You see no room to move into that a-way.", null, null));
 				return;

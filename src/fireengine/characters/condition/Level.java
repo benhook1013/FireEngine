@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import fireengine.characters.condition.exceptions.Level_Exception_Already_Max;
-import fireengine.characters.condition.exceptions.Level_Exception_Already_Min;
+import fireengine.characters.condition.exceptions.LevelExceptionAlreadyMax;
+import fireengine.characters.condition.exceptions.LevelExceptionAlreadyMin;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -136,9 +136,9 @@ public class Level {
 	 * 
 	 * @param experience
 	 * @return did experience change result in level change
-	 * @throws Level_Exception_Already_Max
+	 * @throws LevelExceptionAlreadyMax
 	 */
-	public boolean addExperience(int experience) throws Level_Exception_Already_Max {
+	public boolean addExperience(int experience) throws LevelExceptionAlreadyMax {
 		synchronized (levelLock) {
 			if (experience >= experienceToLevelUp()) {
 				if (canLevelUp()) {
@@ -147,13 +147,13 @@ public class Level {
 					if (experience > 0) {
 						try {
 							addExperience(experience);
-						} catch (Level_Exception_Already_Max e) {
+						} catch (LevelExceptionAlreadyMax e) {
 						}
 					}
 					return true;
 				} else {
 					this.experience = this.experience + experienceToLevelUp() - 1;
-					throw new Level_Exception_Already_Max("Level: Cannot increase level when already maximum level.");
+					throw new LevelExceptionAlreadyMax("Level: Cannot increase level when already maximum level.");
 				}
 			} else {
 				this.experience = this.experience + experience;
@@ -166,9 +166,9 @@ public class Level {
 	 * 
 	 * @param experience
 	 * @return did experience change result in level change
-	 * @throws Level_Exception_Already_Min
+	 * @throws LevelExceptionAlreadyMin
 	 */
-	public boolean removeExperience(int experience) throws Level_Exception_Already_Min {
+	public boolean removeExperience(int experience) throws LevelExceptionAlreadyMin {
 		synchronized (levelLock) {
 			if (experience >= (this.experience + 1)) {
 				if (canLevelDown()) {
@@ -178,13 +178,13 @@ public class Level {
 					if (experience > 0) {
 						try {
 							removeExperience(experience);
-						} catch (Level_Exception_Already_Min e) {
+						} catch (LevelExceptionAlreadyMin e) {
 						}
 					}
 					return true;
 				} else {
 					this.experience = 0;
-					throw new Level_Exception_Already_Min("Level: Cannot increase level when already maximum level.");
+					throw new LevelExceptionAlreadyMin("Level: Cannot increase level when already maximum level.");
 				}
 			} else {
 				this.experience = this.experience - experience;
@@ -193,22 +193,22 @@ public class Level {
 		}
 	}
 
-	public void addLevel() throws Level_Exception_Already_Max {
+	public void addLevel() throws LevelExceptionAlreadyMax {
 		synchronized (levelLock) {
 			if (canLevelUp()) {
 				setLevel(level + 1);
 			} else {
-				throw new Level_Exception_Already_Max("Level: Cannot increase level when already maximum level.");
+				throw new LevelExceptionAlreadyMax("Level: Cannot increase level when already maximum level.");
 			}
 		}
 	}
 
-	public void removeLevel() throws Level_Exception_Already_Min {
+	public void removeLevel() throws LevelExceptionAlreadyMin {
 		synchronized (levelLock) {
 			if (canLevelDown()) {
 				setLevel(level - 1);
 			} else {
-				throw new Level_Exception_Already_Min("Level: Cannot reduce level when already minimum level.");
+				throw new LevelExceptionAlreadyMin("Level: Cannot reduce level when already minimum level.");
 			}
 		}
 	}

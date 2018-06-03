@@ -1,7 +1,7 @@
 package fireengine.characters.commands.character_commands.general;
 
 import fireengine.characters.BaseCharacter;
-import fireengine.characters.commands.character_commands.Character_Command;
+import fireengine.characters.commands.character_commands.CharacterCommand;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.utils.StringUtils;
 
@@ -22,7 +22,7 @@ import fireengine.utils.StringUtils;
  *    limitations under the License.
  */
 
-public class Say extends Character_Command {
+public class Say extends CharacterCommand {
 	private String text;
 
 	public Say(String text) {

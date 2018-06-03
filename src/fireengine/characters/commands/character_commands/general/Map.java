@@ -1,7 +1,7 @@
 package fireengine.characters.commands.character_commands.general;
 
 import fireengine.characters.BaseCharacter;
-import fireengine.characters.commands.character_commands.Character_Command;
+import fireengine.characters.commands.character_commands.CharacterCommand;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.maps.BaseRoom;
 
@@ -22,7 +22,7 @@ import fireengine.gameworld.maps.BaseRoom;
  *    limitations under the License.
  */
 
-public class Map extends Character_Command {
+public class Map extends CharacterCommand {
 	private int size;
 
 	public Map() {

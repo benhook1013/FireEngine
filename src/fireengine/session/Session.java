@@ -24,7 +24,7 @@ import java.util.logging.Level;
 
 import fireengine.characters.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.client_io.ClientConnectionInterface;
+import fireengine.client_io.ClientConnection;
 import fireengine.client_io.ClientIOColour;
 import fireengine.client_io.exceptions.ClientConnectionException;
 import fireengine.main.FireEngineMain;
@@ -39,7 +39,7 @@ import fireengine.utils.MyLogger;
 public class Session {
 	private static ArrayList<Session> sessionList = new ArrayList<>();
 	private Session sess;
-	private ClientConnectionInterface ccon;
+	private ClientConnection ccon;
 	private PhaseManager phaseManager;
 
 	// TODO Options for ANSI.
@@ -51,12 +51,12 @@ public class Session {
 	private volatile Object sessionFutureLock = new Object();
 
 	/**
-	 * Creates a new Session for the provided {@link ClientConnectionInterface}
+	 * Creates a new Session for the provided {@link ClientConnection}
 	 * 
 	 * @param ccon
-	 *            ClientConnectionInterface to make the session for
+	 *            ClientConnection to make the session for
 	 */
-	public Session(ClientConnectionInterface ccon) {
+	public Session(ClientConnection ccon) {
 		synchronized (sessionFutureLock) {
 			this.ccon = ccon;
 			this.sess = this;
@@ -70,7 +70,7 @@ public class Session {
 					try {
 						ccon.setupConnection(sess);
 					} catch (ClientConnectionException e) {
-						MyLogger.log(Level.WARNING, "Session: Failed to setup ClientConnectionInterface.", e);
+						MyLogger.log(Level.WARNING, "Session: Failed to setup ClientConnection.", e);
 						sess.close();
 						return 1;
 					}
@@ -99,7 +99,7 @@ public class Session {
 
 	/**
 	 * Function to pass on {@link ClientConnectionOutput} from the Session to the
-	 * {@link ClientConnectionInterface}.
+	 * {@link ClientConnection}.
 	 * 
 	 * @param output
 	 *            ClientConnectionOutput to be sent
@@ -112,7 +112,7 @@ public class Session {
 	// TODO Keep alive thread.
 	/**
 	 * Let the Session know that input has been received by the
-	 * {@link ClientConnectionInterface}.
+	 * {@link ClientConnection}.
 	 */
 	public void notifyInput() {
 		synchronized (sessionFutureLock) {
@@ -172,7 +172,7 @@ public class Session {
 
 	/**
 	 * Used to signal the Session to gracefully finish parsing input and close down.
-	 * Will lead to the Session telling the {@link ClientConnectionInterface} to
+	 * Will lead to the Session telling the {@link ClientConnection} to
 	 * respond once writing out is finished, allowing the Session to close down.
 	 */
 	private void end() {
@@ -194,7 +194,7 @@ public class Session {
 	}
 
 	/**
-	 * Used by the {@link ClientConnectionInterface} to let the Session know that
+	 * Used by the {@link ClientConnection} to let the Session know that
 	 * it has finished writing out all data, to allow graceful closing of Session.
 	 */
 	public void notifyCconFinished() {

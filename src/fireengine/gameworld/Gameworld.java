@@ -10,10 +10,10 @@ import org.hibernate.query.Query;
 
 import fireengine.gameworld.maps.BaseRoom;
 import fireengine.gameworld.maps.GameMap;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Map_Load;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Out_Of_Bounds;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Exists;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Load;
+import fireengine.gameworld.maps.Exceptions.MapExceptionMapLoad;
+import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
+import fireengine.gameworld.maps.Exceptions.MapExceptionRoomExists;
+import fireengine.gameworld.maps.Exceptions.MapExceptionRoomLoad;
 import fireengine.main.FireEngineMain;
 import fireengine.utils.CheckedHibernateException;
 import fireengine.utils.MyLogger;
@@ -43,7 +43,7 @@ import fireengine.utils.MyLogger;
 public class Gameworld {
 	private static ArrayList<GameMap> mapList = new ArrayList<>();
 
-	public static void setupGameworld() throws CheckedHibernateException, Map_Exception_Map_Load {
+	public static void setupGameworld() throws CheckedHibernateException, MapExceptionMapLoad {
 		loadMaps();
 
 		GameMap mainMap = findMap("Mainland");
@@ -65,9 +65,9 @@ public class Gameworld {
 	 * Attempts to load {@link GameMap}s from the database.
 	 * 
 	 * @throws CheckedHibernateException
-	 * @throws Map_Exception_Map_Load
+	 * @throws MapExceptionMapLoad
 	 */
-	private static void loadMaps() throws CheckedHibernateException, Map_Exception_Map_Load {
+	private static void loadMaps() throws CheckedHibernateException, MapExceptionMapLoad {
 		org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
 		Transaction tx = null;
 
@@ -106,9 +106,9 @@ public class Gameworld {
 			for (GameMap foundMap : mapList) {
 				try {
 					loadRooms(foundMap.getId());
-				} catch (Map_Exception_Room_Load e) {
-					throw new Map_Exception_Map_Load(
-							"Gameworld: Tried to loadMaps but encountered Map_Exception_Room_Load from loadRooms.", e);
+				} catch (MapExceptionRoomLoad e) {
+					throw new MapExceptionMapLoad(
+							"Gameworld: Tried to loadMaps but encountered MapExceptionRoomLoad from loadRooms.", e);
 				}
 			}
 		}
@@ -120,13 +120,13 @@ public class Gameworld {
 	 * @param mapId
 	 *            int id of map to load
 	 * @throws CheckedHibernateException
-	 * @throws Map_Exception_Room_Load
+	 * @throws MapExceptionRoomLoad
 	 */
-	private static void loadRooms(int mapId) throws CheckedHibernateException, Map_Exception_Room_Load {
+	private static void loadRooms(int mapId) throws CheckedHibernateException, MapExceptionRoomLoad {
 		GameMap gameMap = findMap(mapId);
 
 		if (gameMap == null) {
-			throw new Map_Exception_Room_Load(
+			throw new MapExceptionRoomLoad(
 					"Gameworld: Tried to loadRooms but cannot findMap with mapId " + mapId + ".");
 		}
 
@@ -152,12 +152,12 @@ public class Gameworld {
 				for (BaseRoom foundRoom : roomsFound) {
 					try {
 						gameMap.setRoom(foundRoom.getX(), foundRoom.getY(), foundRoom);
-					} catch (Map_Exception_Out_Of_Bounds e) {
+					} catch (MapExceptionOutOfBounds e) {
 						MyLogger.log(Level.WARNING,
-								"Gameworld: Map_Exception_Out_Of_Bounds while trying to setRoom on found room.", e);
-					} catch (Map_Exception_Room_Exists e) {
+								"Gameworld: MapExceptionOutOfBounds while trying to setRoom on found room.", e);
+					} catch (MapExceptionRoomExists e) {
 						MyLogger.log(Level.WARNING,
-								"Gameworld: Map_Exception_Room_Exists while trying to setRoom on found room "
+								"Gameworld: MapExceptionRoomExists while trying to setRoom on found room "
 										+ foundRoom.getCoords() + ".",
 								e);
 					}

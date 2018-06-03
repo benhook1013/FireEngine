@@ -23,19 +23,19 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.query.Query;
 
 import fireengine.characters.BaseCharacter;
-import fireengine.characters.character_class.Character_Class;
-import fireengine.characters.commands.Action_Command;
+import fireengine.characters.character_class.CharacterClass;
+import fireengine.characters.commands.ActionCommand;
 import fireengine.characters.commands.character_commands.general.Look;
-import fireengine.characters.condition.Base_Condition;
-import fireengine.characters.condition.PC_Condition;
-import fireengine.characters.player.exceptions.PC_Exception_Null_Room;
+import fireengine.characters.condition.BaseCondition;
+import fireengine.characters.condition.PCCondition;
+import fireengine.characters.player.exceptions.PCExceptionNullRoom;
 import fireengine.characters.player.state.InWorld;
-import fireengine.characters.player.state.PCStateInterface;
+import fireengine.characters.player.state.PCState;
 import fireengine.characters.player.state.parser.InputParserInWorld;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
 import fireengine.gameworld.maps.BaseRoom;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Out_Of_Bounds;
+import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
 import fireengine.main.FireEngineMain;
 import fireengine.session.Session;
 import fireengine.utils.CheckedHibernateException;
@@ -81,14 +81,14 @@ public class PlayerCharacter extends BaseCharacter {
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_CHAR_CLASS_ID")
-	private Character_Class charClass;
+	private CharacterClass charClass;
 
 	@Transient
-	private PCStateInterface pcState;
+	private PCState pcState;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_PC_COND_ID")
-	private PC_Condition condition;
+	private PCCondition condition;
 	// TODO test cascade see if can remove saving sub classes individually.
 
 	@Transient
@@ -108,8 +108,8 @@ public class PlayerCharacter extends BaseCharacter {
 		this.name = name;
 		this.password = password;
 		settings = new PCSettings();
-		charClass = new Character_Class();
-		condition = new PC_Condition(1);
+		charClass = new CharacterClass();
+		condition = new PCCondition(1);
 	}
 
 	@Override
@@ -150,22 +150,22 @@ public class PlayerCharacter extends BaseCharacter {
 	}
 
 	@Override
-	public Character_Class getCharClass() {
+	public CharacterClass getCharClass() {
 		return this.charClass;
 	}
 
 	@Override
-	public void setCharClass(Character_Class charClass) {
+	public void setCharClass(CharacterClass charClass) {
 		this.charClass = charClass;
 	}
 
 	@Override
-	public Base_Condition getCondition() {
+	public BaseCondition getCondition() {
 		return condition;
 	}
 
 	@Override
-	public void setCondition(PC_Condition condition) {
+	public void setCondition(PCCondition condition) {
 		this.condition = condition;
 	}
 
@@ -183,9 +183,9 @@ public class PlayerCharacter extends BaseCharacter {
 	}
 
 	@Override
-	public void setRoom(BaseRoom room) throws PC_Exception_Null_Room {
+	public void setRoom(BaseRoom room) throws PCExceptionNullRoom {
 		if (room == null) {
-			throw new PC_Exception_Null_Room("PlayerCharacter: Player tried to be sent to null room.");
+			throw new PCExceptionNullRoom("PlayerCharacter: Player tried to be sent to null room.");
 		}
 
 		if (this.room != null) {
@@ -198,12 +198,12 @@ public class PlayerCharacter extends BaseCharacter {
 
 	@Override
 	public void acceptInput(String text) {
-		Action_Command command = pcState.acceptInput(text);
+		ActionCommand command = pcState.acceptInput(text);
 		acceptInput(command);
 	}
 
 	@Override
-	public void acceptInput(Action_Command command) {
+	public void acceptInput(ActionCommand command) {
 		try {
 			if (command == null) {
 				ClientConnectionOutput output = new ClientConnectionOutput(2);
@@ -214,22 +214,22 @@ public class PlayerCharacter extends BaseCharacter {
 				if (room != null)
 					command.doAction(this);
 				else {
-					throw new PC_Exception_Null_Room(
+					throw new PCExceptionNullRoom(
 							"PlayerCharacter: Player tried to do action " + command.getClass() + " with no room.");
 				}
 			}
-		} catch (PC_Exception_Null_Room e) {
+		} catch (PCExceptionNullRoom e) {
 			ClientConnectionOutput message = new ClientConnectionOutput(2);
 			message.addPart("You are trying to do an action without being in any room!", null, null);
 			message.addPart("We will try and move you somewhere...", null, null);
 			sendToListeners(message);
-			MyLogger.log(Level.WARNING, "PlayerCharacter: PC_Exception_Null_Room error when trying to acceptInput.",
+			MyLogger.log(Level.WARNING, "PlayerCharacter: PCExceptionNullRoom error when trying to acceptInput.",
 					e);
 
 			BaseRoom sendRoom = null;
 			try {
 				sendRoom = Gameworld.findMap(1).getRoom(1, 1);
-			} catch (Map_Exception_Out_Of_Bounds e1) {
+			} catch (MapExceptionOutOfBounds e1) {
 				MyLogger.log(Level.WARNING,
 						"PlayerCharacter: Origin room out of bounds while trying to find origin room to send null room player to.",
 						e);
@@ -239,7 +239,7 @@ public class PlayerCharacter extends BaseCharacter {
 			if (sendRoom != null) {
 				try {
 					setRoom(sendRoom);
-				} catch (PC_Exception_Null_Room e1) {
+				} catch (PCExceptionNullRoom e1) {
 					MyLogger.log(Level.WARNING,
 							"PlayerCharacter: Null error when trying to send null room player to origin.", e);
 					return;
@@ -270,9 +270,9 @@ public class PlayerCharacter extends BaseCharacter {
 	/**
 	 * Used to connect a {@link Session} to the {@link PlayerCharacter}.
 	 * 
-	 * @throws PC_Exception_Null_Room
+	 * @throws PCExceptionNullRoom
 	 */
-	public void connect(Session sess) throws PC_Exception_Null_Room {
+	public void connect(Session sess) throws PCExceptionNullRoom {
 		connect(sess, this.room);
 	}
 
@@ -280,9 +280,9 @@ public class PlayerCharacter extends BaseCharacter {
 	 * Used to connect a {@link Session} to the {@link PlayerCharacter}, and
 	 * entering the {@link BaseRoom} specified.
 	 * 
-	 * @throws PC_Exception_Null_Room
+	 * @throws PCExceptionNullRoom
 	 */
-	public void connect(Session sess, BaseRoom room) throws PC_Exception_Null_Room {
+	public void connect(Session sess, BaseRoom room) throws PCExceptionNullRoom {
 		if (this.session != null) {
 			this.session.send(
 					new ClientConnectionOutput("Disconnecting; another session has connected to this character."));
@@ -293,10 +293,10 @@ public class PlayerCharacter extends BaseCharacter {
 
 		try {
 			setRoom(room);
-		} catch (PC_Exception_Null_Room e) {
+		} catch (PCExceptionNullRoom e) {
 			sess.send(new ClientConnectionOutput("Failed to enter world."));
 			setSession(null);
-			throw new PC_Exception_Null_Room("PlayerCharacter: Player tried to do enter world with null room.", e);
+			throw new PCExceptionNullRoom("PlayerCharacter: Player tried to do enter world with null room.", e);
 		}
 
 		if (pcState instanceof InWorld) {

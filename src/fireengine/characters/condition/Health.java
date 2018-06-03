@@ -7,7 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import fireengine.characters.condition.exceptions.Health_Exception_0_Health;
+import fireengine.characters.condition.exceptions.HealthExceptionZeroHealth;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -96,19 +96,19 @@ public class Health {
 		}
 	}
 
-	public void removeHealth(int maxHealth, int removeHealth) throws Health_Exception_0_Health {
+	public void removeHealth(int maxHealth, int removeHealth) throws HealthExceptionZeroHealth {
 		synchronized (this) {
 			int newHealth = this.health - removeHealth;
 			if (newHealth < 1) {
 				this.health = 0;
-				throw new Health_Exception_0_Health("Health: removehealth resulted in 0 health.");
+				throw new HealthExceptionZeroHealth("Health: removehealth resulted in 0 health.");
 			} else {
 				this.health = newHealth;
 			}
 		}
 	}
 
-	public void removeHealthPercentMax(int maxHealth, int percent) throws Health_Exception_0_Health {
+	public void removeHealthPercentMax(int maxHealth, int percent) throws HealthExceptionZeroHealth {
 		synchronized (this) {
 			int removeHealth = (int) Math.round((maxHealth / 100.0) * percent);
 
@@ -116,7 +116,7 @@ public class Health {
 		}
 	}
 
-	public void removeHealthPercentCurrent(int maxHealth, int percent) throws Health_Exception_0_Health {
+	public void removeHealthPercentCurrent(int maxHealth, int percent) throws HealthExceptionZeroHealth {
 		synchronized (this) {
 			int removeHealth = (int) Math.round((this.health / 100.0) * percent);
 

@@ -18,12 +18,12 @@ import org.hibernate.Transaction;
 import fireengine.characters.commands.character_commands.general.Map;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Direction_Not_Supported;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Exit_Exists;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Exit_Room_Null;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Out_Of_Bounds;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Exists;
-import fireengine.gameworld.maps.Exceptions.Map_Exception_Room_Null;
+import fireengine.gameworld.maps.Exceptions.MapExceptionDirectionNotSupported;
+import fireengine.gameworld.maps.Exceptions.MapExceptionExitExists;
+import fireengine.gameworld.maps.Exceptions.MapExceptionExitRoomNull;
+import fireengine.gameworld.maps.Exceptions.MapExceptionOutOfBounds;
+import fireengine.gameworld.maps.Exceptions.MapExceptionRoomExists;
+import fireengine.gameworld.maps.Exceptions.MapExceptionRoomNull;
 import fireengine.main.FireEngineMain;
 import fireengine.utils.CheckedHibernateException;
 import fireengine.utils.MyLogger;
@@ -119,7 +119,7 @@ public class GameMap {
 		return x;
 	}
 
-	private MapColumn getColumn(int x) throws Map_Exception_Out_Of_Bounds {
+	private MapColumn getColumn(int x) throws MapExceptionOutOfBounds {
 		checkRoomCoordinate(x);
 		x = xAdjust(x);
 		return columnList.get(x);
@@ -134,9 +134,9 @@ public class GameMap {
 	 * @param y
 	 *            y coordinate of room to find
 	 * @return
-	 * @throws Map_Exception_Out_Of_Bounds
+	 * @throws MapExceptionOutOfBounds
 	 */
-	public BaseRoom getRoom(int x, int y) throws Map_Exception_Out_Of_Bounds {
+	public BaseRoom getRoom(int x, int y) throws MapExceptionOutOfBounds {
 		MapColumn column = getColumn(x);
 		if (column == null) {
 			MyLogger.log(Level.WARNING, "GameMap: No MapColumn found for getRoom with x: '" + x + "'.");
@@ -156,11 +156,11 @@ public class GameMap {
 	 * @param direction
 	 *            direction from origin room the sought after room is
 	 * @return
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionDirectionNotSupported
 	 */
 	public BaseRoom getRoom(BaseRoom room, Directions.DIRECTION direction)
-			throws Map_Exception_Out_Of_Bounds, Map_Exception_Direction_Not_Supported {
+			throws MapExceptionOutOfBounds, MapExceptionDirectionNotSupported {
 		int otherX = xAdjustDirection(room.getX(), direction);
 		int othery = yAdjustDirection(room.getY(), direction);
 		return getRoom(otherX, othery);
@@ -173,18 +173,18 @@ public class GameMap {
 	 * @param x
 	 * @param y
 	 * @param room
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Room_Exists
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionRoomExists
 	 */
-	public void setRoom(int x, int y, BaseRoom room) throws Map_Exception_Out_Of_Bounds, Map_Exception_Room_Exists {
+	public void setRoom(int x, int y, BaseRoom room) throws MapExceptionOutOfBounds, MapExceptionRoomExists {
 		synchronized (columnList) {
 			MapColumn column = getColumn(x);
 
 			if (column != null) {
 				try {
 					column.setRoom(y, room);
-				} catch (Map_Exception_Room_Exists e) {
-					throw new Map_Exception_Room_Exists(
+				} catch (MapExceptionRoomExists e) {
+					throw new MapExceptionRoomExists(
 							"GameMap: setRoom found room already at " + room.getCoords() + ".", e);
 				}
 			} else {
@@ -200,49 +200,49 @@ public class GameMap {
 	 * @param x
 	 * @param y
 	 * @return
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Room_Exists
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionRoomExists
 	 * @throws CheckedHibernateException
 	 */
 	public void createRoom(int x, int y)
-			throws Map_Exception_Out_Of_Bounds, Map_Exception_Room_Exists, CheckedHibernateException {
+			throws MapExceptionOutOfBounds, MapExceptionRoomExists, CheckedHibernateException {
 		synchronized (columnList) {
 			checkRoomCoordinate(x);
 			checkRoomCoordinate(y);
 
 			BaseRoom foundRoom = getRoom(x, y);
 			if (foundRoom != null) {
-				throw new Map_Exception_Room_Exists(
+				throw new MapExceptionRoomExists(
 						"GameMap: createRoom found room already at designated coordinates.");
 			}
 
 			BaseRoom newRoom;
 			try {
 				newRoom = BaseRoom.createRoom(id, x, y);
-			} catch (Map_Exception_Room_Null e) {
+			} catch (MapExceptionRoomNull e) {
 				MyLogger.log(Level.SEVERE,
-						"GameMap: Weird error, Map_Exception_Room_Null while trying to BaseRoom.createRoom.", e);
+						"GameMap: Weird error, MapExceptionRoomNull while trying to BaseRoom.createRoom.", e);
 				return;
 			}
 			try {
 				setRoom(x, y, newRoom);
-			} catch (Map_Exception_Room_Exists e) {
+			} catch (MapExceptionRoomExists e) {
 				try {
 					BaseRoom.deleteRoom(newRoom);
-				} catch (Map_Exception_Room_Null e2) {
-					MyLogger.log(Level.SEVERE, "GameMap: Weird error, Map_Exception_Room_Null while trying to setRoom.",
+				} catch (MapExceptionRoomNull e2) {
+					MyLogger.log(Level.SEVERE, "GameMap: Weird error, MapExceptionRoomNull while trying to setRoom.",
 							e2);
 					return;
-				} catch (Map_Exception_Exit_Exists e3) {
+				} catch (MapExceptionExitExists e3) {
 					MyLogger.log(Level.WARNING,
-							"GameMap: Map_Exception_Exit_Exists while deleteRoom after Map_Exception_Room_Exists on createRoom.",
+							"GameMap: MapExceptionExitExists while deleteRoom after MapExceptionRoomExists on createRoom.",
 							e3);
 					return;
 				}
 				MyLogger.log(Level.WARNING,
 						"GameMap: createRoom found room already at designated coordinates after creation, cleaning up.",
 						e);
-				throw new Map_Exception_Room_Exists(
+				throw new MapExceptionRoomExists(
 						"GameMap: createRoom found room already at designated coordinates after creation, cleaning up.",
 						e);
 			}
@@ -254,13 +254,13 @@ public class GameMap {
 	 * 
 	 * @param baseRoom
 	 * @param direction
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Room_Exists
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionRoomExists
 	 * @throws CheckedHibernateException
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void createRoom(BaseRoom baseRoom, Directions.DIRECTION direction) throws Map_Exception_Out_Of_Bounds,
-			Map_Exception_Room_Exists, CheckedHibernateException, Map_Exception_Direction_Not_Supported {
+	public void createRoom(BaseRoom baseRoom, Directions.DIRECTION direction) throws MapExceptionOutOfBounds,
+			MapExceptionRoomExists, CheckedHibernateException, MapExceptionDirectionNotSupported {
 		createRoom(xAdjustDirection(baseRoom.getX(), direction), yAdjustDirection(baseRoom.getY(), direction));
 	}
 
@@ -270,12 +270,12 @@ public class GameMap {
 	 * 
 	 * @param x
 	 * @param y
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Room_Null
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
 	public void destroyRoom(int x, int y)
-			throws Map_Exception_Out_Of_Bounds, Map_Exception_Room_Null, CheckedHibernateException {
+			throws MapExceptionOutOfBounds, MapExceptionRoomNull, CheckedHibernateException {
 		synchronized (columnList) {
 			MapColumn column = getColumn(x);
 
@@ -285,12 +285,12 @@ public class GameMap {
 				for (Directions.DIRECTION direction : Directions.DIRECTION.values()) {
 					try {
 						destroyExit(room, direction);
-					} catch (Map_Exception_Out_Of_Bounds e) {
+					} catch (MapExceptionOutOfBounds e) {
 						// This is expected in some situations and is allowed
-					} catch (Map_Exception_Exit_Room_Null e) {
+					} catch (MapExceptionExitRoomNull e) {
 						// This is expected in some situations and is allowed
-					} catch (Map_Exception_Direction_Not_Supported e) {
-						MyLogger.log(Level.WARNING, "GameMap: Map_Exception_Direction_Not_Supported while destroyRoom.",
+					} catch (MapExceptionDirectionNotSupported e) {
+						MyLogger.log(Level.WARNING, "GameMap: MapExceptionDirectionNotSupported while destroyRoom.",
 								e);
 						return;
 					}
@@ -298,9 +298,9 @@ public class GameMap {
 
 				try {
 					column.deleteRoom(y);
-				} catch (Map_Exception_Exit_Exists e) {
+				} catch (MapExceptionExitExists e) {
 					MyLogger.log(Level.WARNING,
-							"GameMap: Map_Exception_Exit_Exists while deleteRoom, but all exits should have already been destroyed.",
+							"GameMap: MapExceptionExitExists while deleteRoom, but all exits should have already been destroyed.",
 							e);
 					return;
 				}
@@ -317,13 +317,13 @@ public class GameMap {
 	 * 
 	 * @param baseRoom
 	 * @param direction
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Room_Null
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void destroyRoom(BaseRoom baseRoom, Directions.DIRECTION direction) throws Map_Exception_Out_Of_Bounds,
-			Map_Exception_Room_Null, CheckedHibernateException, Map_Exception_Direction_Not_Supported {
+	public void destroyRoom(BaseRoom baseRoom, Directions.DIRECTION direction) throws MapExceptionOutOfBounds,
+			MapExceptionRoomNull, CheckedHibernateException, MapExceptionDirectionNotSupported {
 		System.out.println("Destroying (" + xAdjustDirection(baseRoom.getX(), direction) + ","
 				+ yAdjustDirection(baseRoom.getY(), direction) + ").");
 		destroyRoom(xAdjustDirection(baseRoom.getX(), direction), yAdjustDirection(baseRoom.getY(), direction));
@@ -334,30 +334,30 @@ public class GameMap {
 	 * 
 	 * @param room
 	 * @param direction
-	 * @throws Map_Exception_Room_Null
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Exit_Room_Null
-	 * @throws Map_Exception_Exit_Exists
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionRoomNull
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionExitRoomNull
+	 * @throws MapExceptionExitExists
+	 * @throws MapExceptionDirectionNotSupported
 	 * @throws CheckedHibernateException
 	 */
 	public void createExit(BaseRoom room, Directions.DIRECTION direction)
-			throws Map_Exception_Room_Null, Map_Exception_Out_Of_Bounds, Map_Exception_Exit_Room_Null,
-			Map_Exception_Exit_Exists, Map_Exception_Direction_Not_Supported, CheckedHibernateException {
+			throws MapExceptionRoomNull, MapExceptionOutOfBounds, MapExceptionExitRoomNull,
+			MapExceptionExitExists, MapExceptionDirectionNotSupported, CheckedHibernateException {
 		if (room == null) {
-			throw new Map_Exception_Room_Null("GameMap: Tried to set exit on null room.");
+			throw new MapExceptionRoomNull("GameMap: Tried to set exit on null room.");
 		}
 		if (room.getExit(direction) != null) {
-			throw new Map_Exception_Exit_Exists(
+			throw new MapExceptionExitExists(
 					"GameMap: Exit is not null " + direction.toString() + " of " + room.getRoomName() + ".");
 		}
 
 		BaseRoom otherRoom = getRoom(room, direction);
 		if (otherRoom == null) {
-			throw new Map_Exception_Exit_Room_Null("GameMap: Tried to set exit on null adjacent room.");
+			throw new MapExceptionExitRoomNull("GameMap: Tried to set exit on null adjacent room.");
 		}
 		if (room.getExit(Directions.oppositeDirection(direction)) != null) {
-			throw new Map_Exception_Exit_Exists("GameMap: Exit is not null "
+			throw new MapExceptionExitExists("GameMap: Exit is not null "
 					+ Directions.oppositeDirection(direction).toString() + " of " + otherRoom.getRoomName());
 		}
 
@@ -373,23 +373,23 @@ public class GameMap {
 	 * 
 	 * @param room
 	 * @param direction
-	 * @throws Map_Exception_Room_Null
-	 * @throws Map_Exception_Out_Of_Bounds
-	 * @throws Map_Exception_Exit_Room_Null
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionRoomNull
+	 * @throws MapExceptionOutOfBounds
+	 * @throws MapExceptionExitRoomNull
+	 * @throws MapExceptionDirectionNotSupported
 	 * @throws CheckedHibernateException
 	 */
 	public void destroyExit(BaseRoom room, Directions.DIRECTION direction)
-			throws Map_Exception_Room_Null, Map_Exception_Out_Of_Bounds, Map_Exception_Exit_Room_Null,
-			Map_Exception_Direction_Not_Supported, CheckedHibernateException {
+			throws MapExceptionRoomNull, MapExceptionOutOfBounds, MapExceptionExitRoomNull,
+			MapExceptionDirectionNotSupported, CheckedHibernateException {
 		if (room == null) {
-			throw new Map_Exception_Room_Null("GameMap: Tried to remove exit on null room.");
+			throw new MapExceptionRoomNull("GameMap: Tried to remove exit on null room.");
 		}
 		BaseRoomExit roomExit = room.getExit(direction);
 
 		BaseRoom otherRoom = getRoom(room, direction);
 		if (otherRoom == null) {
-			throw new Map_Exception_Exit_Room_Null("GameMap: Tried to remove exit to a null room.");
+			throw new MapExceptionExitRoomNull("GameMap: Tried to remove exit to a null room.");
 		}
 		BaseRoomExit otherRoomExit = otherRoom.getExit(Directions.oppositeDirection(direction));
 
@@ -500,7 +500,7 @@ public class GameMap {
 					BaseRoom foundRoom;
 					try {
 						foundRoom = gameMap.getRoom(i, lineY);
-					} catch (Map_Exception_Out_Of_Bounds e) {
+					} catch (MapExceptionOutOfBounds e) {
 						foundRoom = null;
 					}
 
@@ -550,9 +550,9 @@ public class GameMap {
 							if (foundRoom.getExit(Directions.DIRECTION.SOUTHEAST) != null) {
 								se = "\\";
 							}
-						} catch (Map_Exception_Direction_Not_Supported e2) {
+						} catch (MapExceptionDirectionNotSupported e2) {
 							MyLogger.log(Level.WARNING,
-									"GameMap: Map_Exception_Direction_Not_Supported while displayMap.", e2);
+									"GameMap: MapExceptionDirectionNotSupported while displayMap.", e2);
 						}
 
 						lineTop = lineTop + nw + " " + n + " " + ne;
@@ -587,11 +587,11 @@ public class GameMap {
 	 * Checks given coordinate is within map dimensions.
 	 * 
 	 * @param coord
-	 * @throws Map_Exception_Out_Of_Bounds
+	 * @throws MapExceptionOutOfBounds
 	 */
-	public static void checkRoomCoordinate(int coord) throws Map_Exception_Out_Of_Bounds {
+	public static void checkRoomCoordinate(int coord) throws MapExceptionOutOfBounds {
 		if (((GameMap.MAP_DIMENSION * -1) > coord) || (coord > GameMap.MAP_DIMENSION)) {
-			throw new Map_Exception_Out_Of_Bounds("GameMap: Failed coordinate check with coord: '" + coord + "'");
+			throw new MapExceptionOutOfBounds("GameMap: Failed coordinate check with coord: '" + coord + "'");
 		}
 	}
 
@@ -602,10 +602,10 @@ public class GameMap {
 	 * @param x
 	 * @param direction
 	 * @return
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionDirectionNotSupported
 	 */
 	public static int xAdjustDirection(int x, Directions.DIRECTION direction)
-			throws Map_Exception_Direction_Not_Supported {
+			throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTHWEST: {
 			return (x - 1);
@@ -634,7 +634,7 @@ public class GameMap {
 		default: {
 			MyLogger.log(Level.WARNING,
 					"GameMap: Failed to xAdjustDirection for direction: " + direction.toString() + ".");
-			throw new Map_Exception_Direction_Not_Supported(
+			throw new MapExceptionDirectionNotSupported(
 					"GameMap: xAdjustDirection missing case for direction " + direction.toString() + ".");
 		}
 		}
@@ -647,10 +647,10 @@ public class GameMap {
 	 * @param y
 	 * @param direction
 	 * @return
-	 * @throws Map_Exception_Direction_Not_Supported
+	 * @throws MapExceptionDirectionNotSupported
 	 */
 	public static int yAdjustDirection(int y, Directions.DIRECTION direction)
-			throws Map_Exception_Direction_Not_Supported {
+			throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTHWEST: {
 			return (y + 1);
@@ -679,7 +679,7 @@ public class GameMap {
 		default: {
 			MyLogger.log(Level.WARNING,
 					"GameMap: Failed to yAdjustDirection for direction: " + direction.toString() + ".");
-			throw new Map_Exception_Direction_Not_Supported(
+			throw new MapExceptionDirectionNotSupported(
 					"GameMap: yAdjustDirection missing case for direction " + direction.toString() + ".");
 		}
 		}

@@ -30,7 +30,7 @@ import fireengine.utils.MyLogger;
  *    limitations under the License.
  */
 
-public class ClientConnectionTelnet implements ClientConnectionInterface {
+public class ClientConnectionTelnet implements ClientConnection {
 	private ClientConnectionTelnet ccon;
 	private ClientIOTelnet telnet;
 	private final SocketChannel sc;

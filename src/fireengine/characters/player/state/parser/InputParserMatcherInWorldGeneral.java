@@ -3,13 +3,13 @@ package fireengine.characters.player.state.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fireengine.characters.commands.Action_Command;
+import fireengine.characters.commands.ActionCommand;
 import fireengine.characters.commands.character_commands.general.Look;
 import fireengine.characters.commands.character_commands.general.Map;
 import fireengine.characters.commands.character_commands.general.Move;
 import fireengine.characters.commands.character_commands.general.Say;
 import fireengine.characters.commands.character_commands.general.Who;
-import fireengine.characters.commands.character_commands.general.player_only.Quit_Game;
+import fireengine.characters.commands.character_commands.general.player_only.QuitGame;
 import fireengine.utils.MathUtils;
 
 /*
@@ -42,7 +42,7 @@ public class InputParserMatcherInWorldGeneral implements InputParserMatcher {
 	}
 
 	@Override
-	public Action_Command match(String text) {
+	public ActionCommand match(String text) {
 		Matcher matcher;
 
 		if ((matcher = lookPattern.matcher(text)).matches()) {
@@ -60,7 +60,7 @@ public class InputParserMatcherInWorldGeneral implements InputParserMatcher {
 		} else if ((matcher = movePattern.matcher(text)).matches()) {
 			return new Move(matcher.group(1));
 		} else if ((matcher = quitGamePattern.matcher(text)).matches()) {
-			return new Quit_Game();
+			return new QuitGame();
 		} else if ((matcher = sayPattern.matcher(text)).matches()) {
 			return new Say(matcher.group(1));
 		} else if ((matcher = whoPattern.matcher(text)).matches()) {

@@ -36,7 +36,7 @@ public class ConfigLoader {
 	}
 
 	/**
-	 * File lives at top level of project (TODO check where on built app).
+	 * Loads config file from given file path.
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws IOException
