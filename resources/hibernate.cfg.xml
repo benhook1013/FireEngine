@@ -6,7 +6,7 @@
 	<session-factory>
 		<!-- DB Info -->
 		<property name="hibernate.dialect">
-			org.hibernate.dialect.MySQLDialect
+			org.hibernate.dialect.SQLServerDialect
 		</property>
 		<property name="hibernate.connection.driver_class">
 			com.mysql.jdbc.Driver
@@ -20,10 +20,10 @@
 			false
 		</property>
 		<property name="hibernate.connection.username">
-			root
+			FireEngine
 		</property>
 		<property name="hibernate.connection.password">
-			rootpassword
+			FireEnginePassword
 		</property>
 
 		<!-- List of XML mapping files -->
