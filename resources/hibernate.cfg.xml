@@ -9,12 +9,12 @@
 			org.hibernate.dialect.SQLServerDialect
 		</property>
 		<property name="hibernate.connection.driver_class">
-			com.mysql.jdbc.Driver
+			com.microsoft.sqlserver.jdbc.SQLServerDriver
 		</property>
 
 		<!-- Connection Info -->
 		<property name="hibernate.connection.url">
-			jdbc:mysql://127.0.0.1:5555/Cyber_World_DB?useSSL=false
+			jdbc:sqlserver://BEN_DESKTOP\DEVDB
 		</property>
 		<property name="hibernate.connection.verifyServerCertificate">
 			false
