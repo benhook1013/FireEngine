@@ -387,8 +387,8 @@ public class ClientConnectionTelnet implements ClientConnection {
 		synchronized (this) {
 			if (sc.isOpen()) {
 				try {
-					MyLogger.log(Level.INFO, "ClientConnectionTelnet: ClientConnectionTelnet shutdown: '"
-							+ sc.getLocalAddress().toString() + "'(local).");
+					// MyLogger.log(Level.INFO, "ClientConnectionTelnet: ClientConnectionTelnet
+					// shutdown: '" + sc.getLocalAddress().toString() + "'(local).");
 					MyLogger.log(Level.INFO, "ClientConnectionTelnet: ClientConnectionTelnet shutdown: '"
 							+ sc.getRemoteAddress().toString() + "'(remote).");
 					sc.close();
