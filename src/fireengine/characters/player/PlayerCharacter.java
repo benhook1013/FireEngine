@@ -29,7 +29,7 @@ import fireengine.characters.commands.character_commands.general.Look;
 import fireengine.characters.condition.BaseCondition;
 import fireengine.characters.condition.PCCondition;
 import fireengine.characters.player.exceptions.PCExceptionNullRoom;
-import fireengine.characters.player.state.InWorld;
+import fireengine.characters.player.state.PCStateInWorld;
 import fireengine.characters.player.state.PCState;
 import fireengine.characters.player.state.parser.InputParserInWorld;
 import fireengine.client_io.ClientConnectionOutput;
@@ -299,10 +299,10 @@ public class PlayerCharacter extends BaseCharacter {
 			throw new PCExceptionNullRoom("PlayerCharacter: Player tried to do enter world with null room.", e);
 		}
 
-		if (pcState instanceof InWorld) {
+		if (pcState instanceof PCStateInWorld) {
 			room.sendToRoom(new ClientConnectionOutput(getName() + " eyes light up and starts moving again."));
 		} else {
-			pcState = new InWorld();
+			pcState = new PCStateInWorld();
 		}
 
 		acceptInput(new Look());
