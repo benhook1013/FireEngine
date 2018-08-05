@@ -26,7 +26,6 @@
 			FireEnginePassword
 		</property>
 		
-
 		<!-- List of XML mapping files -->
 		<mapping class="fireengine.characters.player.PlayerCharacter" />
 		<mapping class="fireengine.characters.player.PCSettings" />
