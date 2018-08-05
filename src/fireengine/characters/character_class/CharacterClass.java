@@ -1,4 +1,4 @@
-package fireengine.characters.character_class;
+package src.fireengine.characters.character_class;
 
 import java.util.ArrayList;
 import java.util.Collections;
