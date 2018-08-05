@@ -25,6 +25,7 @@
 		<property name="hibernate.connection.password">
 			FireEnginePassword
 		</property>
+		
 
 		<!-- List of XML mapping files -->
 		<mapping class="fireengine.characters.player.PlayerCharacter" />
