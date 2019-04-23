@@ -121,7 +121,8 @@ public class FireEngineMain {
 
 		try {
 			MyLogger.log(Level.INFO, "FireEngineMain: Initiating Hibernate");
-			hibSessFactory = new Configuration().configure().buildSessionFactory();
+			hibSessFactory = new Configuration().configure(ConfigLoader.getSetting("hibernateConfigFilePath"))
+					.buildSessionFactory();
 		} catch (HibernateException e) {
 			throw new FireEngineMainSetupException("FireEngineMain: Hibernate Exception", e);
 		}
