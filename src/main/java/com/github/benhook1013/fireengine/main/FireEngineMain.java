@@ -1,7 +1,5 @@
 package com.github.benhook1013.fireengine.main;
 
-
-
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,13 +24,13 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 /*
  *    Copyright 2017 Ben Hook
  *    FireEngineMain.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,7 +40,7 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 
 /**
  * Main Thread; initiates, runs (and later, monitors) the various services.
- * 
+ *
  * @author Ben Hook
  */
 public class FireEngineMain {
@@ -86,25 +84,27 @@ public class FireEngineMain {
 
 		try {
 			setUp();
+
+			try {
+				run();
+			} catch (Exception e) {
+				MyLogger.log(Level.SEVERE, "FireEngineMain: Exception while running app.", e);
+			} finally {
+				shutdown();
+			}
+
 		} catch (Exception e) {
 			MyLogger.log(Level.SEVERE, "FireEngineMain: Failed to start up app.", e);
 			shutdown();
 		}
-		try {
-			run();
-		} catch (Exception e) {
-			MyLogger.log(Level.SEVERE, "FireEngineMain: Exception while running app.", e);
-		} finally {
-			shutdown();
-		}
+
 	}
 
 	/**
 	 * Setup the world and start accepting connections.
-	 * 
-	 * @throws Exception
-	 *             general {@link Exception} catching to allow for logging and
-	 *             purposeful shutdown.
+	 *
+	 * @throws Exception general {@link Exception} catching to allow for logging and
+	 *                   purposeful shutdown.
 	 */
 	private static void setUp() throws Exception {
 		MyLogger.log(Level.INFO, "FireEngineMain: Bootstrapping FireEngine!");
@@ -141,7 +141,7 @@ public class FireEngineMain {
 
 	/**
 	 * Starts the telnet thread and starts accepting connections.
-	 * 
+	 *
 	 * @throws FireEngineMainSetupException
 	 */
 	private static void startClientIO() throws FireEngineMainSetupException {
@@ -315,9 +315,8 @@ public class FireEngineMain {
 	 * Custom handling of {@link HibernateException} which is usually unchecked, but
 	 * using a {@link CheckedHibernateException} we pass to this function, which
 	 * allows us to recognise the Hibernate problem and shutdown gracefully.
-	 * 
-	 * @param e
-	 *            The {@link CheckedHibernateException} thrown.
+	 *
+	 * @param e The {@link CheckedHibernateException} thrown.
 	 */
 	public static void hibernateException(CheckedHibernateException e) {
 		ClientConnectionOutput playerMessage = new ClientConnectionOutput(1);
