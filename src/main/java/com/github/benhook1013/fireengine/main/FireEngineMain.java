@@ -1,5 +1,6 @@
 package com.github.benhook1013.fireengine.main;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -121,8 +122,9 @@ public class FireEngineMain {
 
 		try {
 			MyLogger.log(Level.INFO, "FireEngineMain: Initiating Hibernate");
-			MyLogger.log(Level.INFO, "Hibernate config file: " + ConfigLoader.getSetting("hibernateConfigFilePath"));
-			hibSessFactory = new Configuration().configure(ConfigLoader.getSetting("hibernateConfigFilePath"))
+			MyLogger.log(Level.INFO, "FireEngineMain: Hibernate config file (with new File): "
+					+ ConfigLoader.getSetting("hibernateConfigFilePath"));
+			hibSessFactory = new Configuration().configure(new File(ConfigLoader.getSetting("hibernateConfigFilePath")))
 					.buildSessionFactory();
 		} catch (HibernateException e) {
 			throw new FireEngineMainSetupException("FireEngineMain: Hibernate Exception", e);
