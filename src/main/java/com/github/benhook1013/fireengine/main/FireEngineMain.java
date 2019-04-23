@@ -120,7 +120,7 @@ public class FireEngineMain {
 		telnetPort = Integer.parseInt(ConfigLoader.getSetting("telnetPort"));
 
 		try {
-			MyLogger.log(Level.INFO, "FireEngineMain: Initiating Hibernatezzz");
+			MyLogger.log(Level.INFO, "FireEngineMain: Initiating Hibernate");
 			MyLogger.log(Level.INFO, "Hibernate config file: " + ConfigLoader.getSetting("hibernateConfigFilePath"));
 			hibSessFactory = new Configuration().configure(ConfigLoader.getSetting("hibernateConfigFilePath"))
 					.buildSessionFactory();
