@@ -22,13 +22,13 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 /*
  *    Copyright 2017 Ben Hook
  *    ClientIOTelnet.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,7 +39,7 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 /**
  * Workhorse of the telnet IO, a single thread that scales extremely well and
  * should be able to serve thousands of connections.
- * 
+ *
  * @author Ben Hook
  */
 public class ClientIOTelnet extends Thread {
@@ -58,7 +58,7 @@ public class ClientIOTelnet extends Thread {
 	/**
 	 * A small class used to contain info about pending {@link SelectionKey}
 	 * changes.
-	 * 
+	 *
 	 * @author Ben Hook
 	 */
 	private class SelectItem {
@@ -95,7 +95,7 @@ public class ClientIOTelnet extends Thread {
 
 	/**
 	 * Sets whether to accept new incoming connections or not,
-	 * 
+	 *
 	 * @param accepting
 	 */
 	public void setAccepting(boolean accepting) {
@@ -105,7 +105,7 @@ public class ClientIOTelnet extends Thread {
 	/**
 	 * Tries to open, configure and register the {@link Selector}, throwing
 	 * {@link ClientIOTelnetException} upon exception.
-	 * 
+	 *
 	 * @return {@link Selector}
 	 * @throws ClientIOTelnetException
 	 */
@@ -434,12 +434,11 @@ public class ClientIOTelnet extends Thread {
 
 	/**
 	 * Queue up changed to a SelectionKey for given connection.
-	 * 
+	 *
 	 * @param ccon
 	 * @param key
-	 * @param wakeUp
-	 *            Whether to wake up the selector or not (do not want to wake up if
-	 *            queueing from selector's thread)
+	 * @param wakeUp Whether to wake up the selector or not (do not want to wake up
+	 *               if queueing from selector's thread)
 	 */
 	public void addKeyQueue(ClientConnectionTelnet ccon, int key, boolean wakeUp) {
 		synchronized (keyList) {
@@ -499,7 +498,7 @@ public class ClientIOTelnet extends Thread {
 	 * Closes off all channels/sockets and removes {@link SelectionKey}s.
 	 */
 	public void clearResources() {
-		if (this.ssc != null && this.ssc.isOpen()) {
+		if ((this.ssc != null) && this.ssc.isOpen()) {
 			try {
 				ssc.close();
 				MyLogger.log(Level.INFO, "ClientIOTelnet: Shutdown ServerSocketChannel.");

@@ -18,13 +18,13 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 /*
  *    Copyright 2017 Ben Hook
  *    CreateExit.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -75,8 +75,8 @@ public class CreateExit extends CharacterCommand {
 						null, null));
 				return;
 			} catch (MapExceptionDirectionNotSupported e) {
-				MyLogger.log(Level.WARNING,
-						"CreateExit: MapExceptionDirectionNotSupported while trying to createExit.", e);
+				MyLogger.log(Level.WARNING, "CreateExit: MapExceptionDirectionNotSupported while trying to createExit.",
+						e);
 				character.sendToListeners(new ClientConnectionOutput(
 						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getRoomName()
 								+ "\", direction not supported in exit creation code. Contact a God to fix this.",

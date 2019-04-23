@@ -45,13 +45,13 @@ import com.github.benhook1013.fireengine.utils.StringUtils;
 /*
  *    Copyright 2017 Ben Hook
  *    PlayerCharacter.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -211,9 +211,9 @@ public class PlayerCharacter extends BaseCharacter {
 				output.newLine();
 				sendToListeners(output);
 			} else {
-				if (room != null)
+				if (room != null) {
 					command.doAction(this);
-				else {
+				} else {
 					throw new PCExceptionNullRoom(
 							"PlayerCharacter: Player tried to do action " + command.getClass() + " with no room.");
 				}
@@ -223,8 +223,7 @@ public class PlayerCharacter extends BaseCharacter {
 			message.addPart("You are trying to do an action without being in any room!", null, null);
 			message.addPart("We will try and move you somewhere...", null, null);
 			sendToListeners(message);
-			MyLogger.log(Level.WARNING, "PlayerCharacter: PCExceptionNullRoom error when trying to acceptInput.",
-					e);
+			MyLogger.log(Level.WARNING, "PlayerCharacter: PCExceptionNullRoom error when trying to acceptInput.", e);
 
 			BaseRoom sendRoom = null;
 			try {
@@ -245,8 +244,7 @@ public class PlayerCharacter extends BaseCharacter {
 					return;
 				}
 			} else {
-				MyLogger.log(Level.WARNING, "PlayerCharacter: Cannot find origin room to send null room player to.",
-						e);
+				MyLogger.log(Level.WARNING, "PlayerCharacter: Cannot find origin room to send null room player to.", e);
 				return;
 			}
 		}
@@ -269,7 +267,7 @@ public class PlayerCharacter extends BaseCharacter {
 
 	/**
 	 * Used to connect a {@link Session} to the {@link PlayerCharacter}.
-	 * 
+	 *
 	 * @throws PCExceptionNullRoom
 	 */
 	public void connect(Session sess) throws PCExceptionNullRoom {
@@ -279,7 +277,7 @@ public class PlayerCharacter extends BaseCharacter {
 	/**
 	 * Used to connect a {@link Session} to the {@link PlayerCharacter}, and
 	 * entering the {@link BaseRoom} specified.
-	 * 
+	 *
 	 * @throws PCExceptionNullRoom
 	 */
 	public void connect(Session sess, BaseRoom room) throws PCExceptionNullRoom {

@@ -7,13 +7,13 @@ import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionD
 /*
  *    Copyright 2017 Ben Hook
  *    Directions.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,7 +24,7 @@ import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionD
 /**
  * Class containing supported directions (enum) and functions related to those
  * directions.
- * 
+ *
  * @author Ben Hook
  */
 public class Directions {
@@ -39,7 +39,7 @@ public class Directions {
 
 	/**
 	 * List of supported directions.
-	 * 
+	 *
 	 * @author Ben Hook
 	 */
 	public static enum DIRECTION {
@@ -49,7 +49,7 @@ public class Directions {
 	/**
 	 * Parses directions as text into the relevant direction enum value. Returns
 	 * null if no match found.
-	 * 
+	 *
 	 * @param text
 	 * @return
 	 */
@@ -84,7 +84,7 @@ public class Directions {
 
 	/**
 	 * Returns the opposite direction to the given direction.
-	 * 
+	 *
 	 * @param direction
 	 * @return
 	 * @throws MapExceptionDirectionNotSupported

@@ -34,13 +34,13 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 /*
  *    Copyright 2017 Ben Hook
  *    BaseRoom.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -50,7 +50,7 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 
 /**
  * Default room type, with standard room functions.
- * 
+ *
  * @author Ben Hook
  */
 @Entity
@@ -164,7 +164,7 @@ public class BaseRoom {
 
 	/**
 	 * Returns a String that looks like "(x,y)".
-	 * 
+	 *
 	 * @return
 	 */
 	public String getCoords() {
@@ -192,7 +192,7 @@ public class BaseRoom {
 	 * enter), so far only used to add {@link PlayerCharacter}s. Always use AFTER
 	 * setting room on Character, as this will check to make sure both match(check
 	 * will result in hidden-to-player error).
-	 * 
+	 *
 	 * @param player
 	 */
 	public void addCharacter(BaseCharacter player) {
@@ -202,7 +202,7 @@ public class BaseRoom {
 
 		if (player instanceof PlayerCharacter) {
 			synchronized (playerList) {
-				if (!playerList.contains((PlayerCharacter) player)) {
+				if (!playerList.contains(player)) {
 					playerList.add((PlayerCharacter) player);
 				}
 			}
@@ -210,11 +210,11 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Removes a {@link BaseCharacter} from the rooms player list (typically on
-	 * room exit), so far only used to remove {@link PlayerCharacter}s. Always use
-	 * AFTER setting room on Character, as this will check to make sure isn't
-	 * removing current player room(check will result in hidden-to-player error).
-	 * 
+	 * Removes a {@link BaseCharacter} from the rooms player list (typically on room
+	 * exit), so far only used to remove {@link PlayerCharacter}s. Always use AFTER
+	 * setting room on Character, as this will check to make sure isn't removing
+	 * current player room(check will result in hidden-to-player error).
+	 *
 	 * @param player
 	 */
 	public void removeCharacter(BaseCharacter player) {
@@ -225,14 +225,14 @@ public class BaseRoom {
 
 		if (player instanceof PlayerCharacter) {
 			synchronized (playerList) {
-				playerList.remove((PlayerCharacter) player);
+				playerList.remove(player);
 			}
 		}
 	}
 
 	/**
 	 * Returns list of {@link PlayerCharacter}s in the room.
-	 * 
+	 *
 	 * @return
 	 */
 	public ArrayList<PlayerCharacter> getPCs() {
@@ -245,15 +245,15 @@ public class BaseRoom {
 				}
 			}
 
-			return new ArrayList<PlayerCharacter>(playerList);
+			return new ArrayList<>(playerList);
 		}
 	}
 
 	/**
 	 * Sends to listeners of room, without any exclusion.
-	 * 
+	 *
 	 * @see BaseRoom#sendToRoom(ClientConnectionOutput, PlayerCharacter)
-	 * 
+	 *
 	 * @param output
 	 */
 	public void sendToRoom(ClientConnectionOutput output) {
@@ -263,11 +263,9 @@ public class BaseRoom {
 	/**
 	 * Sends to listeners of the room, apart from notPlayer, if one is specified.
 	 * Currently only {@link PlayerCharacter}s inside the room.
-	 * 
-	 * @param output
-	 *            Output to be sent.
-	 * @param notPlayer
-	 *            Player, if specified, to be excluded from output.
+	 *
+	 * @param output    Output to be sent.
+	 * @param notPlayer Player, if specified, to be excluded from output.
 	 */
 	public void sendToRoom(ClientConnectionOutput output, BaseCharacter ignoreCharacter) {
 		for (PlayerCharacter player : playerList) {
@@ -283,7 +281,7 @@ public class BaseRoom {
 
 	/**
 	 * Returns {@link BaseRoomExit} of room for given {@link DIRECTION}.
-	 * 
+	 *
 	 * @param direction
 	 * @return
 	 * @throws MapExceptionDirectionNotSupported
@@ -323,13 +321,12 @@ public class BaseRoom {
 
 	/**
 	 * Assigns {@link BaseRoomExit} to room, of given {@link DIRECTION}.
-	 * 
+	 *
 	 * @param direction
 	 * @param newExit
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void setExit(Directions.DIRECTION direction, BaseRoomExit newExit)
-			throws MapExceptionDirectionNotSupported {
+	public void setExit(Directions.DIRECTION direction, BaseRoomExit newExit) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTH: {
 			this.northExit = newExit;
@@ -365,7 +362,7 @@ public class BaseRoom {
 	/**
 	 * Returns true if room contains exit for any direction. Mainly used to test if
 	 * room is safe for deletion, having had all exits removed.
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean hasExit() {
@@ -387,9 +384,9 @@ public class BaseRoom {
 	/**
 	 * NOT TO BE CALLED DIRECTLY. This function does not check for existing room
 	 * etc, use the room creation in the {@link GameMap} class.
-	 * 
+	 *
 	 * Creates new {@link BaseRoom} at specified coordinates and returns new room.
-	 * 
+	 *
 	 * @param mapId
 	 * @param x
 	 * @param y
@@ -406,7 +403,7 @@ public class BaseRoom {
 
 	/**
 	 * Saves/persists the {@link BaseRoom} into the database.
-	 * 
+	 *
 	 * @param room
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
@@ -440,9 +437,9 @@ public class BaseRoom {
 
 	/**
 	 * TODO Consider usage of this. Save on Maps should do this behaviour.
-	 * 
+	 *
 	 * Saves all rooms on list of all rooms.
-	 * 
+	 *
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
@@ -456,7 +453,7 @@ public class BaseRoom {
 	 * DO NOT CALL DIRECTLY. Removes {@link BaseRoom} from database but does not
 	 * remove room from {@link MapColumn} etc, meaning it could be re-saved. Use the
 	 * room destroy function in {@link GameMap} instead.
-	 * 
+	 *
 	 * @param room
 	 * @throws MapExceptionRoomNull
 	 * @throws MapExceptionExitExists

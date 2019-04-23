@@ -12,13 +12,13 @@ import com.github.benhook1013.fireengine.utils.CheckedHibernateException;
 /*
  *    Copyright 2017 Ben Hook
  *    MapColumn.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,7 +29,7 @@ import com.github.benhook1013.fireengine.utils.CheckedHibernateException;
 /**
  * Represents a column in a map, contained by {@link GameMap}, and contains
  * {@link BaseRoom}s.
- * 
+ *
  * @author Ben Hook
  */
 public class MapColumn {
@@ -62,9 +62,8 @@ public class MapColumn {
 
 	/**
 	 * Converts the y coordinate into the room array index.
-	 * 
-	 * @param y
-	 *            y coordinate to convert to array index
+	 *
+	 * @param y y coordinate to convert to array index
 	 * @return
 	 */
 	private int yAdjust(int y) {
@@ -75,9 +74,9 @@ public class MapColumn {
 
 	/**
 	 * TODO Consider if this is needed.
-	 * 
+	 *
 	 * Returns list of rooms for the {@link MapColumn}.
-	 * 
+	 *
 	 * @return
 	 */
 	protected List<BaseRoom> getRooms() {
@@ -87,7 +86,7 @@ public class MapColumn {
 	/**
 	 * Returns the room (or null) at the specified y coordinate, throwing an
 	 * exception if coordinate is out of bounds.
-	 * 
+	 *
 	 * @param y
 	 * @return
 	 * @throws MapExceptionOutOfBounds
@@ -101,7 +100,7 @@ public class MapColumn {
 	/**
 	 * Inserts the given room into the room list at the specified y coordinate,
 	 * throwing exception on out of bounds or if room already in that coordinate.
-	 * 
+	 *
 	 * @param y
 	 * @param room
 	 * @throws MapExceptionOutOfBounds
@@ -126,15 +125,15 @@ public class MapColumn {
 	 * Attempts to remove room at given y coordinate from room list and also deletes
 	 * room from database. Throws exception if coordinate is out of bounds, room at
 	 * coordinate is null, the room still has exits, or upon Hibernate problem.
-	 * 
+	 *
 	 * @param y
 	 * @throws MapExceptionOutOfBounds
 	 * @throws MapExceptionRoomNull
 	 * @throws MapExceptionExitExists
 	 * @throws CheckedHibernateException
 	 */
-	protected void deleteRoom(int y) throws MapExceptionOutOfBounds, MapExceptionRoomNull,
-			MapExceptionExitExists, CheckedHibernateException {
+	protected void deleteRoom(int y)
+			throws MapExceptionOutOfBounds, MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
 		synchronized (roomList) {
 			GameMap.checkRoomCoordinate(y);
 			y = yAdjust(y);

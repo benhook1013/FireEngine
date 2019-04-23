@@ -6,13 +6,13 @@ import java.util.Iterator;
 /*
  *    Copyright 2017 Ben Hook
  *    ClientConnectionOutput.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,7 +27,7 @@ import java.util.Iterator;
  * {@link Client_Connection_Output_Line.Client_Connection_Output_Part}
  * (including blank lines), with each part containing text, foreground colour
  * and background colour(colours optional).
- * 
+ *
  * @author Ben Hook
  */
 public class ClientConnectionOutput {
@@ -44,9 +44,8 @@ public class ClientConnectionOutput {
 	 * Takes an initial number for the number of lines in output object. Having a
 	 * good guess/knowledge beforehand can avoid unnecessary resizing of array
 	 * during use.
-	 * 
-	 * @param guessedSize
-	 *            Guessed number of lines in output.
+	 *
+	 * @param guessedSize Guessed number of lines in output.
 	 */
 	public ClientConnectionOutput(int guessedSize) {
 		lineList = new ArrayList<>(guessedSize);
@@ -55,7 +54,7 @@ public class ClientConnectionOutput {
 
 	/**
 	 * Instantiates and adds first part to the new output object.
-	 * 
+	 *
 	 * @param text
 	 */
 	public ClientConnectionOutput(String text) {
@@ -65,7 +64,7 @@ public class ClientConnectionOutput {
 
 	/**
 	 * Instantiates and adds first part to the new output object.
-	 * 
+	 *
 	 * @param text
 	 * @param colourFG
 	 * @param colourBG
@@ -80,7 +79,7 @@ public class ClientConnectionOutput {
 	 * {@link ClientConnectionOutput}, useful in situations such as sending output
 	 * to a group of people, where their own prompt etc will be attached before
 	 * sending.
-	 * 
+	 *
 	 * @param original
 	 */
 	public ClientConnectionOutput(ClientConnectionOutput original) {
@@ -108,7 +107,7 @@ public class ClientConnectionOutput {
 
 	/**
 	 * The main function used to add parts; text and colours, to the output object.
-	 * 
+	 *
 	 * @param text
 	 * @param colourFG
 	 * @param colourBG
@@ -123,7 +122,7 @@ public class ClientConnectionOutput {
 	/**
 	 * Used by the sending client IO to test if output object contains more lines to
 	 * send.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean hasNextLine() {
@@ -137,7 +136,7 @@ public class ClientConnectionOutput {
 	/**
 	 * Used by the sending client IO to test if output object contains more parts to
 	 * send.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean hasNextPart() {
@@ -154,7 +153,7 @@ public class ClientConnectionOutput {
 
 	/**
 	 * Used by the sending client IO to get text of current part.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getText() {
@@ -163,7 +162,7 @@ public class ClientConnectionOutput {
 
 	/**
 	 * Used by the sending client IO to get foreground colour of current part.
-	 * 
+	 *
 	 * @return
 	 */
 	public ClientIOColour.COLOURS getColourFG() {
@@ -172,7 +171,7 @@ public class ClientConnectionOutput {
 
 	/**
 	 * Used by the sending client IO to get background colour of current part.
-	 * 
+	 *
 	 * @return
 	 */
 	public ClientIOColour.COLOURS getColourBG() {
@@ -199,7 +198,7 @@ public class ClientConnectionOutput {
 
 	/**
 	 * Returns array of lines, used in copy constructor.
-	 * 
+	 *
 	 * @return
 	 */
 	public ArrayList<Client_Connection_Output_Line> getLines() {
@@ -207,8 +206,8 @@ public class ClientConnectionOutput {
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @author Ben Hook
 	 */
 	private class Client_Connection_Output_Line {

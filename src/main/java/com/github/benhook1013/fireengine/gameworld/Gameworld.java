@@ -10,7 +10,10 @@ import org.hibernate.query.Query;
 
 import com.github.benhook1013.fireengine.gameworld.maps.BaseRoom;
 import com.github.benhook1013.fireengine.gameworld.maps.GameMap;
-import com.github.benhook1013.fireengine.gameworld.maps.exceptions.*;
+import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionMapLoad;
+import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionOutOfBounds;
+import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionRoomExists;
+import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionRoomLoad;
 import com.github.benhook1013.fireengine.main.FireEngineMain;
 import com.github.benhook1013.fireengine.utils.CheckedHibernateException;
 import com.github.benhook1013.fireengine.utils.MyLogger;
@@ -18,13 +21,13 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 /*
  *    Copyright 2017 Ben Hook
  *    Gameworld.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,7 +37,7 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 
 /**
  * The container and manager for maps in the game.
- * 
+ *
  * @author Ben Hook
  */
 public class Gameworld {
@@ -60,7 +63,7 @@ public class Gameworld {
 
 	/**
 	 * Attempts to load {@link GameMap}s from the database.
-	 * 
+	 *
 	 * @throws CheckedHibernateException
 	 * @throws MapExceptionMapLoad
 	 */
@@ -113,9 +116,8 @@ public class Gameworld {
 
 	/**
 	 * Attempts to load all rooms from the database, give supplied map id.
-	 * 
-	 * @param mapId
-	 *            int id of map to load
+	 *
+	 * @param mapId int id of map to load
 	 * @throws CheckedHibernateException
 	 * @throws MapExceptionRoomLoad
 	 */
@@ -174,9 +176,8 @@ public class Gameworld {
 	/**
 	 * Searches in memory for {@link GameMap}s with matching name. It should not be
 	 * the case that there are maps in the database not loaded.
-	 * 
-	 * @param name
-	 *            String name of map to find
+	 *
+	 * @param name String name of map to find
 	 * @return
 	 */
 	public static GameMap findMap(String name) {
@@ -193,9 +194,8 @@ public class Gameworld {
 	/**
 	 * Searches in memory for {@link GameMap}s with matching id. It should not be
 	 * the case that there are maps in the database not loaded.
-	 * 
-	 * @param id
-	 *            int id of map to find
+	 *
+	 * @param id int id of map to find
 	 * @return
 	 */
 	public static GameMap findMap(int id) {
@@ -211,9 +211,8 @@ public class Gameworld {
 
 	/**
 	 * Adds a {@link GameMap} to the map list, not allowing duplicates based on id.
-	 * 
-	 * @param gameMap
-	 *            {@link GameMap} to add to map list
+	 *
+	 * @param gameMap {@link GameMap} to add to map list
 	 */
 	public static void addMap(GameMap gameMap) {
 		synchronized (mapList) {

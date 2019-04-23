@@ -16,13 +16,13 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 /*
  *    Copyright 2017 Ben Hook
  *    ClientConnectionTelnet.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -310,6 +310,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 		}
 	}
 
+	@Override
 	public void acceptInput() {
 		acceptInput = true;
 		// TODO Unsure if need this
@@ -319,6 +320,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 	/**
 	 * Clear current input and refuse further input.
 	 */
+	@Override
 	public void refuseInput() {
 		synchronized (recieveList) {
 			acceptInput = false;
@@ -368,6 +370,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 
 	}
 
+	@Override
 	public String readFromConnection() {
 		synchronized (recieveList) {
 			if (!recieveList.isEmpty()) {
@@ -378,6 +381,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 		}
 	}
 
+	@Override
 	public void shutdown() {
 		closing = true;
 	}

@@ -3,13 +3,13 @@ package com.github.benhook1013.fireengine.session;
 /*
  *    Copyright 2017 Ben Hook
  *    Session.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 
 /**
  * Session of the connection for a {@link PlayerCharacter}.
- * 
+ *
  * @author Ben Hook
  */
 public class Session {
@@ -52,9 +52,8 @@ public class Session {
 
 	/**
 	 * Creates a new Session for the provided {@link ClientConnection}
-	 * 
-	 * @param ccon
-	 *            ClientConnection to make the session for
+	 *
+	 * @param ccon ClientConnection to make the session for
 	 */
 	public Session(ClientConnection ccon) {
 		synchronized (sessionFutureLock) {
@@ -100,9 +99,8 @@ public class Session {
 	/**
 	 * Function to pass on {@link ClientConnectionOutput} from the Session to the
 	 * {@link ClientConnection}.
-	 * 
-	 * @param output
-	 *            ClientConnectionOutput to be sent
+	 *
+	 * @param output ClientConnectionOutput to be sent
 	 */
 	public void send(ClientConnectionOutput output) {
 		ccon.writeToConnection(output, ansi);
@@ -153,9 +151,9 @@ public class Session {
 	}
 
 	/**
-	 * Used to disconnect a Session from the {@link PlayerCharacter} but not end
-	 * the Session, in such situations as someone logging in overtop another
-	 * Session. Returns the Session to the {@link PhaseWelcome}.
+	 * Used to disconnect a Session from the {@link PlayerCharacter} but not end the
+	 * Session, in such situations as someone logging in overtop another Session.
+	 * Returns the Session to the {@link PhaseWelcome}.
 	 */
 	public void disconnect() {
 		phaseManager.disconnect();
@@ -172,8 +170,8 @@ public class Session {
 
 	/**
 	 * Used to signal the Session to gracefully finish parsing input and close down.
-	 * Will lead to the Session telling the {@link ClientConnection} to
-	 * respond once writing out is finished, allowing the Session to close down.
+	 * Will lead to the Session telling the {@link ClientConnection} to respond once
+	 * writing out is finished, allowing the Session to close down.
 	 */
 	private void end() {
 		ccon.refuseInput();
@@ -184,7 +182,7 @@ public class Session {
 	/**
 	 * Just a weird little way of decoupling the goodbye message out, so its obvious
 	 * where to change it later.
-	 * 
+	 *
 	 * @return {@link ClientConnectionOutput} containing goodbye message
 	 */
 	private ClientConnectionOutput endMsg() {
@@ -194,8 +192,8 @@ public class Session {
 	}
 
 	/**
-	 * Used by the {@link ClientConnection} to let the Session know that
-	 * it has finished writing out all data, to allow graceful closing of Session.
+	 * Used by the {@link ClientConnection} to let the Session know that it has
+	 * finished writing out all data, to allow graceful closing of Session.
 	 */
 	public void notifyCconFinished() {
 		FireEngineMain.session_Executor.submit(new Callable<Integer>() {
@@ -230,7 +228,7 @@ public class Session {
 
 	/**
 	 * Returns number of alive Sessions.
-	 * 
+	 *
 	 * @return number of open Sessions
 	 */
 	public static int numSessions() {
@@ -241,7 +239,7 @@ public class Session {
 
 	/**
 	 * Returns number of alive Sessions.
-	 * 
+	 *
 	 * @return number of open Sessions
 	 */
 	public static ArrayList<Session> getSessions() {

@@ -3,13 +3,13 @@ package com.github.benhook1013.fireengine.utils;
 /*
  *    Copyright 2017 Ben Hook
  *    StringUtils.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,15 +19,14 @@ package com.github.benhook1013.fireengine.utils;
 
 /**
  * Class containing custom/toolbox type String related functions.
- * 
+ *
  * @author Ben Hook
  */
 public abstract class StringUtils {
 	/**
 	 * Ensures first character is upper case and rest of String is lower case.
-	 * 
-	 * @param string
-	 *            string to capitalise
+	 *
+	 * @param string string to capitalise
 	 * @return string that has been capitalised.
 	 */
 	public static String capitalise(String string) {
@@ -38,9 +37,8 @@ public abstract class StringUtils {
 	/**
 	 * Ensures first letter of the {@link String} is capitalised and that end of the
 	 * string has a period.
-	 * 
-	 * @param string
-	 *            String to format
+	 *
+	 * @param string String to format
 	 * @return formatted String
 	 */
 	public static String sentance(String string) {

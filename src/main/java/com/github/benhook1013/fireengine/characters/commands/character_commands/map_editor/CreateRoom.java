@@ -16,13 +16,13 @@ import com.github.benhook1013.fireengine.utils.MyLogger;
 /*
  *    Copyright 2017 Ben Hook
  *    CreateRoom.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,8 +60,8 @@ public class CreateRoom extends CharacterCommand {
 						"Cannot create room in the direction, room already exists there.", null, null));
 				return;
 			} catch (MapExceptionDirectionNotSupported e) {
-				MyLogger.log(Level.WARNING,
-						"CreateRoom: MapExceptionDirectionNotSupported while trying to createRoom.", e);
+				MyLogger.log(Level.WARNING, "CreateRoom: MapExceptionDirectionNotSupported while trying to createRoom.",
+						e);
 				character.sendToListeners(new ClientConnectionOutput(
 						"Can't create room " + direction.toString() + " from \"" + character.getRoom().getRoomName()
 								+ "\", direction not supported in room creation code. Contact a God to fix this.",

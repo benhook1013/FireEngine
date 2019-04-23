@@ -6,13 +6,13 @@ import com.github.benhook1013.fireengine.session.Session;
 /*
  *    Copyright 2017 Ben Hook
  *    Phase.java
- *    
- *    Licensed under the Apache License, Version 2.0 (the "License"); 
+ *
+ *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
  *    You may obtain a copy of the License at
- *    
+ *
  *    		http://www.apache.org/licenses/LICENSE-2.0
- *    
+ *
  *    Unless required by applicable law or agreed to in writing, software
  *    distributed under the License is distributed on an "AS IS" BASIS,
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,14 +22,14 @@ import com.github.benhook1013.fireengine.session.Session;
 
 /**
  * Interface for phases of the {@link Session}, handled by {@link PhaseManager}.
- * 
+ *
  * @author Ben Hook
  */
 public interface Phase {
 
 	/**
 	 * Set the {@link Session} and {@link PhaseManager} for the Phase.
-	 * 
+	 *
 	 * @param session
 	 * @param phaseManager
 	 */
@@ -39,9 +39,8 @@ public interface Phase {
 	 * Passes input into the relevant Session phase, such as {@link PhaseLogin} to
 	 * handle logging in or {@link PhaseInWorld} to do actions with your
 	 * {@link PlayerCharacter}.
-	 * 
-	 * @param input
-	 *            String input passed into Phase for processing.
+	 *
+	 * @param input String input passed into Phase for processing.
 	 */
 	public void acceptInput(String input);
 
