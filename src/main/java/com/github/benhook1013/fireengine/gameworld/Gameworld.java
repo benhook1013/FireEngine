@@ -8,15 +8,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import com.github.benhook1013.fireengine.gameworld.maps.BaseRoom;
-import com.github.benhook1013.fireengine.gameworld.maps.GameMap;
-import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionMapLoad;
-import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionOutOfBounds;
-import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionRoomExists;
-import com.github.benhook1013.fireengine.gameworld.maps.exceptions.MapExceptionRoomLoad;
+import com.github.benhook1013.fireengine.gameworld.map.BaseRoom;
+import com.github.benhook1013.fireengine.gameworld.map.GameMap;
+import com.github.benhook1013.fireengine.gameworld.map.exception.MapExceptionMapLoad;
+import com.github.benhook1013.fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
+import com.github.benhook1013.fireengine.gameworld.map.exception.MapExceptionRoomExists;
+import com.github.benhook1013.fireengine.gameworld.map.exception.MapExceptionRoomLoad;
 import com.github.benhook1013.fireengine.main.FireEngineMain;
-import com.github.benhook1013.fireengine.utils.CheckedHibernateException;
-import com.github.benhook1013.fireengine.utils.MyLogger;
+import com.github.benhook1013.fireengine.util.CheckedHibernateException;
+import com.github.benhook1013.fireengine.util.MyLogger;
 
 /*
  *    Copyright 2017 Ben Hook

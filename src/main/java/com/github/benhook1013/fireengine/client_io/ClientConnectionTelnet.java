@@ -8,10 +8,10 @@ import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import com.github.benhook1013.fireengine.client_io.exceptions.ClientConnectionException;
+import com.github.benhook1013.fireengine.client_io.exception.ClientConnectionException;
 import com.github.benhook1013.fireengine.main.FireEngineMain;
 import com.github.benhook1013.fireengine.session.Session;
-import com.github.benhook1013.fireengine.utils.MyLogger;
+import com.github.benhook1013.fireengine.util.MyLogger;
 
 /*
  *    Copyright 2017 Ben Hook

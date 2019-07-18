@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
-import com.github.benhook1013.fireengine.client_io.exceptions.ClientIOTelnetException;
+import com.github.benhook1013.fireengine.client_io.exception.ClientIOTelnetException;
 import com.github.benhook1013.fireengine.session.Session;
-import com.github.benhook1013.fireengine.utils.MyLogger;
+import com.github.benhook1013.fireengine.util.MyLogger;
 
 /*
  *    Copyright 2017 Ben Hook

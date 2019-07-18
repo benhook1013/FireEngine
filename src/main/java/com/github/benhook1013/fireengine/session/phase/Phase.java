@@ -1,6 +1,6 @@
 package com.github.benhook1013.fireengine.session.phase;
 
-import com.github.benhook1013.fireengine.characters.player.PlayerCharacter;
+import com.github.benhook1013.fireengine.character.player.PlayerCharacter;
 import com.github.benhook1013.fireengine.session.Session;
 
 /*

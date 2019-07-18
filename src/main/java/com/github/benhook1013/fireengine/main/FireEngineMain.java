@@ -10,17 +10,17 @@ import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import com.github.benhook1013.fireengine.characters.character_class.CharacterClass;
-import com.github.benhook1013.fireengine.characters.player.PlayerCharacter;
+import com.github.benhook1013.fireengine.character.character_class.CharacterClass;
+import com.github.benhook1013.fireengine.character.player.PlayerCharacter;
 import com.github.benhook1013.fireengine.client_io.ClientConnectionOutput;
 import com.github.benhook1013.fireengine.client_io.ClientIOTelnet;
-import com.github.benhook1013.fireengine.client_io.exceptions.ClientIOTelnetException;
+import com.github.benhook1013.fireengine.client_io.exception.ClientIOTelnetException;
 import com.github.benhook1013.fireengine.gameworld.Gameworld;
 import com.github.benhook1013.fireengine.session.Session;
 import com.github.benhook1013.fireengine.session.phase.PhaseManager;
-import com.github.benhook1013.fireengine.utils.CheckedHibernateException;
-import com.github.benhook1013.fireengine.utils.ConfigLoader;
-import com.github.benhook1013.fireengine.utils.MyLogger;
+import com.github.benhook1013.fireengine.util.CheckedHibernateException;
+import com.github.benhook1013.fireengine.util.ConfigLoader;
+import com.github.benhook1013.fireengine.util.MyLogger;
 
 /*
  *    Copyright 2017 Ben Hook

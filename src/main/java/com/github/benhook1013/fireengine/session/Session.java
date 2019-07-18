@@ -22,14 +22,14 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
-import com.github.benhook1013.fireengine.characters.player.PlayerCharacter;
+import com.github.benhook1013.fireengine.character.player.PlayerCharacter;
 import com.github.benhook1013.fireengine.client_io.ClientConnection;
 import com.github.benhook1013.fireengine.client_io.ClientConnectionOutput;
 import com.github.benhook1013.fireengine.client_io.ClientIOColour;
-import com.github.benhook1013.fireengine.client_io.exceptions.ClientConnectionException;
+import com.github.benhook1013.fireengine.client_io.exception.ClientConnectionException;
 import com.github.benhook1013.fireengine.main.FireEngineMain;
 import com.github.benhook1013.fireengine.session.phase.PhaseManager;
-import com.github.benhook1013.fireengine.utils.MyLogger;
+import com.github.benhook1013.fireengine.util.MyLogger;
 
 /**
  * Session of the connection for a {@link PlayerCharacter}.

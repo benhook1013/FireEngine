@@ -1,6 +1,6 @@
 package com.github.benhook1013.fireengine.client_io;
 
-import com.github.benhook1013.fireengine.client_io.exceptions.ClientConnectionException;
+import com.github.benhook1013.fireengine.client_io.exception.ClientConnectionException;
 import com.github.benhook1013.fireengine.session.Session;
 
 /*

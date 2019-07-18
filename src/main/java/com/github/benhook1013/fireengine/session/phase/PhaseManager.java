@@ -1,8 +1,8 @@
 package com.github.benhook1013.fireengine.session.phase;
 
 import com.github.benhook1013.fireengine.session.Session;
-import com.github.benhook1013.fireengine.utils.ConfigLoader;
-import com.github.benhook1013.fireengine.utils.MyClassLoader;
+import com.github.benhook1013.fireengine.util.ConfigLoader;
+import com.github.benhook1013.fireengine.util.MyClassLoader;
 
 /*
  *    Copyright 2017 Ben Hook
