@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 /*
  *    Copyright 2017 Ben Hook
- *    PCSettings.java
+ *    PCSetting.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "PC_SETTINGS")
-public class PCSettings {
+public class PCSetting {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "PC_SETTINGS_ID")
@@ -35,7 +35,7 @@ public class PCSettings {
 	@Column(name = "PC_SETTINGS_MAP_EDITOR")
 	private boolean mapEditor;
 
-	public PCSettings() {
+	public PCSetting() {
 		mapEditor = false;
 	}
 

@@ -76,7 +76,7 @@ public class PlayerCharacter extends BaseCharacter {
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_PC_SETTINGS_ID")
-	private PCSettings settings;
+	private PCSetting settings;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
@@ -107,7 +107,7 @@ public class PlayerCharacter extends BaseCharacter {
 		this();
 		this.name = name;
 		this.password = password;
-		settings = new PCSettings();
+		settings = new PCSetting();
 		charClass = new CharacterClass();
 		condition = new PCCondition(1);
 	}
@@ -140,12 +140,12 @@ public class PlayerCharacter extends BaseCharacter {
 		this.password = password;
 	}
 
-	public PCSettings getSettings() {
+	public PCSetting getSettings() {
 		return settings;
 	}
 
 	@SuppressWarnings("unused")
-	private void setSettings(PCSettings settings) {
+	private void setSettings(PCSetting settings) {
 		this.settings = settings;
 	}
 
