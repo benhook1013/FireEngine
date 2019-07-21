@@ -116,7 +116,7 @@ public class FireEngineMain {
 			throw new FireEngineMainSetupException("FireEngineMain: Failed to load config file", e);
 		}
 
-		serverName = ConfigLoader.getSetting("serverName");
+		serverName = ConfigLoader.getSetting("serverName"); // TODO This is not used for anything yet.
 		telnetAddress = ConfigLoader.getSetting("serverIP");
 		telnetPort = Integer.parseInt(ConfigLoader.getSetting("telnetPort"));
 
