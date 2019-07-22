@@ -6,7 +6,7 @@ import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 
 /*
  *    Copyright 2017 Ben Hook
- *    Directions.java
+ *    Direction.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
  *
  * @author Ben Hook
  */
-public class Directions {
+public class Direction {
 	private static Pattern northPattern = Pattern.compile("(?i)N(?:ORTH)?");
 	private static Pattern northEastPattern = Pattern.compile("(?i)N(?:ORTH)?E(?:AST)?");
 	private static Pattern eastPattern = Pattern.compile("(?i)E(?:AST)?");
@@ -117,7 +117,7 @@ public class Directions {
 		}
 		default: {
 			throw new MapExceptionDirectionNotSupported(
-					"Directions: oppositeDirection missing case for direction " + direction.toString());
+					"Direction: oppositeDirection missing case for direction " + direction.toString());
 		}
 		}
 	}

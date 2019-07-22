@@ -6,7 +6,7 @@ import fireengine.character.BaseCharacter;
 import fireengine.character.command.character_comand.CharacterCommand;
 import fireengine.character.player.exception.PCExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.Directions;
+import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitNull;
@@ -43,7 +43,7 @@ public class Move extends CharacterCommand {
 
 	@Override
 	public void doAction(BaseCharacter character) {
-		Directions.DIRECTION direction = Directions.parseDirection(directionText);
+		Direction.DIRECTION direction = Direction.parseDirection(directionText);
 
 		if (direction != null) {
 			try {

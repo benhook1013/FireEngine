@@ -156,7 +156,7 @@ public class GameMap {
 	 * @throws MapExceptionOutOfBounds
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public BaseRoom getRoom(BaseRoom room, Directions.DIRECTION direction)
+	public BaseRoom getRoom(BaseRoom room, Direction.DIRECTION direction)
 			throws MapExceptionOutOfBounds, MapExceptionDirectionNotSupported {
 		int otherX = xAdjustDirection(room.getX(), direction);
 		int othery = yAdjustDirection(room.getY(), direction);
@@ -257,7 +257,7 @@ public class GameMap {
 	 * @throws CheckedHibernateException
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void createRoom(BaseRoom baseRoom, Directions.DIRECTION direction) throws MapExceptionOutOfBounds,
+	public void createRoom(BaseRoom baseRoom, Direction.DIRECTION direction) throws MapExceptionOutOfBounds,
 			MapExceptionRoomExists, CheckedHibernateException, MapExceptionDirectionNotSupported {
 		createRoom(xAdjustDirection(baseRoom.getX(), direction), yAdjustDirection(baseRoom.getY(), direction));
 	}
@@ -280,7 +280,7 @@ public class GameMap {
 			if (column != null) {
 				BaseRoom room = column.getRoom(y);
 
-				for (Directions.DIRECTION direction : Directions.DIRECTION.values()) {
+				for (Direction.DIRECTION direction : Direction.DIRECTION.values()) {
 					try {
 						destroyExit(room, direction);
 					} catch (MapExceptionOutOfBounds e) {
@@ -319,7 +319,7 @@ public class GameMap {
 	 * @throws CheckedHibernateException
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void destroyRoom(BaseRoom baseRoom, Directions.DIRECTION direction) throws MapExceptionOutOfBounds,
+	public void destroyRoom(BaseRoom baseRoom, Direction.DIRECTION direction) throws MapExceptionOutOfBounds,
 			MapExceptionRoomNull, CheckedHibernateException, MapExceptionDirectionNotSupported {
 		System.out.println("Destroying (" + xAdjustDirection(baseRoom.getX(), direction) + ","
 				+ yAdjustDirection(baseRoom.getY(), direction) + ").");
@@ -339,7 +339,7 @@ public class GameMap {
 	 * @throws MapExceptionDirectionNotSupported
 	 * @throws CheckedHibernateException
 	 */
-	public void createExit(BaseRoom room, Directions.DIRECTION direction)
+	public void createExit(BaseRoom room, Direction.DIRECTION direction)
 			throws MapExceptionRoomNull, MapExceptionOutOfBounds, MapExceptionExitRoomNull, MapExceptionExitExists,
 			MapExceptionDirectionNotSupported, CheckedHibernateException {
 		if (room == null) {
@@ -354,20 +354,20 @@ public class GameMap {
 		if (otherRoom == null) {
 			throw new MapExceptionExitRoomNull("GameMap: Tried to set exit on null adjacent room.");
 		}
-		if (room.getExit(Directions.oppositeDirection(direction)) != null) {
+		if (room.getExit(Direction.oppositeDirection(direction)) != null) {
 			throw new MapExceptionExitExists("GameMap: Exit is not null "
-					+ Directions.oppositeDirection(direction).toString() + " of " + otherRoom.getRoomName());
+					+ Direction.oppositeDirection(direction).toString() + " of " + otherRoom.getRoomName());
 		}
 
 		BaseRoomExit newExit = new BaseRoomExit();
 		room.setExit(direction, newExit);
 		BaseRoom.saveRoom(room);
-		otherRoom.setExit(Directions.oppositeDirection(direction), newExit);
+		otherRoom.setExit(Direction.oppositeDirection(direction), newExit);
 		BaseRoom.saveRoom(otherRoom);
 	}
 
 	/**
-	 * Removes {@link BaseRoomExit} in specified {@link Directions.DIRECTION}, from
+	 * Removes {@link BaseRoomExit} in specified {@link Direction.DIRECTION}, from
 	 * {@link BaseRoom} given.
 	 *
 	 * @param room
@@ -378,7 +378,7 @@ public class GameMap {
 	 * @throws MapExceptionDirectionNotSupported
 	 * @throws CheckedHibernateException
 	 */
-	public void destroyExit(BaseRoom room, Directions.DIRECTION direction)
+	public void destroyExit(BaseRoom room, Direction.DIRECTION direction)
 			throws MapExceptionRoomNull, MapExceptionOutOfBounds, MapExceptionExitRoomNull,
 			MapExceptionDirectionNotSupported, CheckedHibernateException {
 		if (room == null) {
@@ -390,7 +390,7 @@ public class GameMap {
 		if (otherRoom == null) {
 			throw new MapExceptionExitRoomNull("GameMap: Tried to remove exit to a null room.");
 		}
-		BaseRoomExit otherRoomExit = otherRoom.getExit(Directions.oppositeDirection(direction));
+		BaseRoomExit otherRoomExit = otherRoom.getExit(Direction.oppositeDirection(direction));
 
 		if ((roomExit != null) && (otherRoomExit != null)) {
 			if (roomExit.getId() == otherRoomExit.getId()) {
@@ -409,7 +409,7 @@ public class GameMap {
 		}
 		room.setExit(direction, null);
 		BaseRoom.saveRoom(room);
-		otherRoom.setExit(Directions.oppositeDirection(direction), null);
+		otherRoom.setExit(Direction.oppositeDirection(direction), null);
 		BaseRoom.saveRoom(otherRoom);
 	}
 
@@ -516,17 +516,17 @@ public class GameMap {
 						String se = " ";
 
 						try {
-							if (foundRoom.getExit(Directions.DIRECTION.NORTHWEST) != null) {
+							if (foundRoom.getExit(Direction.DIRECTION.NORTHWEST) != null) {
 								nw = "\\";
 							}
 
-							if (foundRoom.getExit(Directions.DIRECTION.NORTH) != null) {
+							if (foundRoom.getExit(Direction.DIRECTION.NORTH) != null) {
 								n = "|";
 							}
-							if (foundRoom.getExit(Directions.DIRECTION.NORTHEAST) != null) {
+							if (foundRoom.getExit(Direction.DIRECTION.NORTHEAST) != null) {
 								ne = "/";
 							}
-							if (foundRoom.getExit(Directions.DIRECTION.WEST) != null) {
+							if (foundRoom.getExit(Direction.DIRECTION.WEST) != null) {
 								w = "-";
 							}
 							if (foundRoom == baseRoom) {
@@ -534,16 +534,16 @@ public class GameMap {
 							} else if (!foundRoom.getPCs().isEmpty()) {
 								center = "o";
 							}
-							if (foundRoom.getExit(Directions.DIRECTION.EAST) != null) {
+							if (foundRoom.getExit(Direction.DIRECTION.EAST) != null) {
 								e = "-";
 							}
-							if (foundRoom.getExit(Directions.DIRECTION.SOUTHWEST) != null) {
+							if (foundRoom.getExit(Direction.DIRECTION.SOUTHWEST) != null) {
 								sw = "/";
 							}
-							if (foundRoom.getExit(Directions.DIRECTION.SOUTH) != null) {
+							if (foundRoom.getExit(Direction.DIRECTION.SOUTH) != null) {
 								s = "|";
 							}
-							if (foundRoom.getExit(Directions.DIRECTION.SOUTHEAST) != null) {
+							if (foundRoom.getExit(Direction.DIRECTION.SOUTHEAST) != null) {
 								se = "\\";
 							}
 						} catch (MapExceptionDirectionNotSupported e2) {
@@ -592,7 +592,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Returns x coordinate that occupies the given {@link Directions.DIRECTION}
+	 * Returns x coordinate that occupies the given {@link Direction.DIRECTION}
 	 * from the supplied coordinate.
 	 *
 	 * @param x
@@ -600,7 +600,7 @@ public class GameMap {
 	 * @return
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public static int xAdjustDirection(int x, Directions.DIRECTION direction) throws MapExceptionDirectionNotSupported {
+	public static int xAdjustDirection(int x, Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTHWEST: {
 			return (x - 1);
@@ -636,7 +636,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Returns y coordinate that occupies the given {@link Directions.DIRECTION}
+	 * Returns y coordinate that occupies the given {@link Direction.DIRECTION}
 	 * from the supplied coordinate.
 	 *
 	 * @param y
@@ -644,7 +644,7 @@ public class GameMap {
 	 * @return
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public static int yAdjustDirection(int y, Directions.DIRECTION direction) throws MapExceptionDirectionNotSupported {
+	public static int yAdjustDirection(int y, Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTHWEST: {
 			return (y + 1);

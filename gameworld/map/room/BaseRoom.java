@@ -25,8 +25,8 @@ import fireengine.character.BaseCharacter;
 import fireengine.character.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.GameMap;
-import fireengine.gameworld.map.Directions;
-import fireengine.gameworld.map.Directions.DIRECTION;
+import fireengine.gameworld.map.Direction;
+import fireengine.gameworld.map.Direction.DIRECTION;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
@@ -298,13 +298,13 @@ public class BaseRoom {
 
 	/**
 	 * Returns {@link BaseRoomExit} of {@link BaseRoom} for given
-	 * {@link Directions.DIRECTION}.
+	 * {@link Direction.DIRECTION}.
 	 *
 	 * @param direction
 	 * @return
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public BaseRoomExit getExit(Directions.DIRECTION direction) throws MapExceptionDirectionNotSupported {
+	public BaseRoomExit getExit(Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTH: {
 			return northExit;
@@ -339,13 +339,13 @@ public class BaseRoom {
 
 	/**
 	 * Assigns {@link BaseRoomExit} to {@link BaseRoom}, of given
-	 * {@link Directions.DIRECTION}.
+	 * {@link Direction.DIRECTION}.
 	 *
 	 * @param direction
 	 * @param newExit
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void setExit(Directions.DIRECTION direction, BaseRoomExit newExit) throws MapExceptionDirectionNotSupported {
+	public void setExit(Direction.DIRECTION direction, BaseRoomExit newExit) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTH: {
 			this.northExit = newExit;
@@ -380,7 +380,7 @@ public class BaseRoom {
 
 	/**
 	 * Returns true if {@link BaseRoom} contains {@link BaseRoomExit} for any
-	 * {@link Directions.DIRECTION}. Mainly used to test if room is safe for
+	 * {@link Direction.DIRECTION}. Mainly used to test if room is safe for
 	 * deletion, having had all exits removed.
 	 *
 	 * @return

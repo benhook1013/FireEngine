@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import fireengine.character.BaseCharacter;
 import fireengine.character.command.character_comand.CharacterCommand;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.Directions;
+import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
@@ -45,7 +45,7 @@ public class DestroyExit extends CharacterCommand {
 			return;
 		}
 
-		Directions.DIRECTION direction = Directions.parseDirection(directionText);
+		Direction.DIRECTION direction = Direction.parseDirection(directionText);
 
 		if (direction != null) {
 			try {

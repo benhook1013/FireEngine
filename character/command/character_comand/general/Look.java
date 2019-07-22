@@ -7,7 +7,7 @@ import fireengine.character.BaseCharacter;
 import fireengine.character.command.character_comand.CharacterCommand;
 import fireengine.character.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.Directions;
+import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exit.BaseRoomExit;
@@ -33,7 +33,7 @@ import fireengine.util.StringUtils;
 
 public class Look extends CharacterCommand {
 	private String directionText;
-	Directions.DIRECTION direction;
+	Direction.DIRECTION direction;
 
 	public Look() {
 		super();
@@ -44,7 +44,7 @@ public class Look extends CharacterCommand {
 		this.directionText = directionText;
 	}
 
-	public Look(Directions.DIRECTION direction) {
+	public Look(Direction.DIRECTION direction) {
 		this();
 		this.direction = direction;
 	}
@@ -63,10 +63,10 @@ public class Look extends CharacterCommand {
 			output.newLine();
 		}
 
-		Directions.DIRECTION direction = null;
+		Direction.DIRECTION direction = null;
 		if (this.direction == null) {
 			if (directionText != null) {
-				direction = Directions.parseDirection(directionText);
+				direction = Direction.parseDirection(directionText);
 			}
 
 			if (directionText != null) {
