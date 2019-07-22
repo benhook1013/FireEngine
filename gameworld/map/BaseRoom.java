@@ -13,12 +13,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.query.Query;
+
 
 import fireengine.character.BaseCharacter;
 import fireengine.character.player.PlayerCharacter;
@@ -64,17 +66,28 @@ public class BaseRoom {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "B_ROOM_ID")
+	@Column(name = "B_ROOM_ID", nullable = false)
+	@NotNull
 	private int roomId;
-	@Column(name = "B_ROOM_MAP_ID")
+	
+	@Column(name = "B_ROOM_MAP_ID", nullable = false)
+	@NotNull
 	private int mapId;
-	@Column(name = "B_ROOM_X")
+	
+	@Column(name = "B_ROOM_X", nullable = false)
+	@NotNull
 	private int x;
-	@Column(name = "B_ROOM_Y")
+	
+	@Column(name = "B_ROOM_Y", nullable = false)
+	@NotNull
 	private int y;
+	
 	@Column(name = "B_ROOM_NAME")
+	@NotNull
 	private String name;
+	
 	@Column(name = "B_ROOM_DESC")
+	@NotNull
 	private String desc;
 
 	@OneToOne(fetch = FetchType.EAGER)
