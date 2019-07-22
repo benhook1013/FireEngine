@@ -7,7 +7,7 @@ import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
-import fireengine.gameworld.map.room.BaseRoom;
+import fireengine.gameworld.map.room.Room;
 import fireengine.util.CheckedHibernateException;
 
 /*
@@ -29,13 +29,13 @@ import fireengine.util.CheckedHibernateException;
 
 /**
  * Represents a column in a map, contained by {@link GameMap}, and contains
- * {@link BaseRoom}s.
+ * {@link Room}s.
  *
  * @author Ben Hook
  */
 public class MapColumn {
 	private String name;
-	private List<BaseRoom> roomList;
+	private List<Room> roomList;
 
 	/**
 	 * Initialises the array of rooms.
@@ -76,30 +76,30 @@ public class MapColumn {
 	/**
 	 * TODO Consider if this is needed.
 	 *
-	 * Returns list of {@link BaseRoom}s for the {@link MapColumn}.
+	 * Returns list of {@link Room}s for the {@link MapColumn}.
 	 *
 	 * @return
 	 */
-	protected List<BaseRoom> getRooms() {
+	protected List<Room> getRooms() {
 		return roomList;
 	}
 
 	/**
-	 * Returns the {@link BaseRoom} (or null) at the specified y coordinate,
+	 * Returns the {@link Room} (or null) at the specified y coordinate,
 	 * throwing an exception if coordinate is out of bounds.
 	 *
 	 * @param y
 	 * @return
 	 * @throws MapExceptionOutOfBounds
 	 */
-	protected BaseRoom getRoom(int y) throws MapExceptionOutOfBounds {
+	protected Room getRoom(int y) throws MapExceptionOutOfBounds {
 		GameMap.checkRoomCoordinate(y);
 		y = yAdjust(y);
 		return roomList.get(y);
 	}
 
 	/**
-	 * Inserts the given {@link BaseRoom} into the room list at the specified y
+	 * Inserts the given {@link Room} into the room list at the specified y
 	 * coordinate, throwing exception on out of bounds or if room already in that
 	 * coordinate.
 	 *
@@ -108,12 +108,12 @@ public class MapColumn {
 	 * @throws MapExceptionOutOfBounds
 	 * @throws MapExceptionRoomExists
 	 */
-	protected void setRoom(int y, BaseRoom room) throws MapExceptionOutOfBounds, MapExceptionRoomExists {
+	protected void setRoom(int y, Room room) throws MapExceptionOutOfBounds, MapExceptionRoomExists {
 		synchronized (roomList) {
 			GameMap.checkRoomCoordinate(y);
 			y = yAdjust(y);
 
-			BaseRoom foundRoom = roomList.get(y);
+			Room foundRoom = roomList.get(y);
 
 			if (foundRoom != null) {
 				throw new MapExceptionRoomExists("MapColumn: setRoom found room already at designated coordinates.");
@@ -124,7 +124,7 @@ public class MapColumn {
 	}
 
 	/**
-	 * Attempts to remove {@link BaseRoom} at given y coordinate from room list and
+	 * Attempts to remove {@link Room} at given y coordinate from room list and
 	 * also deletes room from database. Throws exception if coordinate is out of
 	 * bounds, room at coordinate is null, the room still has exits, or upon
 	 * Hibernate problem.
@@ -140,10 +140,10 @@ public class MapColumn {
 		synchronized (roomList) {
 			GameMap.checkRoomCoordinate(y);
 			y = yAdjust(y);
-			BaseRoom foundRoom = roomList.get(y);
+			Room foundRoom = roomList.get(y);
 
 			if (foundRoom != null) {
-				BaseRoom.deleteRoom(foundRoom);
+				Room.deleteRoom(foundRoom);
 				roomList.set(y, null);
 			} else {
 				throw new MapExceptionRoomNull("MapColumn: Tried to deleteRoom on a null room");

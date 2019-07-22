@@ -12,7 +12,7 @@ import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitNull;
 import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
-import fireengine.gameworld.map.room.BaseRoom;
+import fireengine.gameworld.map.room.Room;
 import fireengine.util.MyLogger;
 import fireengine.util.StringUtils;
 
@@ -47,11 +47,11 @@ public class Move extends CharacterCommand {
 
 		if (direction != null) {
 			try {
-				BaseRoom oldRoom = character.getRoom();
+				Room oldRoom = character.getRoom();
 				if (oldRoom.getExit(direction) == null) {
 					throw new MapExceptionExitNull("BaseCharacter: Cannot move in specified direction, exit is null.");
 				}
-				BaseRoom newRoom = character.getMap().getRoom(character.getRoom(), direction);
+				Room newRoom = character.getMap().getRoom(character.getRoom(), direction);
 				if (newRoom == null) {
 					throw new MapExceptionExitRoomNull("BaseCharacter: Somehow room to the " + direction + " of "
 							+ character.getRoom().getRoomName() + " had exit leading to it but room is null.");

@@ -9,7 +9,7 @@ import fireengine.character.player.exception.PCExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
 import fireengine.gameworld.map.GameMap;
-import fireengine.gameworld.map.room.BaseRoom;
+import fireengine.gameworld.map.room.Room;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -51,9 +51,9 @@ public abstract class BaseCharacter {
 
 	public abstract void setCondition(PCCondition condition);
 
-	public abstract BaseRoom getRoom();
+	public abstract Room getRoom();
 
-	public abstract void setRoom(BaseRoom room) throws PCExceptionNullRoom;
+	public abstract void setRoom(Room room) throws PCExceptionNullRoom;
 
 	public abstract void acceptInput(String text);
 
@@ -74,7 +74,7 @@ public abstract class BaseCharacter {
 	public abstract int getMaxMana();
 
 	public GameMap getMap() {
-		BaseRoom room = getRoom();
+		Room room = getRoom();
 
 		if (room != null) {
 			return Gameworld.findMap(room.getMapId());

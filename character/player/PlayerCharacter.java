@@ -35,7 +35,7 @@ import fireengine.character.player.state.parser.InputParserInWorld;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
-import fireengine.gameworld.map.room.BaseRoom;
+import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
 import fireengine.session.Session;
 import fireengine.util.CheckedHibernateException;
@@ -95,7 +95,7 @@ public class PlayerCharacter extends BaseCharacter {
 	private Session session;
 	// TODO Load room on character load.
 	@Transient
-	private volatile BaseRoom room;
+	private volatile Room room;
 
 	// TODO Periodic check for attached session, if not, protect or remove PC.
 
@@ -178,12 +178,12 @@ public class PlayerCharacter extends BaseCharacter {
 	}
 
 	@Override
-	public BaseRoom getRoom() {
+	public Room getRoom() {
 		return room;
 	}
 
 	@Override
-	public void setRoom(BaseRoom room) throws PCExceptionNullRoom {
+	public void setRoom(Room room) throws PCExceptionNullRoom {
 		if (room == null) {
 			throw new PCExceptionNullRoom("PlayerCharacter: Player tried to be sent to null room.");
 		}
@@ -225,7 +225,7 @@ public class PlayerCharacter extends BaseCharacter {
 			sendToListeners(message);
 			MyLogger.log(Level.WARNING, "PlayerCharacter: PCExceptionNullRoom error when trying to acceptInput.", e);
 
-			BaseRoom sendRoom = null;
+			Room sendRoom = null;
 			try {
 				sendRoom = Gameworld.findMap(1).getRoom(1, 1);
 			} catch (MapExceptionOutOfBounds e1) {
@@ -276,11 +276,11 @@ public class PlayerCharacter extends BaseCharacter {
 
 	/**
 	 * Used to connect a {@link Session} to the {@link PlayerCharacter}, and
-	 * entering the {@link BaseRoom} specified.
+	 * entering the {@link Room} specified.
 	 *
 	 * @throws PCExceptionNullRoom
 	 */
-	public void connect(Session sess, BaseRoom room) throws PCExceptionNullRoom {
+	public void connect(Session sess, Room room) throws PCExceptionNullRoom {
 		if (this.session != null) {
 			this.session.send(
 					new ClientConnectionOutput("Disconnecting; another session has connected to this character."));
@@ -311,7 +311,7 @@ public class PlayerCharacter extends BaseCharacter {
 	 */
 	public void disconnect() {
 		setSession(null);
-		BaseRoom room = getRoom();
+		Room room = getRoom();
 		if (room != null) {
 			room.sendToRoom(new ClientConnectionOutput(getName() + " slows down and appears frozen."));
 		}

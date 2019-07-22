@@ -24,8 +24,8 @@ import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
-import fireengine.gameworld.map.exit.BaseRoomExit;
-import fireengine.gameworld.map.room.BaseRoom;
+import fireengine.gameworld.map.exit.RoomExit;
+import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
 import fireengine.util.MyLogger;
@@ -48,7 +48,7 @@ import fireengine.util.MyLogger;
  */
 
 /**
- * Contains indirectly all {@link BaseRoom}s, within {@link MapColumn}s.
+ * Contains indirectly all {@link Room}s, within {@link MapColumn}s.
  * Contains functions to do with the map, including generating {@link Map}
  * command display.
  *
@@ -127,7 +127,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Returns the {@link BaseRoom} (or null) at specified coordinates, throwing an
+	 * Returns the {@link Room} (or null) at specified coordinates, throwing an
 	 * exception if coordinates are out of bounds.
 	 *
 	 * @param x x coordinate of room to find
@@ -135,7 +135,7 @@ public class GameMap {
 	 * @return
 	 * @throws MapExceptionOutOfBounds
 	 */
-	public BaseRoom getRoom(int x, int y) throws MapExceptionOutOfBounds {
+	public Room getRoom(int x, int y) throws MapExceptionOutOfBounds {
 		MapColumn column = getColumn(x);
 		if (column == null) {
 			MyLogger.log(Level.WARNING, "GameMap: No MapColumn found for getRoom with x: '" + x + "'.");
@@ -146,7 +146,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Attempts to get room in the direction off of the given {@link BaseRoom}.
+	 * Attempts to get room in the direction off of the given {@link Room}.
 	 * Exception occurs if the resulting coordinate would be out of bounds, or given
 	 * direction is not yet supported by used functions.
 	 *
@@ -156,7 +156,7 @@ public class GameMap {
 	 * @throws MapExceptionOutOfBounds
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public BaseRoom getRoom(BaseRoom room, Direction.DIRECTION direction)
+	public Room getRoom(Room room, Direction.DIRECTION direction)
 			throws MapExceptionOutOfBounds, MapExceptionDirectionNotSupported {
 		int otherX = xAdjustDirection(room.getX(), direction);
 		int othery = yAdjustDirection(room.getY(), direction);
@@ -164,7 +164,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Inserts the given {@link BaseRoom} into the room list at the specified
+	 * Inserts the given {@link Room} into the room list at the specified
 	 * coordinates, throwing exception on out of bounds or if room already in that
 	 * coordinate.
 	 *
@@ -174,7 +174,7 @@ public class GameMap {
 	 * @throws MapExceptionOutOfBounds
 	 * @throws MapExceptionRoomExists
 	 */
-	public void setRoom(int x, int y, BaseRoom room) throws MapExceptionOutOfBounds, MapExceptionRoomExists {
+	public void setRoom(int x, int y, Room room) throws MapExceptionOutOfBounds, MapExceptionRoomExists {
 		synchronized (columnList) {
 			MapColumn column = getColumn(x);
 
@@ -193,7 +193,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Attempts to create a {@link BaseRoom} at the specified coordinates.
+	 * Attempts to create a {@link Room} at the specified coordinates.
 	 *
 	 * @param x
 	 * @param y
@@ -208,24 +208,24 @@ public class GameMap {
 			checkRoomCoordinate(x);
 			checkRoomCoordinate(y);
 
-			BaseRoom foundRoom = getRoom(x, y);
+			Room foundRoom = getRoom(x, y);
 			if (foundRoom != null) {
 				throw new MapExceptionRoomExists("GameMap: createRoom found room already at designated coordinates.");
 			}
 
-			BaseRoom newRoom;
+			Room newRoom;
 			try {
-				newRoom = BaseRoom.createRoom(id, x, y);
+				newRoom = Room.createRoom(id, x, y);
 			} catch (MapExceptionRoomNull e) {
 				MyLogger.log(Level.SEVERE,
-						"GameMap: Weird error, MapExceptionRoomNull while trying to BaseRoom.createRoom.", e);
+						"GameMap: Weird error, MapExceptionRoomNull while trying to Room.createRoom.", e);
 				return;
 			}
 			try {
 				setRoom(x, y, newRoom);
 			} catch (MapExceptionRoomExists e) {
 				try {
-					BaseRoom.deleteRoom(newRoom);
+					Room.deleteRoom(newRoom);
 				} catch (MapExceptionRoomNull e2) {
 					MyLogger.log(Level.SEVERE, "GameMap: Weird error, MapExceptionRoomNull while trying to setRoom.",
 							e2);
@@ -247,23 +247,23 @@ public class GameMap {
 	}
 
 	/**
-	 * Attempts to create a {@link BaseRoom} in the specified direction, off of the
+	 * Attempts to create a {@link Room} in the specified direction, off of the
 	 * given room.
 	 *
-	 * @param baseRoom
+	 * @param room
 	 * @param direction
 	 * @throws MapExceptionOutOfBounds
 	 * @throws MapExceptionRoomExists
 	 * @throws CheckedHibernateException
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void createRoom(BaseRoom baseRoom, Direction.DIRECTION direction) throws MapExceptionOutOfBounds,
+	public void createRoom(Room room, Direction.DIRECTION direction) throws MapExceptionOutOfBounds,
 			MapExceptionRoomExists, CheckedHibernateException, MapExceptionDirectionNotSupported {
-		createRoom(xAdjustDirection(baseRoom.getX(), direction), yAdjustDirection(baseRoom.getY(), direction));
+		createRoom(xAdjustDirection(room.getX(), direction), yAdjustDirection(room.getY(), direction));
 	}
 
 	/**
-	 * Attempts to remove all {@link BaseRoomExit} of {@link BaseRoom}, remove room
+	 * Attempts to remove all {@link RoomExit} of {@link Room}, remove room
 	 * from {@link GameMap} and delete room from database.
 	 *
 	 * @param x
@@ -278,7 +278,7 @@ public class GameMap {
 			MapColumn column = getColumn(x);
 
 			if (column != null) {
-				BaseRoom room = column.getRoom(y);
+				Room room = column.getRoom(y);
 
 				for (Direction.DIRECTION direction : Direction.DIRECTION.values()) {
 					try {
@@ -309,25 +309,25 @@ public class GameMap {
 	}
 
 	/**
-	 * Attempts to destroy the {@link BaseRoom} in the specified direction, off of
+	 * Attempts to destroy the {@link Room} in the specified direction, off of
 	 * the given room.
 	 *
-	 * @param baseRoom
+	 * @param room
 	 * @param direction
 	 * @throws MapExceptionOutOfBounds
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void destroyRoom(BaseRoom baseRoom, Direction.DIRECTION direction) throws MapExceptionOutOfBounds,
+	public void destroyRoom(Room room, Direction.DIRECTION direction) throws MapExceptionOutOfBounds,
 			MapExceptionRoomNull, CheckedHibernateException, MapExceptionDirectionNotSupported {
-		System.out.println("Destroying (" + xAdjustDirection(baseRoom.getX(), direction) + ","
-				+ yAdjustDirection(baseRoom.getY(), direction) + ").");
-		destroyRoom(xAdjustDirection(baseRoom.getX(), direction), yAdjustDirection(baseRoom.getY(), direction));
+		System.out.println("Destroying (" + xAdjustDirection(room.getX(), direction) + ","
+				+ yAdjustDirection(room.getY(), direction) + ").");
+		destroyRoom(xAdjustDirection(room.getX(), direction), yAdjustDirection(room.getY(), direction));
 	}
 
 	/**
-	 * Creates an {@link BaseRoomExit} in direction specified, from {@link BaseRoom}
+	 * Creates an {@link RoomExit} in direction specified, from {@link Room}
 	 * supplied.
 	 *
 	 * @param room
@@ -339,7 +339,7 @@ public class GameMap {
 	 * @throws MapExceptionDirectionNotSupported
 	 * @throws CheckedHibernateException
 	 */
-	public void createExit(BaseRoom room, Direction.DIRECTION direction)
+	public void createExit(Room room, Direction.DIRECTION direction)
 			throws MapExceptionRoomNull, MapExceptionOutOfBounds, MapExceptionExitRoomNull, MapExceptionExitExists,
 			MapExceptionDirectionNotSupported, CheckedHibernateException {
 		if (room == null) {
@@ -347,28 +347,28 @@ public class GameMap {
 		}
 		if (room.getExit(direction) != null) {
 			throw new MapExceptionExitExists(
-					"GameMap: Exit is not null " + direction.toString() + " of " + room.getRoomName() + ".");
+					"GameMap: RoomExit is not null " + direction.toString() + " of " + room.getRoomName() + ".");
 		}
 
-		BaseRoom otherRoom = getRoom(room, direction);
+		Room otherRoom = getRoom(room, direction);
 		if (otherRoom == null) {
 			throw new MapExceptionExitRoomNull("GameMap: Tried to set exit on null adjacent room.");
 		}
 		if (room.getExit(Direction.oppositeDirection(direction)) != null) {
-			throw new MapExceptionExitExists("GameMap: Exit is not null "
+			throw new MapExceptionExitExists("GameMap: RoomExit is not null "
 					+ Direction.oppositeDirection(direction).toString() + " of " + otherRoom.getRoomName());
 		}
 
-		BaseRoomExit newExit = new BaseRoomExit();
+		RoomExit newExit = new RoomExit();
 		room.setExit(direction, newExit);
-		BaseRoom.saveRoom(room);
+		Room.saveRoom(room);
 		otherRoom.setExit(Direction.oppositeDirection(direction), newExit);
-		BaseRoom.saveRoom(otherRoom);
+		Room.saveRoom(otherRoom);
 	}
 
 	/**
-	 * Removes {@link BaseRoomExit} in specified {@link Direction.DIRECTION}, from
-	 * {@link BaseRoom} given.
+	 * Removes {@link RoomExit} in specified {@link Direction.DIRECTION}, from
+	 * {@link Room} given.
 	 *
 	 * @param room
 	 * @param direction
@@ -378,39 +378,39 @@ public class GameMap {
 	 * @throws MapExceptionDirectionNotSupported
 	 * @throws CheckedHibernateException
 	 */
-	public void destroyExit(BaseRoom room, Direction.DIRECTION direction)
+	public void destroyExit(Room room, Direction.DIRECTION direction)
 			throws MapExceptionRoomNull, MapExceptionOutOfBounds, MapExceptionExitRoomNull,
 			MapExceptionDirectionNotSupported, CheckedHibernateException {
 		if (room == null) {
 			throw new MapExceptionRoomNull("GameMap: Tried to remove exit on null room.");
 		}
-		BaseRoomExit roomExit = room.getExit(direction);
+		RoomExit roomExit = room.getExit(direction);
 
-		BaseRoom otherRoom = getRoom(room, direction);
+		Room otherRoom = getRoom(room, direction);
 		if (otherRoom == null) {
 			throw new MapExceptionExitRoomNull("GameMap: Tried to remove exit to a null room.");
 		}
-		BaseRoomExit otherRoomExit = otherRoom.getExit(Direction.oppositeDirection(direction));
+		RoomExit otherRoomExit = otherRoom.getExit(Direction.oppositeDirection(direction));
 
 		if ((roomExit != null) && (otherRoomExit != null)) {
 			if (roomExit.getId() == otherRoomExit.getId()) {
-				BaseRoom.deleteExit(roomExit);
+				Room.deleteExit(roomExit);
 			} else {
-				BaseRoom.deleteExit(roomExit);
-				BaseRoom.deleteExit(otherRoomExit);
+				Room.deleteExit(roomExit);
+				Room.deleteExit(otherRoomExit);
 			}
 		} else {
 			if (roomExit != null) {
-				BaseRoom.deleteExit(roomExit);
+				Room.deleteExit(roomExit);
 			}
 			if (otherRoomExit != null) {
-				BaseRoom.deleteExit(otherRoomExit);
+				Room.deleteExit(otherRoomExit);
 			}
 		}
 		room.setExit(direction, null);
-		BaseRoom.saveRoom(room);
+		Room.saveRoom(room);
 		otherRoom.setExit(Direction.oppositeDirection(direction), null);
-		BaseRoom.saveRoom(otherRoom);
+		Room.saveRoom(otherRoom);
 	}
 
 	/**
@@ -458,22 +458,22 @@ public class GameMap {
 
 	/**
 	 * Generates an output object with a visual display of the {@link GameMap}
-	 * surrounding the given {@link BaseRoom}.
+	 * surrounding the given {@link Room}.
 	 *
 	 * @param output   Existing output object to append to, if any
-	 * @param baseRoom Room around which to display map
+	 * @param room Room around which to display map
 	 * @param size     Number of rooms in each direction to display
 	 * @return
 	 */
-	public static ClientConnectionOutput displayMap(ClientConnectionOutput output, BaseRoom baseRoom, int size) {
-		GameMap gameMap = Gameworld.findMap(baseRoom.getMapId());
+	public static ClientConnectionOutput displayMap(ClientConnectionOutput output, Room room, int size) {
+		GameMap gameMap = Gameworld.findMap(room.getMapId());
 
 		if (output == null) {
 			output = new ClientConnectionOutput();
 		}
 
 		output.newLine();
-		output.addPart("Map around \"" + baseRoom.getRoomName() + "\" " + baseRoom.getCoordsText(), null, null);
+		output.addPart("Map around \"" + room.getRoomName() + "\" " + room.getCoordsText(), null, null);
 
 		class Line_Builder {
 			// public String getBorder(int size) {
@@ -493,7 +493,7 @@ public class GameMap {
 				String lineBot = "";
 
 				for (int i = lineX; i < (lineX + lineSize); i++) {
-					BaseRoom foundRoom;
+					Room foundRoom;
 					try {
 						foundRoom = gameMap.getRoom(i, lineY);
 					} catch (MapExceptionOutOfBounds e) {
@@ -529,7 +529,7 @@ public class GameMap {
 							if (foundRoom.getExit(Direction.DIRECTION.WEST) != null) {
 								w = "-";
 							}
-							if (foundRoom == baseRoom) {
+							if (foundRoom == room) {
 								center = "x";
 							} else if (!foundRoom.getPCs().isEmpty()) {
 								center = "o";
@@ -570,8 +570,8 @@ public class GameMap {
 		;
 		Line_Builder lineBuilder = new Line_Builder();
 
-		for (int i = (baseRoom.getY() + size); i > (baseRoom.getY() - size - 1); i--) {
-			output = lineBuilder.buildLines(output, (baseRoom.getX() - size), i, ((size * 2) + 1));
+		for (int i = (room.getY() + size); i > (room.getY() - size - 1); i--) {
+			output = lineBuilder.buildLines(output, (room.getX() - size), i, ((size * 2) + 1));
 		}
 		output.newLine();
 		output.addPart(size + "x" + size + " map", null, null);

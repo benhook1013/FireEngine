@@ -10,8 +10,8 @@ import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
-import fireengine.gameworld.map.exit.BaseRoomExit;
-import fireengine.gameworld.map.room.BaseRoom;
+import fireengine.gameworld.map.exit.RoomExit;
+import fireengine.gameworld.map.room.Room;
 import fireengine.util.StringUtils;
 
 /*
@@ -79,12 +79,12 @@ public class Look extends CharacterCommand {
 			direction = this.direction;
 		}
 
-		BaseRoom lookRoom = character.getRoom();
+		Room lookRoom = character.getRoom();
 		if (direction != null) {
 			try {
-				BaseRoomExit exit = lookRoom.getExit(direction);
-				if (exit != null) {
-					if (exit.isOpen()) {
+				RoomExit roomExit = lookRoom.getExit(direction);
+				if (roomExit != null) {
+					if (roomExit.isOpen()) {
 						lookRoom = character.getMap().getRoom(lookRoom, direction);
 						output.addPart("You look " + StringUtils.capitalise(direction.toString()) + ".", null, null);
 						output.newLine();

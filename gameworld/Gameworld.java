@@ -13,7 +13,7 @@ import fireengine.gameworld.map.exception.MapExceptionMapLoad;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomLoad;
-import fireengine.gameworld.map.room.BaseRoom;
+import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
 import fireengine.util.MyLogger;
@@ -116,7 +116,7 @@ public class Gameworld {
 	}
 
 	/**
-	 * Attempts to load all {@link BaseRoom}s from the database, give supplied map
+	 * Attempts to load all {@link Room}s from the database, give supplied map
 	 * id.
 	 *
 	 * @param mapId int id of map to load
@@ -137,11 +137,11 @@ public class Gameworld {
 		try {
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("FROM BaseRoom WHERE mapId = :mapId");
+			Query<?> query = hibSess.createQuery("FROM Room WHERE mapId = :mapId");
 			query.setParameter("mapId", mapId);
 
 			@SuppressWarnings("unchecked")
-			List<BaseRoom> roomsFound = (List<BaseRoom>) query.list();
+			List<Room> roomsFound = (List<Room>) query.list();
 			tx.commit();
 
 			if (roomsFound.isEmpty()) {
@@ -150,7 +150,7 @@ public class Gameworld {
 			} else {
 				System.out.println(roomsFound.size() + " ROOMS FOUND");
 
-				for (BaseRoom foundRoom : roomsFound) {
+				for (Room foundRoom : roomsFound) {
 					try {
 						gameMap.setRoom(foundRoom.getX(), foundRoom.getY(), foundRoom);
 					} catch (MapExceptionOutOfBounds e) {

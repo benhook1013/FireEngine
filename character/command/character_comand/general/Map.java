@@ -3,7 +3,7 @@ package fireengine.character.command.character_comand.general;
 import fireengine.character.BaseCharacter;
 import fireengine.character.command.character_comand.CharacterCommand;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.room.BaseRoom;
+import fireengine.gameworld.map.room.Room;
 
 /*
  *    Copyright 2017 Ben Hook
@@ -40,7 +40,7 @@ public class Map extends CharacterCommand {
 		ClientConnectionOutput output = new ClientConnectionOutput(4);
 		output.addPart("You look around and see...", null, null);
 
-		BaseRoom room = character.getRoom();
+		Room room = character.getRoom();
 		try {
 			output = fireengine.gameworld.map.GameMap.displayMap(output, room, size);
 		} catch (Exception e) {

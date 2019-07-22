@@ -30,14 +30,14 @@ import fireengine.gameworld.map.Direction.DIRECTION;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
-import fireengine.gameworld.map.exit.BaseRoomExit;
+import fireengine.gameworld.map.exit.RoomExit;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
 import fireengine.util.MyLogger;
 
 /*
  *    Copyright 2017 Ben Hook
- *    BaseRoom.java
+ *    Room.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -59,12 +59,12 @@ import fireengine.util.MyLogger;
  */
 @Entity
 @Table(name = "BASE_ROOM")
-public class BaseRoom {
-	/**
-	 * TODO Might not need, only used to in saveRooms. NOT CURRENTLY USED.
-	 */
-	@Transient
-	private static ArrayList<BaseRoom> roomList = new ArrayList<>();
+public class Room {
+//	/**
+//	 * TODO Might not need, only used to in saveRooms. NOT CURRENTLY USED. TODO Remove
+//	 */
+//	@Transient
+//	private static ArrayList<Room> roomList = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -95,44 +95,44 @@ public class BaseRoom {
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_N")
-	private BaseRoomExit northExit;
+	private RoomExit northExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_NE")
-	private BaseRoomExit northEastExit;
+	private RoomExit northEastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_E")
-	private BaseRoomExit eastExit;
+	private RoomExit eastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_SE")
-	private BaseRoomExit southEastExit;
+	private RoomExit southEastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_S")
-	private BaseRoomExit southExit;
+	private RoomExit southExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_SW")
-	private BaseRoomExit southWestExit;
+	private RoomExit southWestExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_W")
-	private BaseRoomExit westExit;
+	private RoomExit westExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "B_ROOM_EXIT_NW")
-	private BaseRoomExit northWestExit;
+	private RoomExit northWestExit;
 
 	@Transient
 	private ArrayList<PlayerCharacter> playerList;
 
-	private BaseRoom() {
+	private Room() {
 		playerList = new ArrayList<>();
 	}
 
-	public BaseRoom(int mapId, int x, int y) {
+	public Room(int mapId, int x, int y) {
 		this();
 		this.mapId = mapId;
 		this.x = x;
@@ -203,7 +203,7 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Adds a {@link BaseCharacter} to the {@link BaseRoom}'s player list (typically
+	 * Adds a {@link BaseCharacter} to the {@link Room}'s player list (typically
 	 * on room enter), so far only used to add {@link PlayerCharacter}s. Always use
 	 * AFTER setting room on Character, as this will check to make sure both
 	 * match(check will result in hidden-to-player error).
@@ -212,7 +212,7 @@ public class BaseRoom {
 	 */
 	public void addCharacter(BaseCharacter player) {
 		if (player.getRoom() != this) {
-			MyLogger.log(Level.WARNING, "BaseRoom: addCharacter onto room that is not BaseCharacter's current room.");
+			MyLogger.log(Level.WARNING, "Room: addCharacter onto room that is not BaseCharacter's current room.");
 		}
 
 		if (player instanceof PlayerCharacter) {
@@ -222,7 +222,7 @@ public class BaseRoom {
 				}
 			}
 		} else {
-			MyLogger.log(Level.WARNING, "BaseRoom: addCharacter on BaseCharacter type that is not a player.");
+			MyLogger.log(Level.WARNING, "Room: addCharacter on BaseCharacter type that is not a player.");
 		}
 	}
 
@@ -237,7 +237,7 @@ public class BaseRoom {
 	public void removeCharacter(BaseCharacter player) {
 		if (player.getRoom() == this) {
 			MyLogger.log(Level.WARNING,
-					"BaseRoom: removeCharacter from room that is still BaseCharacter's current room.");
+					"Room: removeCharacter from room that is still BaseCharacter's current room.");
 		}
 
 		if (player instanceof PlayerCharacter) {
@@ -257,7 +257,7 @@ public class BaseRoom {
 			for (PlayerCharacter pc : playerList) {
 				if (pc.getRoom() != this) {
 					MyLogger.log(Level.WARNING,
-							"BaseRoom: PlayerCharacter found in playerList of room, that is not current room of PlayerCharacter. PlayerCharacter id: "
+							"Room: PlayerCharacter found in playerList of room, that is not current room of PlayerCharacter. PlayerCharacter id: "
 									+ pc.getId());
 				}
 			}
@@ -269,7 +269,7 @@ public class BaseRoom {
 	/**
 	 * Sends to listeners of room, without any exclusion.
 	 *
-	 * @see BaseRoom#sendToRoomExcluding(ClientConnectionOutput, PlayerCharacter)
+	 * @see Room#sendToRoomExcluding(ClientConnectionOutput, PlayerCharacter)
 	 *
 	 * @param output
 	 */
@@ -297,14 +297,14 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Returns {@link BaseRoomExit} of {@link BaseRoom} for given
+	 * Returns {@link RoomExit} of {@link Room} for given
 	 * {@link Direction.DIRECTION}.
 	 *
 	 * @param direction
 	 * @return
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public BaseRoomExit getExit(Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
+	public RoomExit getExit(Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTH: {
 			return northExit;
@@ -332,20 +332,20 @@ public class BaseRoom {
 		}
 		default: {
 			throw new MapExceptionDirectionNotSupported(
-					"BaseRoom: getExit missing case for direction " + direction.toString() + ".");
+					"Room: getExit missing case for direction " + direction.toString() + ".");
 		}
 		}
 	}
 
 	/**
-	 * Assigns {@link BaseRoomExit} to {@link BaseRoom}, of given
+	 * Assigns {@link RoomExit} to {@link Room}, of given
 	 * {@link Direction.DIRECTION}.
 	 *
 	 * @param direction
 	 * @param newExit
 	 * @throws MapExceptionDirectionNotSupported
 	 */
-	public void setExit(Direction.DIRECTION direction, BaseRoomExit newExit) throws MapExceptionDirectionNotSupported {
+	public void setExit(Direction.DIRECTION direction, RoomExit newExit) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
 		case NORTH: {
 			this.northExit = newExit;
@@ -373,13 +373,13 @@ public class BaseRoom {
 		}
 		default: {
 			throw new MapExceptionDirectionNotSupported(
-					"BaseRoom: setExit missing case for direction " + direction.toString() + ".");
+					"Room: setExit missing case for direction " + direction.toString() + ".");
 		}
 		}
 	}
 
 	/**
-	 * Returns true if {@link BaseRoom} contains {@link BaseRoomExit} for any
+	 * Returns true if {@link Room} contains {@link RoomExit} for any
 	 * {@link Direction.DIRECTION}. Mainly used to test if room is safe for
 	 * deletion, having had all exits removed.
 	 *
@@ -393,7 +393,7 @@ public class BaseRoom {
 				}
 			} catch (MapExceptionDirectionNotSupported e) {
 				MyLogger.log(Level.WARNING,
-						"BaseRoom: MapExceptionDirectionNotSupported while trying to hasExit; direction: "
+						"Room: MapExceptionDirectionNotSupported while trying to hasExit; direction: "
 								+ direction.toString(),
 						e);
 			}
@@ -405,7 +405,7 @@ public class BaseRoom {
 	 * NOT TO BE CALLED DIRECTLY. This function does not check for existing room
 	 * etc; use the room creation in the {@link GameMap} class.
 	 *
-	 * Creates new {@link BaseRoom} at specified coordinates and returns new room.
+	 * Creates new {@link Room} at specified coordinates and returns new room.
 	 *
 	 * @param mapId
 	 * @param x
@@ -414,22 +414,22 @@ public class BaseRoom {
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static BaseRoom createRoom(int mapId, int x, int y) throws MapExceptionRoomNull, CheckedHibernateException {
-		BaseRoom newRoom = new BaseRoom(mapId, x, y);
+	public static Room createRoom(int mapId, int x, int y) throws MapExceptionRoomNull, CheckedHibernateException {
+		Room newRoom = new Room(mapId, x, y);
 		saveRoom(newRoom);
 		return newRoom;
 	}
 
 	/**
-	 * Saves/persists the {@link BaseRoom} into the database.
+	 * Saves/persists the {@link Room} into the database.
 	 *
 	 * @param room
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static void saveRoom(BaseRoom room) throws MapExceptionRoomNull, CheckedHibernateException {
+	public static void saveRoom(Room room) throws MapExceptionRoomNull, CheckedHibernateException {
 		if (room == null) {
-			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteRoom on a null room.");
+			throw new MapExceptionRoomNull("Room: Tried to deleteRoom on a null room.");
 		}
 
 		org.hibernate.Session hibSess = null;
@@ -446,7 +446,7 @@ public class BaseRoom {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new CheckedHibernateException("BaseRoom: Hibernate error while trying to saveRoom.", e);
+			throw new CheckedHibernateException("Room: Hibernate error while trying to saveRoom.", e);
 		} finally {
 			if (hibSess != null) {
 				hibSess.close();
@@ -454,23 +454,23 @@ public class BaseRoom {
 		}
 	}
 
-	/**
-	 * TODO Consider usage of this. Save on Maps should do this behaviour. NOT
-	 * CURRENTLY USED.
-	 *
-	 * Saves all rooms on list of all rooms.
-	 *
-	 * @throws MapExceptionRoomNull
-	 * @throws CheckedHibernateException
-	 */
-	protected static void saveRooms() throws MapExceptionRoomNull, CheckedHibernateException {
-		for (BaseRoom room : roomList) {
-			saveRoom(room);
-		}
-	}
+//	/**
+//	 * TODO Consider usage of this. Save on Maps should do this behaviour. NOT
+//	 * CURRENTLY USED. TODO Remove
+//	 *
+//	 * Saves all rooms on list of all rooms.
+//	 *
+//	 * @throws MapExceptionRoomNull
+//	 * @throws CheckedHibernateException
+//	 */
+//	protected static void saveRooms() throws MapExceptionRoomNull, CheckedHibernateException {
+//		for (Room room : roomList) {
+//			saveRoom(room);
+//		}
+//	}
 
 	/**
-	 * DO NOT CALL DIRECTLY. Removes {@link BaseRoom} from database but does not
+	 * DO NOT CALL DIRECTLY. Removes {@link Room} from database but does not
 	 * remove room from {@link MapColumn} etc, meaning it could be re-saved. Use the
 	 * room destroy function in {@link GameMap} instead.
 	 *
@@ -479,13 +479,13 @@ public class BaseRoom {
 	 * @throws MapExceptionExitExists
 	 * @throws CheckedHibernateException
 	 */
-	public static void deleteRoom(BaseRoom room)
+	public static void deleteRoom(Room room)
 			throws MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
 		if (room == null) {
-			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteRoom on a null room.");
+			throw new MapExceptionRoomNull("Room: Tried to deleteRoom on a null room.");
 		}
 		if (room.hasExit()) {
-			throw new MapExceptionExitExists("BaseRoom: Tried to deleteRoom that still had exits.");
+			throw new MapExceptionExitExists("Room: Tried to deleteRoom that still had exits.");
 		}
 
 		org.hibernate.Session hibSess = null;
@@ -495,7 +495,7 @@ public class BaseRoom {
 			hibSess = FireEngineMain.hibSessFactory.openSession();
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("DELETE FROM BaseRoom WHERE B_ROOM_ID = :id");
+			Query<?> query = hibSess.createQuery("DELETE FROM Room WHERE B_ROOM_ID = :id");
 			query.setParameter("id", room.getRoomId());
 			query.executeUpdate();
 
@@ -513,16 +513,16 @@ public class BaseRoom {
 	}
 
 	/**
-	 * DO NOT CALL DIRECTLY. Removes {@link BaseRoomExit} from database. Call
-	 * {@link GameMap#destroyExit(BaseRoom, DIRECTION)} instead.
+	 * DO NOT CALL DIRECTLY. Removes {@link RoomExit} from database. Call
+	 * {@link GameMap#destroyExit(Room, DIRECTION)} instead.
 	 * 
-	 * @param exit
+	 * @param roomExit
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static void deleteExit(BaseRoomExit exit) throws MapExceptionRoomNull, CheckedHibernateException {
-		if (exit == null) {
-			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteExit on a null exit.");
+	public static void deleteExit(RoomExit roomExit) throws MapExceptionRoomNull, CheckedHibernateException {
+		if (roomExit == null) {
+			throw new MapExceptionRoomNull("Room: Tried to deleteExit on a null exit.");
 		}
 
 		org.hibernate.Session hibSess = null;
@@ -532,8 +532,8 @@ public class BaseRoom {
 			hibSess = FireEngineMain.hibSessFactory.openSession();
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("DELETE FROM BaseRoomExit WHERE B_ROOM_EXIT_ID = :id");
-			query.setParameter("id", exit.getId());
+			Query<?> query = hibSess.createQuery("DELETE FROM RoomExit WHERE B_ROOM_EXIT_ID = :id");
+			query.setParameter("id", roomExit.getId());
 			query.executeUpdate();
 
 			tx.commit();

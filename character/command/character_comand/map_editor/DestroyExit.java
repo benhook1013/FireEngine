@@ -50,7 +50,7 @@ public class DestroyExit extends CharacterCommand {
 		if (direction != null) {
 			try {
 				character.getMap().destroyExit(character.getRoom(), direction);
-				character.sendToListeners(new ClientConnectionOutput("Exit destroyed " + direction.toString()
+				character.sendToListeners(new ClientConnectionOutput("RoomExit destroyed " + direction.toString()
 						+ " from \"" + character.getRoom().getRoomName() + "\".", null, null));
 				return;
 			} catch (MapExceptionRoomNull e) {

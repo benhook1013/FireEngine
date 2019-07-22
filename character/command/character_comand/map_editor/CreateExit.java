@@ -52,7 +52,7 @@ public class CreateExit extends CharacterCommand {
 			try {
 				character.getMap().createExit(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput(
-						"Exit created " + direction.toString() + " from \"" + character.getRoom().getRoomName() + "\".",
+						"RoomExit created " + direction.toString() + " from \"" + character.getRoom().getRoomName() + "\".",
 						null, null));
 				return;
 			} catch (MapExceptionRoomNull e) {
