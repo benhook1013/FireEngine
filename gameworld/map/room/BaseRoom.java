@@ -1,4 +1,4 @@
-package fireengine.gameworld.map;
+package fireengine.gameworld.map.room;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -21,14 +21,16 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.query.Query;
 
-
 import fireengine.character.BaseCharacter;
 import fireengine.character.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
+import fireengine.gameworld.map.GameMap;
+import fireengine.gameworld.map.Directions;
 import fireengine.gameworld.map.Directions.DIRECTION;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
+import fireengine.gameworld.map.exit.BaseRoomExit;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
 import fireengine.util.MyLogger;
@@ -59,7 +61,7 @@ import fireengine.util.MyLogger;
 @Table(name = "BASE_ROOM")
 public class BaseRoom {
 	/**
-	 * TODO Might not need, only used to in saveRooms.
+	 * TODO Might not need, only used to in saveRooms. NOT CURRENTLY USED.
 	 */
 	@Transient
 	private static ArrayList<BaseRoom> roomList = new ArrayList<>();
@@ -69,23 +71,23 @@ public class BaseRoom {
 	@Column(name = "B_ROOM_ID", nullable = false)
 	@NotNull
 	private int roomId;
-	
+
 	@Column(name = "B_ROOM_MAP_ID", nullable = false)
 	@NotNull
 	private int mapId;
-	
+
 	@Column(name = "B_ROOM_X", nullable = false)
 	@NotNull
 	private int x;
-	
+
 	@Column(name = "B_ROOM_Y", nullable = false)
 	@NotNull
 	private int y;
-	
+
 	@Column(name = "B_ROOM_NAME")
 	@NotNull
 	private String name;
-	
+
 	@Column(name = "B_ROOM_DESC")
 	@NotNull
 	private String desc;
@@ -180,7 +182,7 @@ public class BaseRoom {
 	 *
 	 * @return
 	 */
-	public String getCoords() {
+	public String getCoordsText() {
 		return "(" + getX() + "," + getY() + ")";
 	}
 
@@ -201,10 +203,10 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Adds a {@link BaseCharacter} to the rooms player list (typically on room
-	 * enter), so far only used to add {@link PlayerCharacter}s. Always use AFTER
-	 * setting room on Character, as this will check to make sure both match(check
-	 * will result in hidden-to-player error).
+	 * Adds a {@link BaseCharacter} to the {@link BaseRoom}'s player list (typically
+	 * on room enter), so far only used to add {@link PlayerCharacter}s. Always use
+	 * AFTER setting room on Character, as this will check to make sure both
+	 * match(check will result in hidden-to-player error).
 	 *
 	 * @param player
 	 */
@@ -219,6 +221,8 @@ public class BaseRoom {
 					playerList.add((PlayerCharacter) player);
 				}
 			}
+		} else {
+			MyLogger.log(Level.WARNING, "BaseRoom: addCharacter on BaseCharacter type that is not a player.");
 		}
 	}
 
@@ -265,12 +269,12 @@ public class BaseRoom {
 	/**
 	 * Sends to listeners of room, without any exclusion.
 	 *
-	 * @see BaseRoom#sendToRoom(ClientConnectionOutput, PlayerCharacter)
+	 * @see BaseRoom#sendToRoomExcluding(ClientConnectionOutput, PlayerCharacter)
 	 *
 	 * @param output
 	 */
 	public void sendToRoom(ClientConnectionOutput output) {
-		sendToRoom(output, null);
+		sendToRoomExcluding(output, null);
 	}
 
 	/**
@@ -280,7 +284,7 @@ public class BaseRoom {
 	 * @param output    Output to be sent.
 	 * @param notPlayer Player, if specified, to be excluded from output.
 	 */
-	public void sendToRoom(ClientConnectionOutput output, BaseCharacter ignoreCharacter) {
+	public void sendToRoomExcluding(ClientConnectionOutput output, BaseCharacter ignoreCharacter) {
 		for (PlayerCharacter player : playerList) {
 			if (ignoreCharacter == null) {
 				player.sendToListeners(new ClientConnectionOutput(output));
@@ -293,7 +297,8 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Returns {@link BaseRoomExit} of room for given {@link DIRECTION}.
+	 * Returns {@link BaseRoomExit} of {@link BaseRoom} for given
+	 * {@link Directions.DIRECTION}.
 	 *
 	 * @param direction
 	 * @return
@@ -333,7 +338,8 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Assigns {@link BaseRoomExit} to room, of given {@link DIRECTION}.
+	 * Assigns {@link BaseRoomExit} to {@link BaseRoom}, of given
+	 * {@link Directions.DIRECTION}.
 	 *
 	 * @param direction
 	 * @param newExit
@@ -373,8 +379,9 @@ public class BaseRoom {
 	}
 
 	/**
-	 * Returns true if room contains exit for any direction. Mainly used to test if
-	 * room is safe for deletion, having had all exits removed.
+	 * Returns true if {@link BaseRoom} contains {@link BaseRoomExit} for any
+	 * {@link Directions.DIRECTION}. Mainly used to test if room is safe for
+	 * deletion, having had all exits removed.
 	 *
 	 * @return
 	 */
@@ -396,7 +403,7 @@ public class BaseRoom {
 
 	/**
 	 * NOT TO BE CALLED DIRECTLY. This function does not check for existing room
-	 * etc, use the room creation in the {@link GameMap} class.
+	 * etc; use the room creation in the {@link GameMap} class.
 	 *
 	 * Creates new {@link BaseRoom} at specified coordinates and returns new room.
 	 *
@@ -407,8 +414,7 @@ public class BaseRoom {
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	protected static BaseRoom createRoom(int mapId, int x, int y)
-			throws MapExceptionRoomNull, CheckedHibernateException {
+	public static BaseRoom createRoom(int mapId, int x, int y) throws MapExceptionRoomNull, CheckedHibernateException {
 		BaseRoom newRoom = new BaseRoom(mapId, x, y);
 		saveRoom(newRoom);
 		return newRoom;
@@ -421,7 +427,7 @@ public class BaseRoom {
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	protected static void saveRoom(BaseRoom room) throws MapExceptionRoomNull, CheckedHibernateException {
+	public static void saveRoom(BaseRoom room) throws MapExceptionRoomNull, CheckedHibernateException {
 		if (room == null) {
 			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteRoom on a null room.");
 		}
@@ -449,7 +455,8 @@ public class BaseRoom {
 	}
 
 	/**
-	 * TODO Consider usage of this. Save on Maps should do this behaviour.
+	 * TODO Consider usage of this. Save on Maps should do this behaviour. NOT
+	 * CURRENTLY USED.
 	 *
 	 * Saves all rooms on list of all rooms.
 	 *
@@ -472,7 +479,7 @@ public class BaseRoom {
 	 * @throws MapExceptionExitExists
 	 * @throws CheckedHibernateException
 	 */
-	protected static void deleteRoom(BaseRoom room)
+	public static void deleteRoom(BaseRoom room)
 			throws MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
 		if (room == null) {
 			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteRoom on a null room.");
@@ -505,7 +512,15 @@ public class BaseRoom {
 		}
 	}
 
-	protected static void deleteExit(BaseRoomExit exit) throws MapExceptionRoomNull, CheckedHibernateException {
+	/**
+	 * DO NOT CALL DIRECTLY. Removes {@link BaseRoomExit} from database. Call
+	 * {@link GameMap#destroyExit(BaseRoom, DIRECTION)} instead.
+	 * 
+	 * @param exit
+	 * @throws MapExceptionRoomNull
+	 * @throws CheckedHibernateException
+	 */
+	public static void deleteExit(BaseRoomExit exit) throws MapExceptionRoomNull, CheckedHibernateException {
 		if (exit == null) {
 			throw new MapExceptionRoomNull("BaseRoom: Tried to deleteExit on a null exit.");
 		}

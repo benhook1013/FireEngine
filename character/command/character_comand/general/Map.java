@@ -3,7 +3,7 @@ package fireengine.character.command.character_comand.general;
 import fireengine.character.BaseCharacter;
 import fireengine.character.command.character_comand.CharacterCommand;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.BaseRoom;
+import fireengine.gameworld.map.room.BaseRoom;
 
 /*
  *    Copyright 2017 Ben Hook

@@ -38,7 +38,7 @@ public class Directions {
 	private static Pattern northWestPattern = Pattern.compile("(?i)N(?:ORTH)?W(?:EST)?");
 
 	/**
-	 * List of supported directions.
+	 * Enum list of supported directions.
 	 *
 	 * @author Ben Hook
 	 */

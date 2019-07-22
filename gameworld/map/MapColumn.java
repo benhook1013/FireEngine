@@ -7,6 +7,7 @@ import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
+import fireengine.gameworld.map.room.BaseRoom;
 import fireengine.util.CheckedHibernateException;
 
 /*
@@ -75,7 +76,7 @@ public class MapColumn {
 	/**
 	 * TODO Consider if this is needed.
 	 *
-	 * Returns list of rooms for the {@link MapColumn}.
+	 * Returns list of {@link BaseRoom}s for the {@link MapColumn}.
 	 *
 	 * @return
 	 */
@@ -84,8 +85,8 @@ public class MapColumn {
 	}
 
 	/**
-	 * Returns the room (or null) at the specified y coordinate, throwing an
-	 * exception if coordinate is out of bounds.
+	 * Returns the {@link BaseRoom} (or null) at the specified y coordinate,
+	 * throwing an exception if coordinate is out of bounds.
 	 *
 	 * @param y
 	 * @return
@@ -98,8 +99,9 @@ public class MapColumn {
 	}
 
 	/**
-	 * Inserts the given room into the room list at the specified y coordinate,
-	 * throwing exception on out of bounds or if room already in that coordinate.
+	 * Inserts the given {@link BaseRoom} into the room list at the specified y
+	 * coordinate, throwing exception on out of bounds or if room already in that
+	 * coordinate.
 	 *
 	 * @param y
 	 * @param room
@@ -122,9 +124,10 @@ public class MapColumn {
 	}
 
 	/**
-	 * Attempts to remove room at given y coordinate from room list and also deletes
-	 * room from database. Throws exception if coordinate is out of bounds, room at
-	 * coordinate is null, the room still has exits, or upon Hibernate problem.
+	 * Attempts to remove {@link BaseRoom} at given y coordinate from room list and
+	 * also deletes room from database. Throws exception if coordinate is out of
+	 * bounds, room at coordinate is null, the room still has exits, or upon
+	 * Hibernate problem.
 	 *
 	 * @param y
 	 * @throws MapExceptionOutOfBounds

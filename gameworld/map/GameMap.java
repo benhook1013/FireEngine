@@ -24,6 +24,8 @@ import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
+import fireengine.gameworld.map.exit.BaseRoomExit;
+import fireengine.gameworld.map.room.BaseRoom;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
 import fireengine.util.MyLogger;
@@ -75,7 +77,7 @@ public class GameMap {
 	private List<MapColumn> columnList;
 
 	/**
-	 * Initialises the column list and instantiates the column objects.
+	 * Initialises the column list and instantiates the {@link MapColumn} objects.
 	 */
 	private GameMap() {
 		columnList = new ArrayList<>((MAP_DIMENSION * 2) + 1);
@@ -108,9 +110,9 @@ public class GameMap {
 	}
 
 	/**
-	 * Converts the s coordinate into the column array index.
+	 * Converts the x coordinate into the column array index.
 	 *
-	 * @param x x coordinate to convert into column array index
+	 * @param x coordinate to convert into column array index
 	 * @return
 	 */
 	private int xAdjust(int x) {
@@ -125,8 +127,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Returns the room (or null) at specified coordinates, throwing an exception if
-	 * coordinates are out of bounds.
+	 * Returns the {@link BaseRoom} (or null) at specified coordinates, throwing an
+	 * exception if coordinates are out of bounds.
 	 *
 	 * @param x x coordinate of room to find
 	 * @param y y coordinate of room to find
@@ -144,9 +146,9 @@ public class GameMap {
 	}
 
 	/**
-	 * Attempts to get room in the direction off of the given room. Exception occurs
-	 * if the resulting coordinate would be out of bounds, or given direction is not
-	 * yet supported by used functions.
+	 * Attempts to get room in the direction off of the given {@link BaseRoom}.
+	 * Exception occurs if the resulting coordinate would be out of bounds, or given
+	 * direction is not yet supported by used functions.
 	 *
 	 * @param room      origin room of which the direction points
 	 * @param direction direction from origin room the sought after room is
@@ -162,8 +164,9 @@ public class GameMap {
 	}
 
 	/**
-	 * Inserts the given room into the room list at the specified coordinates,
-	 * throwing exception on out of bounds or if room already in that coordinate.
+	 * Inserts the given {@link BaseRoom} into the room list at the specified
+	 * coordinates, throwing exception on out of bounds or if room already in that
+	 * coordinate.
 	 *
 	 * @param x
 	 * @param y
@@ -179,7 +182,7 @@ public class GameMap {
 				try {
 					column.setRoom(y, room);
 				} catch (MapExceptionRoomExists e) {
-					throw new MapExceptionRoomExists("GameMap: setRoom found room already at " + room.getCoords() + ".",
+					throw new MapExceptionRoomExists("GameMap: setRoom found room already at " + room.getCoordsText() + ".",
 							e);
 				}
 			} else {
@@ -190,7 +193,7 @@ public class GameMap {
 	}
 
 	/**
-	 *
+	 * Attempts to create a {@link BaseRoom} at the specified coordinates.
 	 *
 	 * @param x
 	 * @param y
@@ -244,7 +247,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Attempts to create a room in the specified direction, off of the given room.
+	 * Attempts to create a {@link BaseRoom} in the specified direction, off of the
+	 * given room.
 	 *
 	 * @param baseRoom
 	 * @param direction
@@ -259,8 +263,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Attempts to remove all exits of room, remove room from map and delete room
-	 * from database.
+	 * Attempts to remove all {@link BaseRoomExit} of {@link BaseRoom}, remove room
+	 * from {@link GameMap} and delete room from database.
 	 *
 	 * @param x
 	 * @param y
@@ -305,8 +309,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Attempts to destroy the room in the specified direction, off of the given
-	 * room.
+	 * Attempts to destroy the {@link BaseRoom} in the specified direction, off of
+	 * the given room.
 	 *
 	 * @param baseRoom
 	 * @param direction
@@ -323,7 +327,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Creates an exit in direction specified, from room supplied.
+	 * Creates an {@link BaseRoomExit} in direction specified, from {@link BaseRoom}
+	 * supplied.
 	 *
 	 * @param room
 	 * @param direction
@@ -362,7 +367,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Removes exit in specified direction, from room given.
+	 * Removes {@link BaseRoomExit} in specified {@link Directions.DIRECTION}, from
+	 * {@link BaseRoom} given.
 	 *
 	 * @param room
 	 * @param direction
@@ -408,7 +414,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Creates a new, blank map with the given name.
+	 * Creates a new, blank {@link GameMap} with the given name.
 	 *
 	 * @param name
 	 * @return
@@ -422,7 +428,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Persists the provided map into the database.
+	 * Persists the provided {@link GameMap} into the database.
 	 *
 	 * @param gameMap
 	 * @throws CheckedHibernateException
@@ -451,8 +457,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Generates an output object with a visual display of the MAP surrounding the
-	 * given room.
+	 * Generates an output object with a visual display of the {@link GameMap}
+	 * surrounding the given {@link BaseRoom}.
 	 *
 	 * @param output   Existing output object to append to, if any
 	 * @param baseRoom Room around which to display map
@@ -467,7 +473,7 @@ public class GameMap {
 		}
 
 		output.newLine();
-		output.addPart("Map around \"" + baseRoom.getRoomName() + "\" " + baseRoom.getCoords(), null, null);
+		output.addPart("Map around \"" + baseRoom.getRoomName() + "\" " + baseRoom.getCoordsText(), null, null);
 
 		class Line_Builder {
 			// public String getBorder(int size) {
@@ -574,7 +580,7 @@ public class GameMap {
 	}
 
 	/**
-	 * Checks given coordinate is within map dimensions.
+	 * Checks given coordinate is within {@link GameMap} dimensions.
 	 *
 	 * @param coord
 	 * @throws MapExceptionOutOfBounds
@@ -586,8 +592,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Returns x coordinate that occupies the given direction from the supplied
-	 * coordinate.
+	 * Returns x coordinate that occupies the given {@link Directions.DIRECTION}
+	 * from the supplied coordinate.
 	 *
 	 * @param x
 	 * @param direction
@@ -630,8 +636,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Returns y coordinate that occupies the given direction from the supplied
-	 * coordinate.
+	 * Returns y coordinate that occupies the given {@link Directions.DIRECTION}
+	 * from the supplied coordinate.
 	 *
 	 * @param y
 	 * @param direction

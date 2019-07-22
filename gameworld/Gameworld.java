@@ -8,12 +8,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import fireengine.gameworld.map.BaseRoom;
 import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.exception.MapExceptionMapLoad;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomLoad;
+import fireengine.gameworld.map.room.BaseRoom;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
 import fireengine.util.MyLogger;
@@ -36,11 +36,12 @@ import fireengine.util.MyLogger;
  */
 
 /**
- * The container and manager for maps in the game.
+ * The container and manager for {@link GameMap}s in the game.
  *
  * @author Ben Hook
  */
 public class Gameworld {
+	// TODO This should probably be a hashmap etc based on map id
 	private static ArrayList<GameMap> mapList = new ArrayList<>();
 
 	public static void setupGameworld() throws CheckedHibernateException, MapExceptionMapLoad {
@@ -115,7 +116,8 @@ public class Gameworld {
 	}
 
 	/**
-	 * Attempts to load all rooms from the database, give supplied map id.
+	 * Attempts to load all {@link BaseRoom}s from the database, give supplied map
+	 * id.
 	 *
 	 * @param mapId int id of map to load
 	 * @throws CheckedHibernateException
@@ -157,7 +159,7 @@ public class Gameworld {
 					} catch (MapExceptionRoomExists e) {
 						MyLogger.log(Level.WARNING,
 								"Gameworld: MapExceptionRoomExists while trying to setRoom on found room "
-										+ foundRoom.getCoords() + ".",
+										+ foundRoom.getCoordsText() + ".",
 								e);
 					}
 				}

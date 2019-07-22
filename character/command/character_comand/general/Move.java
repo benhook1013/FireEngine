@@ -6,13 +6,13 @@ import fireengine.character.BaseCharacter;
 import fireengine.character.command.character_comand.CharacterCommand;
 import fireengine.character.player.exception.PCExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.BaseRoom;
 import fireengine.gameworld.map.Directions;
 import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitNull;
 import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
+import fireengine.gameworld.map.room.BaseRoom;
 import fireengine.util.MyLogger;
 import fireengine.util.StringUtils;
 
@@ -71,7 +71,7 @@ public class Move extends CharacterCommand {
 				newRoom.addCharacter(character);
 
 				// Post move output //
-				oldRoom.sendToRoom(new ClientConnectionOutput(
+				oldRoom.sendToRoomExcluding(new ClientConnectionOutput(
 						character.getName() + " exits to the " + direction.toString() + ".", null, null), character);
 
 				ClientConnectionOutput output = new ClientConnectionOutput();
@@ -80,7 +80,7 @@ public class Move extends CharacterCommand {
 				output = GameMap.displayMap(output, character.getRoom(), 3);
 				character.sendToListeners(output);
 
-				newRoom.sendToRoom(new ClientConnectionOutput(
+				newRoom.sendToRoomExcluding(new ClientConnectionOutput(
 						character.getName() + " enters from the " + StringUtils.capitalise(direction.toString()) + ".",
 						null, null), character);
 

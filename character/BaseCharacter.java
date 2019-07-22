@@ -8,8 +8,8 @@ import fireengine.character.player.PlayerCharacter;
 import fireengine.character.player.exception.PCExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
-import fireengine.gameworld.map.BaseRoom;
 import fireengine.gameworld.map.GameMap;
+import fireengine.gameworld.map.room.BaseRoom;
 
 /*
  *    Copyright 2017 Ben Hook

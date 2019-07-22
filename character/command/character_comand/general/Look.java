@@ -7,11 +7,11 @@ import fireengine.character.BaseCharacter;
 import fireengine.character.command.character_comand.CharacterCommand;
 import fireengine.character.player.PlayerCharacter;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.BaseRoom;
-import fireengine.gameworld.map.BaseRoomExit;
 import fireengine.gameworld.map.Directions;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
+import fireengine.gameworld.map.exit.BaseRoomExit;
+import fireengine.gameworld.map.room.BaseRoom;
 import fireengine.util.StringUtils;
 
 /*
@@ -111,7 +111,7 @@ public class Look extends CharacterCommand {
 			}
 		}
 
-		output.addPart("\"" + lookRoom.getRoomName() + "\" " + lookRoom.getCoords(), null, null);
+		output.addPart("\"" + lookRoom.getRoomName() + "\" " + lookRoom.getCoordsText(), null, null);
 		output.newLine();
 		output.addPart(lookRoom.getRoomDesc(), null, null);
 		output.newLine();

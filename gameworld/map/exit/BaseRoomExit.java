@@ -1,4 +1,4 @@
-package fireengine.gameworld.map;
+package fireengine.gameworld.map.exit;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
