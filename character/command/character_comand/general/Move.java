@@ -17,7 +17,7 @@ import fireengine.util.MyLogger;
 import fireengine.util.StringUtils;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    Move.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

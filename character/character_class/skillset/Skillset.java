@@ -13,7 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    Base_Skillet.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

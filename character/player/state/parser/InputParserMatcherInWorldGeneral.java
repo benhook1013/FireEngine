@@ -13,7 +13,7 @@ import fireengine.character.command.character_comand.general.player_only.QuitGam
 import fireengine.util.MathUtils;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    InputParserMatcherInWorldGeneral.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

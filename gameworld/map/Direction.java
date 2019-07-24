@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    Direction.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

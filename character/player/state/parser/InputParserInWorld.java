@@ -3,7 +3,7 @@ package fireengine.character.player.state.parser;
 import fireengine.character.command.ActionCommand;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    InputParserInWorld.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

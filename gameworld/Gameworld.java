@@ -19,7 +19,7 @@ import fireengine.util.CheckedHibernateException;
 import fireengine.util.MyLogger;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    Gameworld.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

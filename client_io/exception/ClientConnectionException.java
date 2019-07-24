@@ -3,7 +3,7 @@ package fireengine.client_io.exception;
 import java.io.IOException;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    ClientConnectionException.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

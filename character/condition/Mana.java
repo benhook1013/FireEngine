@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import fireengine.character.condition.exception.ManaExceptionZeroMana;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    Mana.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

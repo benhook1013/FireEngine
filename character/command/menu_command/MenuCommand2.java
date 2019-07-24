@@ -1,7 +1,7 @@
 package fireengine.character.command.menu_command;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    MenuCommand2.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");

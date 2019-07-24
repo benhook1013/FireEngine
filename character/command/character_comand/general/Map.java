@@ -6,7 +6,7 @@ import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.room.Room;
 
 /*
- *    Copyright 2017 Ben Hook
+ *    Copyright 2019 Ben Hook
  *    GameMap.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
