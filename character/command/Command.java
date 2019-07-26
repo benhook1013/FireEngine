@@ -1,10 +1,8 @@
 package fireengine.character.command;
 
-import fireengine.character.BaseCharacter;
-
 /*
  *    Copyright 2019 Ben Hook
- *    ActionCommand.java
+ *    Command.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,10 +17,7 @@ import fireengine.character.BaseCharacter;
  *    limitations under the License.
  */
 
-public abstract class ActionCommand extends BaseCommand {
-	protected ActionCommand() {
-		super();
+public abstract class Command {
+	protected Command() {
 	}
-
-	public abstract void doAction(BaseCharacter character);
 }

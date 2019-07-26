@@ -2,7 +2,7 @@ package fireengine.character.condition;
 
 /*
  *    Copyright 2019 Ben Hook
- *    BaseCondition.java
+ *    Condition.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package fireengine.character.condition;
  *    limitations under the License.
  */
 
-public abstract class BaseCondition {
-	protected BaseCondition() {
+public abstract class Condition {
+	protected Condition() {
 	}
 
 	public abstract int getLevelNumber();

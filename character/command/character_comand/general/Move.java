@@ -2,8 +2,8 @@ package fireengine.character.command.character_comand.general;
 
 import java.util.logging.Level;
 
-import fireengine.character.BaseCharacter;
-import fireengine.character.command.character_comand.CharacterCommand;
+import fireengine.character.Character;
+import fireengine.character.command.character_comand.CommandCharacter;
 import fireengine.character.player.exception.PCExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
@@ -33,7 +33,7 @@ import fireengine.util.StringUtils;
  *    limitations under the License.
  */
 
-public class Move extends CharacterCommand {
+public class Move extends CommandCharacter {
 	private String directionText;
 
 	public Move(String directionText) {
@@ -42,18 +42,18 @@ public class Move extends CharacterCommand {
 	}
 
 	@Override
-	public void doAction(BaseCharacter character) {
+	public void doAction(Character character) {
 		Direction.DIRECTION direction = Direction.parseDirection(directionText);
 
 		if (direction != null) {
 			try {
 				Room oldRoom = character.getRoom();
 				if (oldRoom.getExit(direction) == null) {
-					throw new MapExceptionExitNull("BaseCharacter: Cannot move in specified direction, exit is null.");
+					throw new MapExceptionExitNull("Character: Cannot move in specified direction, exit is null.");
 				}
 				Room newRoom = character.getMap().getRoom(character.getRoom(), direction);
 				if (newRoom == null) {
-					throw new MapExceptionExitRoomNull("BaseCharacter: Somehow room to the " + direction + " of "
+					throw new MapExceptionExitRoomNull("Character: Somehow room to the " + direction + " of "
 							+ character.getRoom().getRoomName() + " had exit leading to it but room is null.");
 				}
 
@@ -64,7 +64,7 @@ public class Move extends CharacterCommand {
 					character.setRoom(newRoom);
 				} catch (PCExceptionNullRoom e) {
 					MyLogger.log(Level.WARNING,
-							"BaseCharacter: PCExceptionNullRoom during move AFTER null check happened.");
+							"Character: PCExceptionNullRoom during move AFTER null check happened.");
 					return;
 				}
 				oldRoom.removeCharacter(character);

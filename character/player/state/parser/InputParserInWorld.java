@@ -1,6 +1,6 @@
 package fireengine.character.player.state.parser;
 
-import fireengine.character.command.ActionCommand;
+import fireengine.character.command.CommandAction;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -30,9 +30,9 @@ public class InputParserInWorld implements InputParser {
 	}
 
 	@Override
-	public ActionCommand parse(String text) {
+	public CommandAction parse(String text) {
 		text = InputParser.clean(text);
-		ActionCommand foundCommand;
+		CommandAction foundCommand;
 
 		foundCommand = generalMatcher.match(text);
 		if (foundCommand != null) {

@@ -23,15 +23,15 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.query.Query;
 
-import fireengine.character.BaseCharacter;
+import fireengine.character.Character;
 import fireengine.character.character_class.CharacterClass;
-import fireengine.character.command.ActionCommand;
+import fireengine.character.command.CommandAction;
 import fireengine.character.command.character_comand.general.Look;
-import fireengine.character.condition.BaseCondition;
-import fireengine.character.condition.PCCondition;
+import fireengine.character.condition.Condition;
+import fireengine.character.condition.ConditionPC;
 import fireengine.character.player.exception.PCExceptionNullRoom;
-import fireengine.character.player.state.PCState;
-import fireengine.character.player.state.PCStateInWorld;
+import fireengine.character.player.state.StatePC;
+import fireengine.character.player.state.StatePCInWorld;
 import fireengine.character.player.state.parser.InputParserInWorld;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
@@ -45,7 +45,7 @@ import fireengine.util.StringUtils;
 
 /*
  *    Copyright 2019 Ben Hook
- *    PlayerCharacter.java
+ *    CharacterPlayer.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -62,9 +62,9 @@ import fireengine.util.StringUtils;
 
 @Entity
 @Table(name = "PLAYER_CHARACTER")
-public class PlayerCharacter extends BaseCharacter {
+public class CharacterPlayer extends Character {
 	@Transient
-	private static ArrayList<PlayerCharacter> playerList = new ArrayList<>();
+	private static ArrayList<CharacterPlayer> playerList = new ArrayList<>();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -93,13 +93,13 @@ public class PlayerCharacter extends BaseCharacter {
 	private CharacterClass charClass;
 
 	@Transient
-	private PCState pcState;
+	private StatePC pcState;
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_PC_COND_ID")
 	@NotNull
-	private PCCondition condition;
+	private ConditionPC condition;
 	// TODO test cascade see if can remove saving sub classes individually.
 
 	@Transient
@@ -111,17 +111,17 @@ public class PlayerCharacter extends BaseCharacter {
 
 	// TODO Periodic check for attached session, if not, protect or remove PC.
 
-	private PlayerCharacter() {
+	private CharacterPlayer() {
 		super();
 	}
 
-	public PlayerCharacter(String name, String password) {
+	public CharacterPlayer(String name, String password) {
 		this();
 		this.name = name;
 		this.password = password;
 		settings = new PCSetting();
 		charClass = new CharacterClass();
-		condition = new PCCondition(1);
+		condition = new ConditionPC(1);
 	}
 
 	@Override
@@ -172,12 +172,12 @@ public class PlayerCharacter extends BaseCharacter {
 	}
 
 	@Override
-	public BaseCondition getCondition() {
+	public Condition getCondition() {
 		return condition;
 	}
 
 	@Override
-	public void setCondition(PCCondition condition) {
+	public void setCondition(ConditionPC condition) {
 		this.condition = condition;
 	}
 
@@ -197,7 +197,7 @@ public class PlayerCharacter extends BaseCharacter {
 	@Override
 	public void setRoom(Room room) throws PCExceptionNullRoom {
 		if (room == null) {
-			throw new PCExceptionNullRoom("PlayerCharacter: Player tried to be sent to null room.");
+			throw new PCExceptionNullRoom("CharacterPlayer: Player tried to be sent to null room.");
 		}
 
 		if (this.room != null) {
@@ -210,12 +210,12 @@ public class PlayerCharacter extends BaseCharacter {
 
 	@Override
 	public void acceptInput(String text) {
-		ActionCommand command = pcState.acceptInput(text);
+		CommandAction command = pcState.acceptInput(text);
 		acceptInput(command);
 	}
 
 	@Override
-	public void acceptInput(ActionCommand command) {
+	public void acceptInput(CommandAction command) {
 		try {
 			if (command == null) {
 				ClientConnectionOutput output = new ClientConnectionOutput(2);
@@ -227,7 +227,7 @@ public class PlayerCharacter extends BaseCharacter {
 					command.doAction(this);
 				} else {
 					throw new PCExceptionNullRoom(
-							"PlayerCharacter: Player tried to do action " + command.getClass() + " with no room.");
+							"CharacterPlayer: Player tried to do action " + command.getClass() + " with no room.");
 				}
 			}
 		} catch (PCExceptionNullRoom e) {
@@ -235,14 +235,14 @@ public class PlayerCharacter extends BaseCharacter {
 			message.addPart("You are trying to do an action without being in any room!", null, null);
 			message.addPart("We will try and move you somewhere...", null, null);
 			sendToListeners(message);
-			MyLogger.log(Level.WARNING, "PlayerCharacter: PCExceptionNullRoom error when trying to acceptInput.", e);
+			MyLogger.log(Level.WARNING, "CharacterPlayer: PCExceptionNullRoom error when trying to acceptInput.", e);
 
 			Room sendRoom = null;
 			try {
 				sendRoom = Gameworld.findMap(1).getRoom(1, 1);
 			} catch (MapExceptionOutOfBounds e1) {
 				MyLogger.log(Level.WARNING,
-						"PlayerCharacter: Origin room out of bounds while trying to find origin room to send null room player to.",
+						"CharacterPlayer: Origin room out of bounds while trying to find origin room to send null room player to.",
 						e);
 				return;
 			}
@@ -252,11 +252,11 @@ public class PlayerCharacter extends BaseCharacter {
 					setRoom(sendRoom);
 				} catch (PCExceptionNullRoom e1) {
 					MyLogger.log(Level.WARNING,
-							"PlayerCharacter: Null error when trying to send null room player to origin.", e);
+							"CharacterPlayer: Null error when trying to send null room player to origin.", e);
 					return;
 				}
 			} else {
-				MyLogger.log(Level.WARNING, "PlayerCharacter: Cannot find origin room to send null room player to.", e);
+				MyLogger.log(Level.WARNING, "CharacterPlayer: Cannot find origin room to send null room player to.", e);
 				return;
 			}
 		}
@@ -273,12 +273,12 @@ public class PlayerCharacter extends BaseCharacter {
 			session.send(output);
 		} else {
 			MyLogger.log(Level.FINE,
-					"PlayerCharacter: Tried to send output to character '" + name + "' but no session was attached.");
+					"CharacterPlayer: Tried to send output to character '" + name + "' but no session was attached.");
 		}
 	}
 
 	/**
-	 * Used to connect a {@link Session} to the {@link PlayerCharacter}.
+	 * Used to connect a {@link Session} to the {@link CharacterPlayer}.
 	 *
 	 * @throws PCExceptionNullRoom
 	 */
@@ -287,7 +287,7 @@ public class PlayerCharacter extends BaseCharacter {
 	}
 
 	/**
-	 * Used to connect a {@link Session} to the {@link PlayerCharacter}, and
+	 * Used to connect a {@link Session} to the {@link CharacterPlayer}, and
 	 * entering the {@link Room} specified.
 	 *
 	 * @throws PCExceptionNullRoom
@@ -306,20 +306,20 @@ public class PlayerCharacter extends BaseCharacter {
 		} catch (PCExceptionNullRoom e) {
 			sess.send(new ClientConnectionOutput("Failed to enter world."));
 			setSession(null);
-			throw new PCExceptionNullRoom("PlayerCharacter: Player tried to do enter world with null room.", e);
+			throw new PCExceptionNullRoom("CharacterPlayer: Player tried to do enter world with null room.", e);
 		}
 
-		if (pcState instanceof PCStateInWorld) {
+		if (pcState instanceof StatePCInWorld) {
 			room.sendToRoom(new ClientConnectionOutput(getName() + " eyes light up and starts moving again."));
 		} else {
-			pcState = new PCStateInWorld();
+			pcState = new StatePCInWorld();
 		}
 
 		acceptInput(new Look());
 	}
 
 	/**
-	 * Used to disconnect a {@link Session} from the {@link PlayerCharacter}.
+	 * Used to disconnect a {@link Session} from the {@link CharacterPlayer}.
 	 */
 	public void disconnect() {
 		setSession(null);
@@ -368,10 +368,10 @@ public class PlayerCharacter extends BaseCharacter {
 		return condition.getMaxMana();
 	}
 
-	public static PlayerCharacter findCharacter(String name) throws CheckedHibernateException {
+	public static CharacterPlayer findCharacter(String name) throws CheckedHibernateException {
 		name = StringUtils.capitalise(name);
 
-		for (PlayerCharacter listPlayer : playerList) {
+		for (CharacterPlayer listPlayer : playerList) {
 			if (listPlayer.getName().equals(name)) {
 				return listPlayer;
 			}
@@ -379,12 +379,12 @@ public class PlayerCharacter extends BaseCharacter {
 
 		org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
 		Transaction tx = null;
-		PlayerCharacter player = null;
+		CharacterPlayer player = null;
 
 		try {
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("FROM PlayerCharacter WHERE PC_NAME = :name");
+			Query<?> query = hibSess.createQuery("FROM CharacterPlayer WHERE PC_NAME = :name");
 			query.setParameter("name", name);
 
 			List<?> players = query.list();
@@ -394,9 +394,9 @@ public class PlayerCharacter extends BaseCharacter {
 				return null;
 			} else {
 				if (players.size() > 1) {
-					MyLogger.log(Level.WARNING, "PlayerCharacter: Multiple DB results for player name.");
+					MyLogger.log(Level.WARNING, "CharacterPlayer: Multiple DB results for player name.");
 				}
-				player = (PlayerCharacter) players.get(0);
+				player = (CharacterPlayer) players.get(0);
 				addPlayerList(player);
 
 				return player;
@@ -406,14 +406,14 @@ public class PlayerCharacter extends BaseCharacter {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new CheckedHibernateException("PlayerCharacter: Hibernate error while trying to findCharacter.", e);
+			throw new CheckedHibernateException("CharacterPlayer: Hibernate error while trying to findCharacter.", e);
 		} finally {
 			hibSess.close();
 		}
 	}
 
-	public static void addPlayerList(PlayerCharacter player) {
-		for (PlayerCharacter listPlayer : playerList) {
+	public static void addPlayerList(CharacterPlayer player) {
+		for (CharacterPlayer listPlayer : playerList) {
 			if (listPlayer == player) {
 				return;
 			}
@@ -421,8 +421,8 @@ public class PlayerCharacter extends BaseCharacter {
 		playerList.add(player);
 	}
 
-	public static void removePlayerList(PlayerCharacter player) {
-		for (PlayerCharacter listPlayer : playerList) {
+	public static void removePlayerList(CharacterPlayer player) {
+		for (CharacterPlayer listPlayer : playerList) {
 			if (listPlayer == player) {
 				playerList.remove(listPlayer);
 				return;
@@ -430,12 +430,12 @@ public class PlayerCharacter extends BaseCharacter {
 		}
 	}
 
-	public static ArrayList<PlayerCharacter> getPlayerList() {
+	public static ArrayList<CharacterPlayer> getPlayerList() {
 		return playerList;
 	}
 
 	public static void sendToAllPlayers(ClientConnectionOutput output) {
-		for (PlayerCharacter player : playerList) {
+		for (CharacterPlayer player : playerList) {
 			player.sendToListeners(output);
 		}
 	}
@@ -450,15 +450,15 @@ public class PlayerCharacter extends BaseCharacter {
 		return true;
 	}
 
-	public static PlayerCharacter createCharacter(String name, String password) throws CheckedHibernateException {
+	public static CharacterPlayer createCharacter(String name, String password) throws CheckedHibernateException {
 		name = StringUtils.capitalise(name);
-		PlayerCharacter newPlayer = new PlayerCharacter(name, password);
+		CharacterPlayer newPlayer = new CharacterPlayer(name, password);
 
 		saveCharacter(newPlayer);
-		return PlayerCharacter.findCharacter(name);
+		return CharacterPlayer.findCharacter(name);
 	}
 
-	public static void saveCharacter(PlayerCharacter pc) throws CheckedHibernateException {
+	public static void saveCharacter(CharacterPlayer pc) throws CheckedHibernateException {
 		org.hibernate.Session hibSess = null;
 		Transaction tx = null;
 
@@ -477,7 +477,7 @@ public class PlayerCharacter extends BaseCharacter {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new CheckedHibernateException("PlayerCharacter: Hibernate error while trying to saveCharacter.", e);
+			throw new CheckedHibernateException("CharacterPlayer: Hibernate error while trying to saveCharacter.", e);
 		} finally {
 			if (hibSess != null) {
 				hibSess.close();
@@ -495,7 +495,7 @@ public class PlayerCharacter extends BaseCharacter {
 			hibSess = FireEngineMain.hibSessFactory.openSession();
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("FROM PlayerCharacter");
+			Query<?> query = hibSess.createQuery("FROM CharacterPlayer");
 
 			List<?> players = query.list();
 			tx.commit();
@@ -504,7 +504,7 @@ public class PlayerCharacter extends BaseCharacter {
 				info = new ClientConnectionOutput();
 
 				for (Iterator<?> iterator = players.iterator(); iterator.hasNext();) {
-					PlayerCharacter player = (PlayerCharacter) iterator.next();
+					CharacterPlayer player = (CharacterPlayer) iterator.next();
 					info.addPart("ID: " + player.getId() + ", Name: '" + player.getName() + "', Class: '"
 							+ player.getCharClass().getClassName() + "', Level: " + player.getLevel() + ", Experience: "
 							+ player.getExperience() + "", null, null);
@@ -518,7 +518,7 @@ public class PlayerCharacter extends BaseCharacter {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new CheckedHibernateException("PlayerCharacter: Hibernate error while trying to getAllPlayerInfo.",
+			throw new CheckedHibernateException("CharacterPlayer: Hibernate error while trying to getAllPlayerInfo.",
 					e);
 		} finally {
 			hibSess.close();

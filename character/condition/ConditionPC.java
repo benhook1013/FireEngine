@@ -16,7 +16,7 @@ import org.hibernate.annotations.CascadeType;
 
 /*
  *    Copyright 2019 Ben Hook
- *    PCCondition.java
+ *    ConditionPC.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name = "PC_CONDITION")
-public class PCCondition extends BaseCondition {
+public class ConditionPC extends Condition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "PC_COND_ID")
@@ -58,11 +58,11 @@ public class PCCondition extends BaseCondition {
 	@NotNull
 	private Mana mana;
 
-	private PCCondition() {
+	private ConditionPC() {
 		super();
 	}
 
-	public PCCondition(int level) {
+	public ConditionPC(int level) {
 		this();
 		setLevel(new Level(level));
 		setHealth(new Health(this.level.getMaxStat()));

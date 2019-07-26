@@ -1,10 +1,8 @@
-package fireengine.character.player.state;
-
-import fireengine.character.command.ActionCommand;
+package fireengine.character.command;
 
 /*
  *    Copyright 2019 Ben Hook
- *    PCState.java
+ *    CommandInfo.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +17,8 @@ import fireengine.character.command.ActionCommand;
  *    limitations under the License.
  */
 
-public interface PCState {
-	public ActionCommand acceptInput(String text);
+public abstract class CommandInfo extends Command {
+	protected CommandInfo() {
+		super();
+	}
 }

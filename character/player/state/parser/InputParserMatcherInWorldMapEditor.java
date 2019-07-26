@@ -3,7 +3,7 @@ package fireengine.character.player.state.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fireengine.character.command.ActionCommand;
+import fireengine.character.command.CommandAction;
 import fireengine.character.command.character_comand.map_editor.CreateExit;
 import fireengine.character.command.character_comand.map_editor.CreateRoom;
 import fireengine.character.command.character_comand.map_editor.DestroyExit;
@@ -36,7 +36,7 @@ public class InputParserMatcherInWorldMapEditor implements InputParserMatcher {
 	}
 
 	@Override
-	public ActionCommand match(String text) {
+	public CommandAction match(String text) {
 		Matcher matcher;
 
 		if ((matcher = createExitsPattern.matcher(text)).matches()) {

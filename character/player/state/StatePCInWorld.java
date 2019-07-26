@@ -1,8 +1,11 @@
-package fireengine.character.command;
+package fireengine.character.player.state;
+
+import fireengine.character.command.CommandAction;
+import fireengine.character.player.state.parser.InputParserInWorld;
 
 /*
  *    Copyright 2019 Ben Hook
- *    BaseCommand.java
+ *    StatePCInWorld.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,7 +20,15 @@ package fireengine.character.command;
  *    limitations under the License.
  */
 
-public abstract class BaseCommand {
-	protected BaseCommand() {
+public class StatePCInWorld implements StatePC {
+	InputParserInWorld inputParserInWorld;
+
+	public StatePCInWorld() {
+		inputParserInWorld = InputParserInWorld.getInstance();
+	}
+
+	@Override
+	public CommandAction acceptInput(String text) {
+		return inputParserInWorld.parse(text);
 	}
 }

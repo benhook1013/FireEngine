@@ -3,7 +3,7 @@ package fireengine.character.player.state.parser;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fireengine.character.command.ActionCommand;
+import fireengine.character.command.CommandAction;
 import fireengine.character.command.character_comand.general.Look;
 import fireengine.character.command.character_comand.general.Map;
 import fireengine.character.command.character_comand.general.Move;
@@ -42,7 +42,7 @@ public class InputParserMatcherInWorldGeneral implements InputParserMatcher {
 	}
 
 	@Override
-	public ActionCommand match(String text) {
+	public CommandAction match(String text) {
 		Matcher matcher;
 
 		if ((matcher = lookPattern.matcher(text)).matches()) {

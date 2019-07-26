@@ -11,7 +11,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import fireengine.character.character_class.CharacterClass;
-import fireengine.character.player.PlayerCharacter;
+import fireengine.character.player.CharacterPlayer;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.client_io.ClientIOTelnet;
 import fireengine.client_io.exception.ClientIOTelnetException;
@@ -323,7 +323,7 @@ public class FireEngineMain {
 	public static void hibernateException(CheckedHibernateException e) {
 		ClientConnectionOutput playerMessage = new ClientConnectionOutput(1);
 		playerMessage.addPart("Fatal Database error detected, shutting down.", null, null);
-		PlayerCharacter.sendToAllPlayers(playerMessage);
+		CharacterPlayer.sendToAllPlayers(playerMessage);
 		stop();
 		MyLogger.log(Level.SEVERE, "FireEngineMain: Fatal Hibernate exception caught, initiating shutdown.", e);
 	}

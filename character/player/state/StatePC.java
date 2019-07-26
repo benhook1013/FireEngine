@@ -1,10 +1,10 @@
-package fireengine.character.command.character_comand;
+package fireengine.character.player.state;
 
-import fireengine.character.command.ActionCommand;
+import fireengine.character.command.CommandAction;
 
 /*
  *    Copyright 2019 Ben Hook
- *    CharacterCommand.java
+ *    StatePC.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,8 +19,6 @@ import fireengine.character.command.ActionCommand;
  *    limitations under the License.
  */
 
-public abstract class CharacterCommand extends ActionCommand {
-	protected CharacterCommand() {
-		super();
-	}
+public interface StatePC {
+	public CommandAction acceptInput(String text);
 }

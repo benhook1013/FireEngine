@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 
 /*
  *    Copyright 2019 Ben Hook
- *    Base_Skillet.java
+ *    Skillset.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,27 +31,27 @@ import javax.validation.constraints.NotNull;
  */
 
 @Entity
-@Table(name = "BASE_SKILLSET")
+@Table(name = "SKILLSET")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Skillset {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "BASE_SKILLSET_ID")
+	@Column(name = "SKILLSET_ID")
 	@NotNull
 	private int id;
 
-	@Column(name = "BASE_SKILLSET_NAME")
+	@Column(name = "SKILLSET_NAME")
 	@NotNull
 	protected String skillsetName;
 	
-	@Column(name = "BASE_SKILLSET_SKILLSET_EXPERIENCE")
+	@Column(name = "SKILLSET_SKILLSET_EXPERIENCE")
 	@NotNull
 	private int skillsetExperience;
 
 	@Transient
-	protected ArrayList<Base_Skill> skillList;
+	protected ArrayList<Skill> skillList;
 
-	protected class Base_Skill {
+	protected class Skill {
 		protected String skillName;
 	}
 
@@ -88,11 +88,11 @@ public abstract class Skillset {
 		skillsetExperience = experience;
 	}
 
-	protected void addSkill(Base_Skill skill) {
+	protected void addSkill(Skill skill) {
 		skillList.add(skill);
 	}
 
-	protected ArrayList<Base_Skill> getSkillList() {
+	protected ArrayList<Skill> getSkillList() {
 		return skillList;
 	}
 }

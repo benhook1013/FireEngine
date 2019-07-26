@@ -3,9 +3,9 @@ package fireengine.character.command.character_comand.general;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import fireengine.character.BaseCharacter;
-import fireengine.character.command.character_comand.CharacterCommand;
-import fireengine.character.player.PlayerCharacter;
+import fireengine.character.Character;
+import fireengine.character.command.character_comand.CommandCharacter;
+import fireengine.character.player.CharacterPlayer;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
@@ -31,7 +31,7 @@ import fireengine.util.StringUtils;
  *    limitations under the License.
  */
 
-public class Look extends CharacterCommand {
+public class Look extends CommandCharacter {
 	private String directionText;
 	Direction.DIRECTION direction;
 
@@ -50,11 +50,11 @@ public class Look extends CharacterCommand {
 	}
 
 	@Override
-	public void doAction(BaseCharacter character) {
+	public void doAction(Character character) {
 		doAction(character, null);
 	}
 
-	public ClientConnectionOutput doAction(BaseCharacter character, ClientConnectionOutput returnOutput) {
+	public ClientConnectionOutput doAction(Character character, ClientConnectionOutput returnOutput) {
 		ClientConnectionOutput output;
 		if (returnOutput == null) {
 			output = new ClientConnectionOutput(4);
@@ -115,13 +115,13 @@ public class Look extends CharacterCommand {
 		output.newLine();
 		output.addPart(lookRoom.getRoomDesc(), null, null);
 		output.newLine();
-		ArrayList<PlayerCharacter> playerList = lookRoom.getPCs();
+		ArrayList<CharacterPlayer> playerList = lookRoom.getPCs();
 		if (playerList.isEmpty()) {
 			output.addPart("You see no one here.", null, null);
 		} else {
 			int seen = 0;
 			output.addPart("You see ", null, null);
-			for (Iterator<PlayerCharacter> iter = playerList.iterator(); iter.hasNext();) {
+			for (Iterator<CharacterPlayer> iter = playerList.iterator(); iter.hasNext();) {
 				output.addPart(iter.next().getName(), null, null);
 				seen++;
 				if (iter.hasNext()) {

@@ -1,10 +1,10 @@
 package fireengine.character;
 
 import fireengine.character.character_class.CharacterClass;
-import fireengine.character.command.ActionCommand;
-import fireengine.character.condition.BaseCondition;
-import fireengine.character.condition.PCCondition;
-import fireengine.character.player.PlayerCharacter;
+import fireengine.character.command.CommandAction;
+import fireengine.character.condition.Condition;
+import fireengine.character.condition.ConditionPC;
+import fireengine.character.player.CharacterPlayer;
 import fireengine.character.player.exception.PCExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
@@ -13,7 +13,7 @@ import fireengine.gameworld.map.room.Room;
 
 /*
  *    Copyright 2019 Ben Hook
- *    BaseCharacter.java
+ *    Character.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import fireengine.gameworld.map.room.Room;
 /**
  * @author Ben Hook
  */
-public abstract class BaseCharacter {
-	protected BaseCharacter() {
+public abstract class Character {
+	protected Character() {
 	}
 
 	public abstract int getId();
@@ -47,9 +47,9 @@ public abstract class BaseCharacter {
 
 	public abstract void setCharClass(CharacterClass charClass);
 
-	public abstract BaseCondition getCondition();
+	public abstract Condition getCondition();
 
-	public abstract void setCondition(PCCondition condition);
+	public abstract void setCondition(ConditionPC condition);
 
 	public abstract Room getRoom();
 
@@ -57,7 +57,7 @@ public abstract class BaseCharacter {
 
 	public abstract void acceptInput(String text);
 
-	public abstract void acceptInput(ActionCommand command);
+	public abstract void acceptInput(CommandAction command);
 
 	public abstract void sendToListeners(ClientConnectionOutput output);
 
@@ -83,9 +83,9 @@ public abstract class BaseCharacter {
 		}
 	}
 
-	public static boolean checkMapEditorPrivs(BaseCharacter character) {
-		if (character instanceof PlayerCharacter) {
-			if (!((PlayerCharacter) character).getSettings().isMapEditor()) {
+	public static boolean checkMapEditorPrivs(Character character) {
+		if (character instanceof CharacterPlayer) {
+			if (!((CharacterPlayer) character).getSettings().isMapEditor()) {
 				character.sendToListeners(
 						new ClientConnectionOutput("You don't have GameMap Editor privileges!", null, null));
 				return false;

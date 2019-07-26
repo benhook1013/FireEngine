@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "SKILLSET_MARTIALISM")
-@PrimaryKeyJoinColumn(name = "SKILLSET_MARTIALISM_BASE_SKILLSET_ID")
+@PrimaryKeyJoinColumn(name = "SKILLSET_MARTIALISM_SKILLSET_ID")
 public class SkillsetMartialism extends Skillset {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +50,7 @@ public class SkillsetMartialism extends Skillset {
 		this.id = id;
 	}
 
-	protected class Weaponry extends Base_Skill {
+	protected class Weaponry extends Skill {
 		protected Weaponry() {
 			this.skillName = "Weaponry";
 		}

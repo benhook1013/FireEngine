@@ -1,7 +1,7 @@
 package fireengine.character.command.character_comand.general;
 
-import fireengine.character.BaseCharacter;
-import fireengine.character.command.character_comand.CharacterCommand;
+import fireengine.character.Character;
+import fireengine.character.command.character_comand.CommandCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.util.StringUtils;
 
@@ -22,7 +22,7 @@ import fireengine.util.StringUtils;
  *    limitations under the License.
  */
 
-public class Say extends CharacterCommand {
+public class Say extends CommandCharacter {
 	private String text;
 
 	public Say(String text) {
@@ -32,7 +32,7 @@ public class Say extends CharacterCommand {
 	}
 
 	@Override
-	public void doAction(BaseCharacter character) {
+	public void doAction(Character character) {
 		ClientConnectionOutput output = new ClientConnectionOutput(2);
 
 		output.addPart(character.getName() + " says, \"" + text + "\"", null, null);

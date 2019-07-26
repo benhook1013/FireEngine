@@ -1,7 +1,7 @@
 package fireengine.character.command.character_comand.general;
 
-import fireengine.character.BaseCharacter;
-import fireengine.character.command.character_comand.CharacterCommand;
+import fireengine.character.Character;
+import fireengine.character.command.character_comand.CommandCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.room.Room;
 
@@ -22,7 +22,7 @@ import fireengine.gameworld.map.room.Room;
  *    limitations under the License.
  */
 
-public class Map extends CharacterCommand {
+public class Map extends CommandCharacter {
 	private int size;
 
 	public Map() {
@@ -36,7 +36,7 @@ public class Map extends CharacterCommand {
 	}
 
 	@Override
-	public void doAction(BaseCharacter character) {
+	public void doAction(Character character) {
 		ClientConnectionOutput output = new ClientConnectionOutput(4);
 		output.addPart("You look around and see...", null, null);
 

@@ -1,11 +1,10 @@
-package fireengine.character.player.state;
+package fireengine.character.command.character_comand;
 
-import fireengine.character.command.ActionCommand;
-import fireengine.character.player.state.parser.InputParserInWorld;
+import fireengine.character.command.CommandAction;
 
 /*
  *    Copyright 2019 Ben Hook
- *    PCStateInWorld.java
+ *    CommandCharacter.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,15 +19,8 @@ import fireengine.character.player.state.parser.InputParserInWorld;
  *    limitations under the License.
  */
 
-public class PCStateInWorld implements PCState {
-	InputParserInWorld inputParserInWorld;
-
-	public PCStateInWorld() {
-		inputParserInWorld = InputParserInWorld.getInstance();
-	}
-
-	@Override
-	public ActionCommand acceptInput(String text) {
-		return inputParserInWorld.parse(text);
+public abstract class CommandCharacter extends CommandAction {
+	protected CommandCharacter() {
+		super();
 	}
 }

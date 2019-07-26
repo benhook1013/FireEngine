@@ -1,8 +1,8 @@
 package fireengine.character.command.character_comand.general;
 
-import fireengine.character.BaseCharacter;
-import fireengine.character.command.character_comand.CharacterCommand;
-import fireengine.character.player.PlayerCharacter;
+import fireengine.character.Character;
+import fireengine.character.command.character_comand.CommandCharacter;
+import fireengine.character.player.CharacterPlayer;
 import fireengine.client_io.ClientConnectionOutput;
 
 /*
@@ -22,7 +22,7 @@ import fireengine.client_io.ClientConnectionOutput;
  *    limitations under the License.
  */
 
-public class Who extends CharacterCommand {
+public class Who extends CommandCharacter {
 
 	public Who() {
 		super();
@@ -30,12 +30,12 @@ public class Who extends CharacterCommand {
 
 	// TODO Sort this by something.
 	@Override
-	public void doAction(BaseCharacter character) {
+	public void doAction(Character character) {
 		ClientConnectionOutput output = new ClientConnectionOutput(2);
 
 		output.addPart("A list of players in the realm:", null, null);
 
-		for (PlayerCharacter pc : PlayerCharacter.getPlayerList()) {
+		for (CharacterPlayer pc : CharacterPlayer.getPlayerList()) {
 			output.newLine();
 			output.addPart(pc.getName(), null, null);
 		}

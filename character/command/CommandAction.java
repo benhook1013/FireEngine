@@ -1,8 +1,10 @@
 package fireengine.character.command;
 
+import fireengine.character.Character;
+
 /*
  *    Copyright 2019 Ben Hook
- *    InfoCommand.java
+ *    CommandAction.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,8 +19,10 @@ package fireengine.character.command;
  *    limitations under the License.
  */
 
-public abstract class InfoCommand extends BaseCommand {
-	protected InfoCommand() {
+public abstract class CommandAction extends Command {
+	protected CommandAction() {
 		super();
 	}
+
+	public abstract void doAction(Character character);
 }

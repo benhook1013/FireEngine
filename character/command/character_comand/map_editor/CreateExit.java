@@ -2,8 +2,8 @@ package fireengine.character.command.character_comand.map_editor;
 
 import java.util.logging.Level;
 
-import fireengine.character.BaseCharacter;
-import fireengine.character.command.character_comand.CharacterCommand;
+import fireengine.character.Character;
+import fireengine.character.command.character_comand.CommandCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
@@ -32,7 +32,7 @@ import fireengine.util.MyLogger;
  *    limitations under the License.
  */
 
-public class CreateExit extends CharacterCommand {
+public class CreateExit extends CommandCharacter {
 	private String directionText;
 
 	public CreateExit(String directionText) {
@@ -41,8 +41,8 @@ public class CreateExit extends CharacterCommand {
 	}
 
 	@Override
-	public void doAction(BaseCharacter character) {
-		if (BaseCharacter.checkMapEditorPrivs(character) == false) {
+	public void doAction(Character character) {
+		if (Character.checkMapEditorPrivs(character) == false) {
 			return;
 		}
 
