@@ -2,7 +2,7 @@ package fireengine.character.command.character_comand.general.player_only;
 
 import fireengine.character.Character;
 import fireengine.character.command.character_comand.CommandCharacter;
-import fireengine.character.player.CharacterPlayer;
+import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
@@ -35,10 +35,10 @@ public class QuitGame extends CommandCharacter {
 		character.getRoom().sendToRoom(output);
 
 		try {
-			CharacterPlayer.saveCharacter((CharacterPlayer) character);
+			Player.saveCharacter((Player) character);
 		} catch (CheckedHibernateException e) {
 			FireEngineMain.hibernateException(e);
 		}
-		((CharacterPlayer) character).getSession().disconnect();
+		((Player) character).getSession().disconnect();
 	}
 }

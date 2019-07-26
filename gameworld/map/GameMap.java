@@ -535,7 +535,7 @@ public class GameMap {
 							}
 							if (foundRoom == room) {
 								center = "x";
-							} else if (!foundRoom.getPCs().isEmpty()) {
+							} else if (!foundRoom.getPlayers().isEmpty()) {
 								center = "o";
 							}
 							if (foundRoom.getExit(Direction.DIRECTION.EAST) != null) {

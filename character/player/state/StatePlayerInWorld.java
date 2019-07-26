@@ -5,7 +5,7 @@ import fireengine.character.player.state.parser.InputParserInWorld;
 
 /*
  *    Copyright 2019 Ben Hook
- *    StatePCInWorld.java
+ *    StatePlayerInWorld.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -20,10 +20,10 @@ import fireengine.character.player.state.parser.InputParserInWorld;
  *    limitations under the License.
  */
 
-public class StatePCInWorld implements StatePC {
+public class StatePlayerInWorld implements StatePlayer {
 	InputParserInWorld inputParserInWorld;
 
-	public StatePCInWorld() {
+	public StatePlayerInWorld() {
 		inputParserInWorld = InputParserInWorld.getInstance();
 	}
 

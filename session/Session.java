@@ -22,7 +22,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 
-import fireengine.character.player.CharacterPlayer;
+import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnection;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.client_io.ClientIOColour;
@@ -32,7 +32,7 @@ import fireengine.session.phase.PhaseManager;
 import fireengine.util.MyLogger;
 
 /**
- * Session of the connection for a {@link CharacterPlayer}.
+ * Session of the connection for a {@link Player}.
  *
  * @author Ben Hook
  */
@@ -151,7 +151,7 @@ public class Session {
 	}
 
 	/**
-	 * Used to disconnect a Session from the {@link CharacterPlayer} but not end the
+	 * Used to disconnect a Session from the {@link Player} but not end the
 	 * Session, in such situations as someone logging in overtop another Session.
 	 * Returns the Session to the {@link PhaseWelcome}.
 	 */

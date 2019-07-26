@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import fireengine.character.Character;
 import fireengine.character.command.character_comand.CommandCharacter;
-import fireengine.character.player.CharacterPlayer;
+import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
@@ -115,13 +115,13 @@ public class Look extends CommandCharacter {
 		output.newLine();
 		output.addPart(lookRoom.getRoomDesc(), null, null);
 		output.newLine();
-		ArrayList<CharacterPlayer> playerList = lookRoom.getPCs();
+		ArrayList<Player> playerList = lookRoom.getPlayers();
 		if (playerList.isEmpty()) {
 			output.addPart("You see no one here.", null, null);
 		} else {
 			int seen = 0;
 			output.addPart("You see ", null, null);
-			for (Iterator<CharacterPlayer> iter = playerList.iterator(); iter.hasNext();) {
+			for (Iterator<Player> iter = playerList.iterator(); iter.hasNext();) {
 				output.addPart(iter.next().getName(), null, null);
 				seen++;
 				if (iter.hasNext()) {

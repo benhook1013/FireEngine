@@ -16,7 +16,7 @@ import org.hibernate.annotations.CascadeType;
 
 /*
  *    Copyright 2019 Ben Hook
- *    ConditionPC.java
+ *    ConditionPlayer.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -32,37 +32,37 @@ import org.hibernate.annotations.CascadeType;
  */
 
 @Entity
-@Table(name = "PC_CONDITION")
-public class ConditionPC extends Condition {
+@Table(name = "CONDITION_PLAYER")
+public class ConditionPlayer extends Condition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "PC_COND_ID")
+	@Column(name = "COND_PLAYER_ID")
 	@NotNull
 	private int id;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "PC_COND_CHAR_LEVEL_ID")
+	@JoinColumn(name = "COND_PLAYER_LEVEL_ID")
 	@NotNull
 	private Level level;
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "PC_COND_CHAR_HEALTH_ID")
+	@JoinColumn(name = "COND_PLAYER_HEALTH_ID")
 	@NotNull
 	private Health health;
 	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "PC_COND_CHAR_MANA_ID")
+	@JoinColumn(name = "COND_PLAYER_MANA_ID")
 	@NotNull
 	private Mana mana;
 
-	private ConditionPC() {
+	private ConditionPlayer() {
 		super();
 	}
 
-	public ConditionPC(int level) {
+	public ConditionPlayer(int level) {
 		this();
 		setLevel(new Level(level));
 		setHealth(new Health(this.level.getMaxStat()));

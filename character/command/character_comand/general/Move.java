@@ -4,7 +4,7 @@ import java.util.logging.Level;
 
 import fireengine.character.Character;
 import fireengine.character.command.character_comand.CommandCharacter;
-import fireengine.character.player.exception.PCExceptionNullRoom;
+import fireengine.character.player.exception.PlayerExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.GameMap;
@@ -62,9 +62,9 @@ public class Move extends CommandCharacter {
 				// Actual moving //
 				try {
 					character.setRoom(newRoom);
-				} catch (PCExceptionNullRoom e) {
+				} catch (PlayerExceptionNullRoom e) {
 					MyLogger.log(Level.WARNING,
-							"Character: PCExceptionNullRoom during move AFTER null check happened.");
+							"Character: PlayerExceptionNullRoom during move AFTER null check happened.");
 					return;
 				}
 				oldRoom.removeCharacter(character);

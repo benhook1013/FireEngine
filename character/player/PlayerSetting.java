@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 /*
  *    Copyright 2019 Ben Hook
- *    PCSetting.java
+ *    PlayerSetting.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -26,19 +26,19 @@ import javax.validation.constraints.NotNull;
  */
 
 @Entity
-@Table(name = "PC_SETTINGS")
-public class PCSetting {
+@Table(name = "PLAYER_SETTINGS")
+public class PlayerSetting {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "PC_SETTINGS_ID")
+	@Column(name = "PLAYER_SETTINGS_ID")
 	@NotNull
 	private int id;
 
-	@Column(name = "PC_SETTINGS_MAP_EDITOR")
+	@Column(name = "PLAYER_SETTINGS_MAP_EDITOR")
 	@NotNull
 	private boolean mapEditor;
 
-	public PCSetting() {
+	public PlayerSetting() {
 		mapEditor = false;
 	}
 

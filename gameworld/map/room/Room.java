@@ -22,7 +22,7 @@ import org.hibernate.annotations.CascadeType;
 import org.hibernate.query.Query;
 
 import fireengine.character.Character;
-import fireengine.character.player.CharacterPlayer;
+import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.Direction;
@@ -133,7 +133,7 @@ public class Room {
 	private RoomExit northWestExit;
 
 	@Transient
-	private ArrayList<CharacterPlayer> playerList;
+	private ArrayList<Player> playerList;
 
 	private Room() {
 		playerList = new ArrayList<>();
@@ -211,7 +211,7 @@ public class Room {
 
 	/**
 	 * Adds a {@link Character} to the {@link Room}'s player list (typically
-	 * on room enter), so far only used to add {@link CharacterPlayer}s. Always use
+	 * on room enter), so far only used to add {@link Player}s. Always use
 	 * AFTER setting room on Character, as this will check to make sure both
 	 * match(check will result in hidden-to-player error).
 	 *
@@ -222,10 +222,10 @@ public class Room {
 			MyLogger.log(Level.WARNING, "Room: addCharacter onto room that is not Character's current room.");
 		}
 
-		if (player instanceof CharacterPlayer) {
+		if (player instanceof Player) {
 			synchronized (playerList) {
 				if (!playerList.contains(player)) {
-					playerList.add((CharacterPlayer) player);
+					playerList.add((Player) player);
 				}
 			}
 		} else {
@@ -235,7 +235,7 @@ public class Room {
 
 	/**
 	 * Removes a {@link Character} from the rooms player list (typically on room
-	 * exit), so far only used to remove {@link CharacterPlayer}s. Always use AFTER
+	 * exit), so far only used to remove {@link Player}s. Always use AFTER
 	 * setting room on Character, as this will check to make sure isn't removing
 	 * current player room(check will result in hidden-to-player error).
 	 *
@@ -247,7 +247,7 @@ public class Room {
 					"Room: removeCharacter from room that is still Character's current room.");
 		}
 
-		if (player instanceof CharacterPlayer) {
+		if (player instanceof Player) {
 			synchronized (playerList) {
 				playerList.remove(player);
 			}
@@ -255,17 +255,17 @@ public class Room {
 	}
 
 	/**
-	 * Returns list of {@link CharacterPlayer}s in the room.
+	 * Returns list of {@link Player}s in the room.
 	 *
 	 * @return
 	 */
-	public ArrayList<CharacterPlayer> getPCs() {
+	public ArrayList<Player> getPlayers() {
 		synchronized (playerList) {
-			for (CharacterPlayer pc : playerList) {
-				if (pc.getRoom() != this) {
+			for (Player player : playerList) {
+				if (player.getRoom() != this) {
 					MyLogger.log(Level.WARNING,
-							"Room: CharacterPlayer found in playerList of room, that is not current room of CharacterPlayer. CharacterPlayer id: "
-									+ pc.getId());
+							"Room: Player found in playerList of room, that is not current room of Player. Player id: "
+									+ player.getId());
 				}
 			}
 
@@ -276,7 +276,7 @@ public class Room {
 	/**
 	 * Sends to listeners of room, without any exclusion.
 	 *
-	 * @see Room#sendToRoomExcluding(ClientConnectionOutput, CharacterPlayer)
+	 * @see Room#sendToRoomExcluding(ClientConnectionOutput, Player)
 	 *
 	 * @param output
 	 */
@@ -286,13 +286,13 @@ public class Room {
 
 	/**
 	 * Sends to listeners of the room, apart from notPlayer, if one is specified.
-	 * Currently only {@link CharacterPlayer}s inside the room.
+	 * Currently only {@link Player}s inside the room.
 	 *
 	 * @param output    Output to be sent.
 	 * @param notPlayer Player, if specified, to be excluded from output.
 	 */
 	public void sendToRoomExcluding(ClientConnectionOutput output, Character ignoreCharacter) {
-		for (CharacterPlayer player : playerList) {
+		for (Player player : playerList) {
 			if (ignoreCharacter == null) {
 				player.sendToListeners(new ClientConnectionOutput(output));
 			} else {

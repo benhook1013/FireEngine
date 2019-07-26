@@ -4,7 +4,7 @@ import fireengine.character.command.CommandAction;
 
 /*
  *    Copyright 2019 Ben Hook
- *    StatePC.java
+ *    StatePlayer.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,6 +19,6 @@ import fireengine.character.command.CommandAction;
  *    limitations under the License.
  */
 
-public interface StatePC {
+public interface StatePlayer {
 	public CommandAction acceptInput(String text);
 }

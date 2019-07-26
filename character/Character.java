@@ -3,9 +3,9 @@ package fireengine.character;
 import fireengine.character.character_class.CharacterClass;
 import fireengine.character.command.CommandAction;
 import fireengine.character.condition.Condition;
-import fireengine.character.condition.ConditionPC;
-import fireengine.character.player.CharacterPlayer;
-import fireengine.character.player.exception.PCExceptionNullRoom;
+import fireengine.character.condition.ConditionPlayer;
+import fireengine.character.player.Player;
+import fireengine.character.player.exception.PlayerExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.Gameworld;
 import fireengine.gameworld.map.GameMap;
@@ -49,11 +49,11 @@ public abstract class Character {
 
 	public abstract Condition getCondition();
 
-	public abstract void setCondition(ConditionPC condition);
+	public abstract void setCondition(ConditionPlayer condition);
 
 	public abstract Room getRoom();
 
-	public abstract void setRoom(Room room) throws PCExceptionNullRoom;
+	public abstract void setRoom(Room room) throws PlayerExceptionNullRoom;
 
 	public abstract void acceptInput(String text);
 
@@ -84,8 +84,8 @@ public abstract class Character {
 	}
 
 	public static boolean checkMapEditorPrivs(Character character) {
-		if (character instanceof CharacterPlayer) {
-			if (!((CharacterPlayer) character).getSettings().isMapEditor()) {
+		if (character instanceof Player) {
+			if (!((Player) character).getSettings().isMapEditor()) {
 				character.sendToListeners(
 						new ClientConnectionOutput("You don't have GameMap Editor privileges!", null, null));
 				return false;

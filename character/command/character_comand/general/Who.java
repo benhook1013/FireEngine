@@ -2,7 +2,7 @@ package fireengine.character.command.character_comand.general;
 
 import fireengine.character.Character;
 import fireengine.character.command.character_comand.CommandCharacter;
-import fireengine.character.player.CharacterPlayer;
+import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
 
 /*
@@ -35,9 +35,9 @@ public class Who extends CommandCharacter {
 
 		output.addPart("A list of players in the realm:", null, null);
 
-		for (CharacterPlayer pc : CharacterPlayer.getPlayerList()) {
+		for (Player p : Player.getPlayerList()) {
 			output.newLine();
-			output.addPart(pc.getName(), null, null);
+			output.addPart(p.getName(), null, null);
 		}
 
 		character.getRoom().sendToRoom(output);

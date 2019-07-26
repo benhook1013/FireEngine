@@ -34,7 +34,7 @@ import fireengine.util.MyClassLoader;
  */
 
 @Entity
-@Table(name = "CHARACTER_CLASS")
+@Table(name = "CHAR_CLASS")
 public class CharacterClass {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,7 +2,7 @@ package fireengine.character.player.exception;
 
 /*
  *    Copyright 2019 Ben Hook
- *    PCExceptionNullRoom.java
+ *    PlayerException.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -17,18 +17,18 @@ package fireengine.character.player.exception;
  *    limitations under the License.
  */
 
-public class PCExceptionNullRoom extends PCException {
+public abstract class PlayerException extends Exception {
 	private static final long serialVersionUID = 1L;
 
-	public PCExceptionNullRoom(String message) {
+	public PlayerException(String message) {
 		super(message);
 	}
 
-	public PCExceptionNullRoom(Throwable throwable) {
+	public PlayerException(Throwable throwable) {
 		super(throwable);
 	}
 
-	public PCExceptionNullRoom(String message, Throwable throwable) {
+	public PlayerException(String message, Throwable throwable) {
 		super(message, throwable);
 	}
 }
