@@ -25,11 +25,11 @@ import javax.persistence.Table;
  */
 
 @Entity
-@Table(name = "BASE_ROOM_EXIT")
+@Table(name = "ROOM_EXIT")
 public class RoomExit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "B_ROOM_EXIT_ID")
+	@Column(name = "ROOM_EXIT_ID")
 	private int id;
 
 	public RoomExit() {

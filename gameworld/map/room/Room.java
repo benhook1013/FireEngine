@@ -58,7 +58,7 @@ import fireengine.util.MyLogger;
  * @author Ben Hook
  */
 @Entity
-@Table(name = "BASE_ROOM")
+@Table(name = "ROOM")
 public class Room {
 //	/**
 //	 * TODO Might not need, only used to in saveRooms. NOT CURRENTLY USED. TODO Remove
@@ -68,61 +68,61 @@ public class Room {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "B_ROOM_ID", nullable = false)
+	@Column(name = "ROOM_ID", nullable = false)
 	@NotNull
 	private int roomId;
 
-	@Column(name = "B_ROOM_MAP_ID", nullable = false)
+	@Column(name = "ROOM_MAP_ID", nullable = false)
 	@NotNull
 	private int mapId;
 
-	@Column(name = "B_ROOM_X", nullable = false)
+	@Column(name = "ROOM_X", nullable = false)
 	@NotNull
 	private int x;
 
-	@Column(name = "B_ROOM_Y", nullable = false)
+	@Column(name = "ROOM_Y", nullable = false)
 	@NotNull
 	private int y;
 
-	@Column(name = "B_ROOM_NAME")
+	@Column(name = "ROOM_NAME")
 	@NotNull
 	private String name;
 
-	@Column(name = "B_ROOM_DESC")
+	@Column(name = "ROOM_DESC")
 	@NotNull
 	private String desc;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "B_ROOM_EXIT_N")
+	@JoinColumn(name = "ROOM_EXIT_N")
 	private RoomExit northExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "B_ROOM_EXIT_NE")
+	@JoinColumn(name = "ROOM_EXIT_NE")
 	private RoomExit northEastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "B_ROOM_EXIT_E")
+	@JoinColumn(name = "ROOM_EXIT_E")
 	private RoomExit eastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "B_ROOM_EXIT_SE")
+	@JoinColumn(name = "ROOM_EXIT_SE")
 	private RoomExit southEastExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "B_ROOM_EXIT_S")
+	@JoinColumn(name = "ROOM_EXIT_S")
 	private RoomExit southExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "B_ROOM_EXIT_SW")
+	@JoinColumn(name = "ROOM_EXIT_SW")
 	private RoomExit southWestExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "B_ROOM_EXIT_W")
+	@JoinColumn(name = "ROOM_EXIT_W")
 	private RoomExit westExit;
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "B_ROOM_EXIT_NW")
+	@JoinColumn(name = "ROOM_EXIT_NW")
 	private RoomExit northWestExit;
 
 	@Transient
@@ -495,7 +495,7 @@ public class Room {
 			hibSess = FireEngineMain.hibSessFactory.openSession();
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("DELETE FROM Room WHERE B_ROOM_ID = :id");
+			Query<?> query = hibSess.createQuery("DELETE FROM Room WHERE ROOM_ID = :id");
 			query.setParameter("id", room.getRoomId());
 			query.executeUpdate();
 
@@ -532,7 +532,7 @@ public class Room {
 			hibSess = FireEngineMain.hibSessFactory.openSession();
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("DELETE FROM RoomExit WHERE B_ROOM_EXIT_ID = :id");
+			Query<?> query = hibSess.createQuery("DELETE FROM RoomExit WHERE ROOM_EXIT_ID = :id");
 			query.setParameter("id", roomExit.getId());
 			query.executeUpdate();
 
