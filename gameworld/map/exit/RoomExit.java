@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -30,6 +31,7 @@ public class RoomExit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ROOM_EXIT_ID")
+	@NotNull
 	private int id;
 
 	public RoomExit() {

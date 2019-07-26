@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
@@ -36,19 +37,25 @@ public class PCCondition extends BaseCondition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "PC_COND_ID")
+	@NotNull
 	private int id;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_COND_CHAR_LEVEL_ID")
+	@NotNull
 	private Level level;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_COND_CHAR_HEALTH_ID")
+	@NotNull
 	private Health health;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_COND_CHAR_MANA_ID")
+	@NotNull
 	private Mana mana;
 
 	private PCCondition() {

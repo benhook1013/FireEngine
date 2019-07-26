@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
@@ -68,32 +69,43 @@ public class PlayerCharacter extends BaseCharacter {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "PC_ID")
+	@NotNull
 	private int id;
+	
 	@Column(name = "PC_NAME")
+	@NotNull
 	private String name; // 40 characters max
+	
 	@Column(name = "PC_PASSWORD")
+	@NotNull
 	private String password; // 40 characters max
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_PC_SETTINGS_ID")
+	@NotNull
 	private PCSetting settings;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_CHAR_CLASS_ID")
+	@NotNull
 	private CharacterClass charClass;
 
 	@Transient
 	private PCState pcState;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PC_PC_COND_ID")
+	@NotNull
 	private PCCondition condition;
 	// TODO test cascade see if can remove saving sub classes individually.
 
 	@Transient
 	private Session session;
 	// TODO Load room on character load.
+	
 	@Transient
 	private volatile Room room;
 

@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -32,6 +33,7 @@ public class SkillsetMartialism extends Skillset {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "SKILLSET_MARTIALISM_ID")
+	@NotNull
 	private int id;
 
 	public SkillsetMartialism() {

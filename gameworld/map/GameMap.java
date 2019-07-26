@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
@@ -69,8 +70,11 @@ public class GameMap {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "GAME_MAP_ID")
+	@NotNull
 	private int id;
+	
 	@Column(name = "GAME_MAP_NAME")
+	@NotNull
 	private String name;
 
 	@Transient

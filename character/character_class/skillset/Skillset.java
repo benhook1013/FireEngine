@@ -11,6 +11,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -36,11 +37,15 @@ public abstract class Skillset {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "BASE_SKILLSET_ID")
+	@NotNull
 	private int id;
 
 	@Column(name = "BASE_SKILLSET_NAME")
+	@NotNull
 	protected String skillsetName;
+	
 	@Column(name = "BASE_SKILLSET_SKILLSET_EXPERIENCE")
+	@NotNull
 	private int skillsetExperience;
 
 	@Transient

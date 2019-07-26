@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import fireengine.character.condition.exception.ManaExceptionZeroMana;
 
@@ -32,9 +33,11 @@ public class Mana {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CHAR_MANA_ID")
+	@NotNull
 	private int id;
 
 	@Column(name = "CHAR_MANA_MANA")
+	@NotNull
 	private volatile int mana;
 
 	@SuppressWarnings("unused")

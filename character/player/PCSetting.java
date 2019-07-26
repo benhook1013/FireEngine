@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -30,9 +31,11 @@ public class PCSetting {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "PC_SETTINGS_ID")
+	@NotNull
 	private int id;
 
 	@Column(name = "PC_SETTINGS_MAP_EDITOR")
+	@NotNull
 	private boolean mapEditor;
 
 	public PCSetting() {

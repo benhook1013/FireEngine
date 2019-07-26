@@ -96,30 +96,37 @@ public class Room {
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_N")
 	private RoomExit northExit;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_NE")
 	private RoomExit northEastExit;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_E")
 	private RoomExit eastExit;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_SE")
 	private RoomExit southEastExit;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_S")
 	private RoomExit southExit;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_SW")
 	private RoomExit southWestExit;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_W")
 	private RoomExit westExit;
+	
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_NW")

@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import fireengine.character.condition.exception.LevelExceptionAlreadyMax;
 import fireengine.character.condition.exception.LevelExceptionAlreadyMin;
@@ -34,6 +35,7 @@ public class Level {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CHAR_LEVEL_ID")
+	@NotNull
 	private int id;
 
 	private static int[] experienceList = { 0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1150, 1350, 1600,
@@ -42,9 +44,13 @@ public class Level {
 	private static int statPerLevel = 30;
 
 	@Column(name = "CHAR_LEVEL_LEVEL")
+	@NotNull
 	private volatile int level;
+	
 	@Column(name = "CHAR_LEVEL_EXPERIENCE")
+	@NotNull
 	private volatile int experience;
+	
 	@Transient
 	private Object levelLock = new Object();
 

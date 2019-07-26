@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
 
 import fireengine.character.character_class.skillset.Skillset;
 import fireengine.util.ConfigLoader;
@@ -38,9 +39,11 @@ public class CharacterClass {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "CHAR_CLASS_ID")
+	@NotNull
 	private int id;
 
 	@Column(name = "CHAR_CLASS_NAME")
+	@NotNull
 	protected String className;
 
 	@Transient
