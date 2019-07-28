@@ -52,7 +52,7 @@ public class CreateExit extends CommandCharacter {
 			try {
 				character.getMap().createExit(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput(
-						"RoomExit created " + direction.toString() + " from \"" + character.getRoom().getRoomName() + "\".",
+						"RoomExit created " + direction.toString() + " from \"" + character.getRoom().getName() + "\".",
 						null, null));
 				return;
 			} catch (MapExceptionRoomNull e) {
@@ -61,7 +61,7 @@ public class CreateExit extends CommandCharacter {
 				return;
 			} catch (MapExceptionOutOfBounds e) {
 				character.sendToListeners(new ClientConnectionOutput("Can't create exit " + direction.toString()
-						+ " from \"" + character.getRoom().getRoomName() + "\", adjoining room is out of map boundary."
+						+ " from \"" + character.getRoom().getName() + "\", adjoining room is out of map boundary."
 						+ " If you think room is actaully there, contact a God.", null, null));
 				return;
 			} catch (MapExceptionExitRoomNull e) {
@@ -70,7 +70,7 @@ public class CreateExit extends CommandCharacter {
 				return;
 			} catch (MapExceptionExitExists e) {
 				character.sendToListeners(new ClientConnectionOutput(
-						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getRoomName()
+						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getName()
 								+ "\", exit already exists there." + " Try DESTROY EXIT first if exit is oneway.",
 						null, null));
 				return;
@@ -78,7 +78,7 @@ public class CreateExit extends CommandCharacter {
 				MyLogger.log(Level.WARNING, "CreateExit: MapExceptionDirectionNotSupported while trying to createExit.",
 						e);
 				character.sendToListeners(new ClientConnectionOutput(
-						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getRoomName()
+						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getName()
 								+ "\", direction not supported in exit creation code. Contact a God to fix this.",
 						null, null));
 				return;

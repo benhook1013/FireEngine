@@ -63,7 +63,7 @@ public class CreateRoom extends CommandCharacter {
 				MyLogger.log(Level.WARNING, "CreateRoom: MapExceptionDirectionNotSupported while trying to createRoom.",
 						e);
 				character.sendToListeners(new ClientConnectionOutput(
-						"Can't create room " + direction.toString() + " from \"" + character.getRoom().getRoomName()
+						"Can't create room " + direction.toString() + " from \"" + character.getRoom().getName()
 								+ "\", direction not supported in room creation code. Contact a God to fix this.",
 						null, null));
 				return;

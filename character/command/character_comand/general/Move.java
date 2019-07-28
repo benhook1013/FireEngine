@@ -54,7 +54,7 @@ public class Move extends CommandCharacter {
 				Room newRoom = character.getMap().getRoom(character.getRoom(), direction);
 				if (newRoom == null) {
 					throw new MapExceptionExitRoomNull("Character: Somehow room to the " + direction + " of "
-							+ character.getRoom().getRoomName() + " had exit leading to it but room is null.");
+							+ character.getRoom().getName() + " had exit leading to it but room is null.");
 				}
 
 				// Anything blocking movement goes here //

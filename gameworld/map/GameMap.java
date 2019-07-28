@@ -351,7 +351,7 @@ public class GameMap {
 		}
 		if (room.getExit(direction) != null) {
 			throw new MapExceptionExitExists(
-					"GameMap: RoomExit is not null " + direction.toString() + " of " + room.getRoomName() + ".");
+					"GameMap: RoomExit is not null " + direction.toString() + " of " + room.getName() + ".");
 		}
 
 		Room otherRoom = getRoom(room, direction);
@@ -360,7 +360,7 @@ public class GameMap {
 		}
 		if (room.getExit(Direction.oppositeDirection(direction)) != null) {
 			throw new MapExceptionExitExists("GameMap: RoomExit is not null "
-					+ Direction.oppositeDirection(direction).toString() + " of " + otherRoom.getRoomName());
+					+ Direction.oppositeDirection(direction).toString() + " of " + otherRoom.getName());
 		}
 
 		RoomExit newExit = new RoomExit();
@@ -477,7 +477,7 @@ public class GameMap {
 		}
 
 		output.newLine();
-		output.addPart("Map around \"" + room.getRoomName() + "\" " + room.getCoordsText(), null, null);
+		output.addPart("Map around \"" + room.getName() + "\" " + room.getCoordsText(), null, null);
 
 		class Line_Builder {
 			// public String getBorder(int size) {

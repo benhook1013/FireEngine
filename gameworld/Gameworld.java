@@ -8,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import fireengine.character.player.Player;
 import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.exception.MapExceptionMapLoad;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
@@ -44,7 +45,7 @@ public class Gameworld {
 	// TODO This should probably be a hashmap etc based on map id
 	private static ArrayList<GameMap> mapList = new ArrayList<>();
 
-	public static void setupGameworld() throws CheckedHibernateException, MapExceptionMapLoad {
+	public static void setupGameworld() throws CheckedHibernateException, MapExceptionMapLoad, MapExceptionOutOfBounds, MapExceptionRoomExists {
 		loadMaps();
 
 		GameMap mainMap = findMap("Mainland");
@@ -59,6 +60,20 @@ public class Gameworld {
 			}
 		} else {
 			System.out.println("Using old map: " + mainMap.getName());
+		}
+
+		// Create spawn room if non exists
+		if (Gameworld.findMap("Mainland").getRoom(0, 0) == null) {
+			Gameworld.findMap("Mainland").createRoom(0, 0);
+			Room spawnRoom = Gameworld.findMap("Mainland").getRoom(0, 0);
+			spawnRoom.setName("The Lounge");
+			spawnRoom.setDesc("Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server.");
+		}
+
+		// Create admin with map editor privs if not existing
+		if (Player.findCharacter("Admin") == null) {
+			Player.createCharacter("Admin", "adminpass");
+			Player.findCharacter("Admin").getSettings().setMapEditor(true);
 		}
 	}
 

@@ -51,7 +51,7 @@ public class DestroyExit extends CommandCharacter {
 			try {
 				character.getMap().destroyExit(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput("RoomExit destroyed " + direction.toString()
-						+ " from \"" + character.getRoom().getRoomName() + "\".", null, null));
+						+ " from \"" + character.getRoom().getName() + "\".", null, null));
 				return;
 			} catch (MapExceptionRoomNull e) {
 				character.sendToListeners(
@@ -59,7 +59,7 @@ public class DestroyExit extends CommandCharacter {
 				return;
 			} catch (MapExceptionOutOfBounds e) {
 				character.sendToListeners(new ClientConnectionOutput("Can't destroy exit " + direction.toString()
-						+ " from \"" + character.getRoom().getRoomName() + "\", adjoining room is out of map boundary."
+						+ " from \"" + character.getRoom().getName() + "\", adjoining room is out of map boundary."
 						+ " If you think room is actaully there, contact a God.", null, null));
 				return;
 			} catch (MapExceptionExitRoomNull e) {
@@ -70,7 +70,7 @@ public class DestroyExit extends CommandCharacter {
 				MyLogger.log(Level.WARNING,
 						"DestroyExit: MapExceptionDirectionNotSupported while trying to destroyExit.", e);
 				character.sendToListeners(new ClientConnectionOutput(
-						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getRoomName()
+						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getName()
 								+ "\", direction not supported in exit creation code. Contact a God to fix this.",
 						null, null));
 				return;

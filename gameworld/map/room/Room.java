@@ -145,7 +145,7 @@ public class Room {
 		this.x = x;
 		this.y = y;
 		this.name = "Placeholder name";
-		this.desc = "Placeholder desc.";
+		this.desc = "Placeholder description";
 	}
 
 	public int getRoomId() {
@@ -193,19 +193,19 @@ public class Room {
 		return "(" + getX() + "," + getY() + ")";
 	}
 
-	public String getRoomName() {
+	public String getName() {
 		return name;
 	}
 
-	public void setRoomName(String name) {
+	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getRoomDesc() {
+	public String getDesc() {
 		return desc;
 	}
 
-	public void setRoomDesc(String desc) {
+	public void setDesc(String desc) {
 		this.desc = desc;
 	}
 

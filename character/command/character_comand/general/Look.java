@@ -111,9 +111,9 @@ public class Look extends CommandCharacter {
 			}
 		}
 
-		output.addPart("\"" + lookRoom.getRoomName() + "\" " + lookRoom.getCoordsText(), null, null);
+		output.addPart("\"" + lookRoom.getName() + "\" " + lookRoom.getCoordsText(), null, null);
 		output.newLine();
-		output.addPart(lookRoom.getRoomDesc(), null, null);
+		output.addPart(lookRoom.getDesc(), null, null);
 		output.newLine();
 		ArrayList<Player> playerList = lookRoom.getPlayers();
 		if (playerList.isEmpty()) {

@@ -65,7 +65,7 @@ public class DestroyRoom extends CommandCharacter {
 				MyLogger.log(Level.WARNING,
 						"DestroyRoom: MapExceptionDirectionNotSupported while trying to destroyRoom.", e);
 				character.sendToListeners(new ClientConnectionOutput(
-						"Can't destroy room " + direction.toString() + " from \"" + character.getRoom().getRoomName()
+						"Can't destroy room " + direction.toString() + " from \"" + character.getRoom().getName()
 								+ "\", direction not supported in room destruction code. Contact a God to fix this.",
 						null, null));
 			} catch (CheckedHibernateException e) {
