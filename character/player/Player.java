@@ -71,15 +71,15 @@ public class Player extends Character {
 	@Column(name = "PLAYER_ID")
 	@NotNull
 	private int id;
-	
+
 	@Column(name = "PLAYER_NAME")
 	@NotNull
 	private String name; // 40 characters max
-	
+
 	@Column(name = "PLAYER_PASSWORD")
 	@NotNull
 	private String password; // 40 characters max
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PLAYER_PLAYER_SETTINGS_ID")
@@ -94,7 +94,7 @@ public class Player extends Character {
 
 	@Transient
 	private StatePlayer playerState;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PLAYER_COND_PLAYER_ID")
@@ -105,7 +105,7 @@ public class Player extends Character {
 	@Transient
 	private Session session;
 	// TODO Load room on character load.
-	
+
 	@Transient
 	private volatile Room room;
 
@@ -251,8 +251,8 @@ public class Player extends Character {
 				try {
 					setRoom(sendRoom);
 				} catch (PlayerExceptionNullRoom e1) {
-					MyLogger.log(Level.WARNING,
-							"Player: Null error when trying to send null room player to origin.", e);
+					MyLogger.log(Level.WARNING, "Player: Null error when trying to send null room player to origin.",
+							e);
 					return;
 				}
 			} else {
@@ -287,8 +287,8 @@ public class Player extends Character {
 	}
 
 	/**
-	 * Used to connect a {@link Session} to the {@link Player}, and
-	 * entering the {@link Room} specified.
+	 * Used to connect a {@link Session} to the {@link Player}, and entering the
+	 * {@link Room} specified.
 	 *
 	 * @throws PlayerExceptionNullRoom
 	 */
@@ -518,8 +518,7 @@ public class Player extends Character {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new CheckedHibernateException("Player: Hibernate error while trying to getAllPlayerInfo.",
-					e);
+			throw new CheckedHibernateException("Player: Hibernate error while trying to getAllPlayerInfo.", e);
 		} finally {
 			hibSess.close();
 		}

@@ -151,9 +151,9 @@ public class Session {
 	}
 
 	/**
-	 * Used to disconnect a Session from the {@link Player} but not end the
-	 * Session, in such situations as someone logging in overtop another Session.
-	 * Returns the Session to the {@link PhaseWelcome}.
+	 * Used to disconnect a Session from the {@link Player} but not end the Session,
+	 * in such situations as someone logging in overtop another Session. Returns the
+	 * Session to the {@link PhaseWelcome}.
 	 */
 	public void disconnect() {
 		phaseManager.disconnect();

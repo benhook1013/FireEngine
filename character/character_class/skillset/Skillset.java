@@ -43,7 +43,7 @@ public abstract class Skillset {
 	@Column(name = "SKILLSET_NAME")
 	@NotNull
 	protected String skillsetName;
-	
+
 	@Column(name = "SKILLSET_SKILLSET_EXPERIENCE")
 	@NotNull
 	private int skillsetExperience;

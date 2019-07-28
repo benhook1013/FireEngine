@@ -45,13 +45,13 @@ public class ConditionPlayer extends Condition {
 	@JoinColumn(name = "COND_PLAYER_LEVEL_ID")
 	@NotNull
 	private Level level;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "COND_PLAYER_HEALTH_ID")
 	@NotNull
 	private Health health;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "COND_PLAYER_MANA_ID")

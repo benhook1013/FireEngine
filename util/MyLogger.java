@@ -72,42 +72,42 @@ public class MyLogger {
 	public class MyLoggerFormatter extends Formatter {
 		// ANSI escape code
 		public static final String ANSI_RESET = "\u001B[0m";
-		
-		public static final String ANSI_BLACK =		"\u001B[30m";
-		public static final String ANSI_RED =		"\u001B[31m";
-		public static final String ANSI_GREEN =		"\u001B[32m";
-		public static final String ANSI_YELLOW =	"\u001B[33m";
-		public static final String ANSI_BLUE =		"\u001B[34m";
-		public static final String ANSI_MAGENTA =	"\u001B[35m";
-		public static final String ANSI_CYAN =		"\u001B[36m";
-		public static final String ANSI_WHITE =		"\u001B[37m";
-		
-		public static final String ANSI_BRIGHT_BLACK =		"\u001b[30;1m";
-		public static final String ANSI_BRIGHT_RED =		"\u001b[31;1m";
-		public static final String ANSI_BRIGHT_GREEN =		"\u001b[32;1m";
-		public static final String ANSI_BRIGHT_YELLOW =		"\u001b[33;1m";
-		public static final String ANSI_BRIGHT_BLUE =		"\u001b[34;1m";
-		public static final String ANSI_BRIGHT_MAGENTA =	"\u001b[35;1m";
-		public static final String ANSI_BRIGHT_CYAN =		"\u001b[36;1m";
-		public static final String ANSI_BRIGHT_WHITE =		"\u001b[37;1m";
-		
-		public static final String ANSI_BACKGROUND_BLACK =		"\u001b[40m";
-		public static final String ANSI_BACKGROUND_RED =		"\u001B[41m";
-		public static final String ANSI_BACKGROUND_GREEN =		"\u001B[42m";
-		public static final String ANSI_BACKGROUND_YELLOW =		"\u001B[43m";
-		public static final String ANSI_BACKGROUND_BLUE =		"\u001B[44m";
-		public static final String ANSI_BACKGROUND_MAGENTA =	"\u001B[45m";
-		public static final String ANSI_BACKGROUND_CYAN =		"\u001B[46m";
-		public static final String ANSI_BACKGROUND_WHITE =		"\u001B[47m";
-		
-		public static final String ANSI_BACKGROUND_BRIGHT_BLACK =	"\u001b[40;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_RED =		"\u001b[41;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_GREEN =	"\u001b[42;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_YELLOW =	"\u001b[43;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_BLUE =	"\u001b[44;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_MAGENTA =	"\u001b[45;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_CYAN =	"\u001b[46;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_WHITE =	"\u001b[47;1m";
+
+		public static final String ANSI_BLACK = "\u001B[30m";
+		public static final String ANSI_RED = "\u001B[31m";
+		public static final String ANSI_GREEN = "\u001B[32m";
+		public static final String ANSI_YELLOW = "\u001B[33m";
+		public static final String ANSI_BLUE = "\u001B[34m";
+		public static final String ANSI_MAGENTA = "\u001B[35m";
+		public static final String ANSI_CYAN = "\u001B[36m";
+		public static final String ANSI_WHITE = "\u001B[37m";
+
+		public static final String ANSI_BRIGHT_BLACK = "\u001b[30;1m";
+		public static final String ANSI_BRIGHT_RED = "\u001b[31;1m";
+		public static final String ANSI_BRIGHT_GREEN = "\u001b[32;1m";
+		public static final String ANSI_BRIGHT_YELLOW = "\u001b[33;1m";
+		public static final String ANSI_BRIGHT_BLUE = "\u001b[34;1m";
+		public static final String ANSI_BRIGHT_MAGENTA = "\u001b[35;1m";
+		public static final String ANSI_BRIGHT_CYAN = "\u001b[36;1m";
+		public static final String ANSI_BRIGHT_WHITE = "\u001b[37;1m";
+
+		public static final String ANSI_BACKGROUND_BLACK = "\u001b[40m";
+		public static final String ANSI_BACKGROUND_RED = "\u001B[41m";
+		public static final String ANSI_BACKGROUND_GREEN = "\u001B[42m";
+		public static final String ANSI_BACKGROUND_YELLOW = "\u001B[43m";
+		public static final String ANSI_BACKGROUND_BLUE = "\u001B[44m";
+		public static final String ANSI_BACKGROUND_MAGENTA = "\u001B[45m";
+		public static final String ANSI_BACKGROUND_CYAN = "\u001B[46m";
+		public static final String ANSI_BACKGROUND_WHITE = "\u001B[47m";
+
+		public static final String ANSI_BACKGROUND_BRIGHT_BLACK = "\u001b[40;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_RED = "\u001b[41;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_GREEN = "\u001b[42;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_YELLOW = "\u001b[43;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_BLUE = "\u001b[44;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_MAGENTA = "\u001b[45;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_CYAN = "\u001b[46;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_WHITE = "\u001b[47;1m";
 
 		// Here you can configure the format of the output and
 		// its colour by using the ANSI escape codes defined above.
@@ -118,8 +118,8 @@ public class MyLogger {
 			// This example will print date/time, class, and log level in yellow,
 			// followed by the log message and it's parameters in white .
 			StringBuilder builder = new StringBuilder();
-			
-			//builder.append(ANSI_BACKGROUND_BRIGHT_WHITE);
+
+			// builder.append(ANSI_BACKGROUND_BRIGHT_WHITE);
 
 			if (record.getLevel().intValue() == Level.SEVERE.intValue()) {
 				builder.append(ANSI_BRIGHT_RED);

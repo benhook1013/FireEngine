@@ -46,11 +46,11 @@ public class Level {
 	@Column(name = "CHAR_LEVEL_LEVEL")
 	@NotNull
 	private volatile int level;
-	
+
 	@Column(name = "CHAR_LEVEL_EXPERIENCE")
 	@NotNull
 	private volatile int experience;
-	
+
 	@Transient
 	private Object levelLock = new Object();
 

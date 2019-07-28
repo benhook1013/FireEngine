@@ -100,37 +100,37 @@ public class Room {
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_N")
 	private RoomExit northExit;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_NE")
 	private RoomExit northEastExit;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_E")
 	private RoomExit eastExit;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_SE")
 	private RoomExit southEastExit;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_S")
 	private RoomExit southExit;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_SW")
 	private RoomExit southWestExit;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_W")
 	private RoomExit westExit;
-	
+
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "ROOM_EXIT_NW")
@@ -224,10 +224,10 @@ public class Room {
 	}
 
 	/**
-	 * Adds a {@link Character} to the {@link Room}'s player list (typically
-	 * on room enter), so far only used to add {@link Player}s. Always use
-	 * AFTER setting room on Character, as this will check to make sure both
-	 * match(check will result in hidden-to-player error).
+	 * Adds a {@link Character} to the {@link Room}'s player list (typically on room
+	 * enter), so far only used to add {@link Player}s. Always use AFTER setting
+	 * room on Character, as this will check to make sure both match(check will
+	 * result in hidden-to-player error).
 	 *
 	 * @param player
 	 */
@@ -249,16 +249,15 @@ public class Room {
 
 	/**
 	 * Removes a {@link Character} from the rooms player list (typically on room
-	 * exit), so far only used to remove {@link Player}s. Always use AFTER
-	 * setting room on Character, as this will check to make sure isn't removing
-	 * current player room(check will result in hidden-to-player error).
+	 * exit), so far only used to remove {@link Player}s. Always use AFTER setting
+	 * room on Character, as this will check to make sure isn't removing current
+	 * player room(check will result in hidden-to-player error).
 	 *
 	 * @param player
 	 */
 	public void removeCharacter(Character player) {
 		if (player.getRoom() == this) {
-			MyLogger.log(Level.WARNING,
-					"Room: removeCharacter from room that is still Character's current room.");
+			MyLogger.log(Level.WARNING, "Room: removeCharacter from room that is still Character's current room.");
 		}
 
 		if (player instanceof Player) {
@@ -435,7 +434,8 @@ public class Room {
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static Room createRoom(int mapId, int z, int x, int y) throws MapExceptionRoomNull, CheckedHibernateException {
+	public static Room createRoom(int mapId, int z, int x, int y)
+			throws MapExceptionRoomNull, CheckedHibernateException {
 		Room newRoom = new Room(mapId, z, x, y);
 		saveRoom(newRoom);
 		return newRoom;
@@ -491,9 +491,9 @@ public class Room {
 //	}
 
 	/**
-	 * DO NOT CALL DIRECTLY. Removes {@link Room} from database but does not
-	 * remove room from {@link MapColumn} etc, meaning it could be re-saved. Use the
-	 * room destroy function in {@link GameMap} instead.
+	 * DO NOT CALL DIRECTLY. Removes {@link Room} from database but does not remove
+	 * room from {@link MapColumn} etc, meaning it could be re-saved. Use the room
+	 * destroy function in {@link GameMap} instead.
 	 *
 	 * @param room
 	 * @throws MapExceptionRoomNull
