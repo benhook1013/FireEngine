@@ -33,7 +33,7 @@ public class InputParserMatcherInWorldGeneral implements InputParserMatcher {
 	private Pattern lookPattern = Pattern.compile("(?i)L(?:OOK)?(?: (\\w+))?");
 	private Pattern mapPattern = Pattern.compile("(?i)MAP(?: (\\w+))?");
 	private Pattern movePattern = Pattern.compile(
-			"(?i)(?:(?:MOVE|GO|WALK) )?(N(?:ORTH)?(?:(?:W(?:EST)?)?|E(?:AST)?)|E(?:AST)?|S(?:OUTH)?(?:(?:W(?:EST)?)?|E(?:AST)?)|W(?:EST)?)");
+			"(?i)(?:(?:MOVE|GO) )?((?:U(?:P)?)|(?:D(?:OWN)?)|(?:N(?:ORTH)?(?:(?:W(?:EST)?)?|E(?:AST)?))|E(?:AST)?|(?:S(?:OUTH)?(?:(?:W(?:EST)?)?|E(?:AST)?))|W(?:EST)?)");
 	private Pattern quitGamePattern = Pattern.compile("(?i)QQ|QUIT(?: GAME)");
 	private Pattern sayPattern = Pattern.compile("(?i)SAY? (.+)");
 	private Pattern whoPattern = Pattern.compile("(?i)WHO");
