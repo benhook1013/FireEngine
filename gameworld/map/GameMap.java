@@ -16,7 +16,7 @@ import org.hibernate.Transaction;
 
 import fireengine.character.command.character_comand.general.Map;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.Gameworld;
+import fireengine.gameworld.GameWorld;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
@@ -436,7 +436,7 @@ public class GameMap {
 	 * @return
 	 */
 	public static ClientConnectionOutput displayMap(ClientConnectionOutput output, Room room, int size) {
-		GameMap gameMap = Gameworld.findMap(room.getMapId());
+		GameMap gameMap = GameWorld.findMap(room.getMapId());
 
 		if (output == null) {
 			output = new ClientConnectionOutput();

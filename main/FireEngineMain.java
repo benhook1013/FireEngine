@@ -15,7 +15,7 @@ import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.client_io.ClientIOTelnet;
 import fireengine.client_io.exception.ClientIOTelnetException;
-import fireengine.gameworld.Gameworld;
+import fireengine.gameworld.GameWorld;
 import fireengine.session.Session;
 import fireengine.session.phase.PhaseManager;
 import fireengine.util.CheckedHibernateException;
@@ -128,8 +128,8 @@ public class FireEngineMain {
 			throw new FireEngineMainSetupException("FireEngineMain: Hibernate Exception", e);
 		}
 
-		MyLogger.log(Level.INFO, "FireEngineMain: Setting up Gameworld");
-		Gameworld.setupGameworld();
+		MyLogger.log(Level.INFO, "FireEngineMain: Setting up GameWorld");
+		GameWorld.setupGameworld();
 
 		PhaseManager.loadWelcomePhase();
 		CharacterClass.loadSkillsets();

@@ -7,7 +7,7 @@ import fireengine.character.condition.ConditionPlayer;
 import fireengine.character.player.Player;
 import fireengine.character.player.exception.PlayerExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.Gameworld;
+import fireengine.gameworld.GameWorld;
 import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.room.Room;
 
@@ -77,7 +77,7 @@ public abstract class Character {
 		Room room = getRoom();
 
 		if (room != null) {
-			return Gameworld.findMap(room.getMapId());
+			return GameWorld.findMap(room.getMapId());
 		} else {
 			return null;
 		}

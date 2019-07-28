@@ -21,7 +21,7 @@ import fireengine.util.MyLogger;
 
 /*
  *    Copyright 2019 Ben Hook
- *    Gameworld.java
+ *    GameWorld.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import fireengine.util.MyLogger;
  *
  * @author Ben Hook
  */
-public class Gameworld {
+public class GameWorld {
 	// TODO This should probably be a hashmap etc based on map id
 	private static ArrayList<GameMap> mapList = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public class Gameworld {
 		GameMap mainMap = findMap("Mainland");
 
 		if (mainMap == null) {
-			MyLogger.log(Level.SEVERE, "Gameworld: Creating new map: Mainland");
+			MyLogger.log(Level.SEVERE, "GameWorld: Creating new map: Mainland");
 			try {
 				GameMap newMap = GameMap.createMap("Mainland");
 				addMap(newMap);
@@ -65,9 +65,9 @@ public class Gameworld {
 		}
 
 		// Create spawn room if non exists
-		if (Gameworld.findMap("Mainland").getRoom(0, 0, 0) == null) {
-			Gameworld.findMap("Mainland").createRoom(0, 0, 0);
-			Room spawnRoom = Gameworld.findMap("Mainland").getRoom(0, 0, 0);
+		if (GameWorld.findMap("Mainland").getRoom(0, 0, 0) == null) {
+			GameWorld.findMap("Mainland").createRoom(0, 0, 0);
+			Room spawnRoom = GameWorld.findMap("Mainland").getRoom(0, 0, 0);
 			spawnRoom.setName("The Lounge");
 			spawnRoom.setDesc(
 					"Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server.");
@@ -100,7 +100,7 @@ public class Gameworld {
 			tx.commit();
 
 			if (mapsFound.isEmpty()) {
-				MyLogger.log(Level.SEVERE, "Gameworld: NO MAPS FOUND while trying to loadMaps.");
+				MyLogger.log(Level.SEVERE, "GameWorld: NO MAPS FOUND while trying to loadMaps.");
 				return;
 			} else {
 				System.out.println(mapsFound.size() + " MAPS FOUND");
@@ -116,7 +116,7 @@ public class Gameworld {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new CheckedHibernateException("Gameworld: Hibernate error while trying to loadMaps.", e);
+			throw new CheckedHibernateException("GameWorld: Hibernate error while trying to loadMaps.", e);
 		} finally {
 			hibSess.close();
 		}
@@ -127,7 +127,7 @@ public class Gameworld {
 					loadRooms(foundMap.getId());
 				} catch (MapExceptionRoomLoad e) {
 					throw new MapExceptionMapLoad(
-							"Gameworld: Tried to loadMaps but encountered MapExceptionRoomLoad from loadRooms.", e);
+							"GameWorld: Tried to loadMaps but encountered MapExceptionRoomLoad from loadRooms.", e);
 				}
 			}
 		}
@@ -145,7 +145,7 @@ public class Gameworld {
 
 		if (gameMap == null) {
 			throw new MapExceptionRoomLoad(
-					"Gameworld: Tried to loadRooms but cannot findMap with mapId " + mapId + ".");
+					"GameWorld: Tried to loadRooms but cannot findMap with mapId " + mapId + ".");
 		}
 
 		org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
@@ -172,10 +172,10 @@ public class Gameworld {
 						gameMap.setRoom(foundRoom.getZ(), foundRoom.getX(), foundRoom.getY(), foundRoom);
 					} catch (MapExceptionOutOfBounds e) {
 						MyLogger.log(Level.WARNING,
-								"Gameworld: MapExceptionOutOfBounds while trying to setRoom on found room.", e);
+								"GameWorld: MapExceptionOutOfBounds while trying to setRoom on found room.", e);
 					} catch (MapExceptionRoomExists e) {
 						MyLogger.log(Level.WARNING,
-								"Gameworld: MapExceptionRoomExists while trying to setRoom on found room "
+								"GameWorld: MapExceptionRoomExists while trying to setRoom on found room "
 										+ foundRoom.getCoordsText() + ".",
 								e);
 					}
@@ -186,7 +186,7 @@ public class Gameworld {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new CheckedHibernateException("Gameworld: Hibernate error while trying to loadRooms.", e);
+			throw new CheckedHibernateException("GameWorld: Hibernate error while trying to loadRooms.", e);
 		} finally {
 			hibSess.close();
 		}
