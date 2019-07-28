@@ -193,26 +193,26 @@ public class GameMap {
 			}
 			try {
 				setRoom(z, x, y, newRoom);
-			} catch (MapExceptionRoomExists e1) {
+			} catch (MapExceptionRoomExists e) {
 				MyLogger.log(Level.WARNING,
 						"GameMap: createRoom found room already at designated coordinates after creation, cleaning up.",
-						e1);
+						e);
 				try {
 					Room.deleteRoom(newRoom);
-				} catch (MapExceptionRoomNull e2) {
+				} catch (MapExceptionRoomNull e1) {
 					MyLogger.log(Level.SEVERE,
 							"GameMap: Weird error (already checked for), MapExceptionRoomNull while trying to deleteRoom in createRoom.",
-							e2);
+							e1);
 					return;
-				} catch (MapExceptionExitExists e3) {
+				} catch (MapExceptionExitExists e2) {
 					MyLogger.log(Level.WARNING,
 							"GameMap: MapExceptionExitExists while deleteRoom after MapExceptionRoomExists on createRoom.",
-							e3);
+							e2);
 					return;
 				}
 				throw new MapExceptionRoomExists(
 						"GameMap: createRoom found room already at designated coordinates after creation, cleaning up.",
-						e1);
+						e);
 			}
 		}
 	}
