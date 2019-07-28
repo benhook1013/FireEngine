@@ -135,6 +135,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 		return string;
 	}
 
+	// Bright background colours not supported in Mudlet (and presumably telnet).
 	private String parseOutputColour(ClientIOColour.COLOURS colour, boolean isFG) {
 		String code = null;
 
