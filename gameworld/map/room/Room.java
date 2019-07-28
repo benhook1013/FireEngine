@@ -76,6 +76,10 @@ public class Room {
 	@NotNull
 	private int mapId;
 
+	@Column(name = "ROOM_Z", nullable = false)
+	@NotNull
+	private int z;
+
 	@Column(name = "ROOM_X", nullable = false)
 	@NotNull
 	private int x;
@@ -139,9 +143,10 @@ public class Room {
 		playerList = new ArrayList<>();
 	}
 
-	public Room(int mapId, int x, int y) {
+	public Room(int mapId, int z, int x, int y) {
 		this();
 		this.mapId = mapId;
+		this.z = z;
 		this.x = x;
 		this.y = y;
 		this.name = "Placeholder name";
@@ -164,6 +169,15 @@ public class Room {
 	@SuppressWarnings("unused")
 	private void setMapId(int mapId) {
 		this.mapId = mapId;
+	}
+
+	public int getZ() {
+		return z;
+	}
+
+	@SuppressWarnings("unused")
+	private void setZ(int z) {
+		this.z = z;
 	}
 
 	public int getX() {
@@ -190,7 +204,7 @@ public class Room {
 	 * @return
 	 */
 	public String getCoordsText() {
-		return "(" + getX() + "," + getY() + ")";
+		return "(" + getZ() + "," + getX() + "," + getY() + ")";
 	}
 
 	public String getName() {
@@ -421,8 +435,8 @@ public class Room {
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static Room createRoom(int mapId, int x, int y) throws MapExceptionRoomNull, CheckedHibernateException {
-		Room newRoom = new Room(mapId, x, y);
+	public static Room createRoom(int mapId, int z, int x, int y) throws MapExceptionRoomNull, CheckedHibernateException {
+		Room newRoom = new Room(mapId, z, x, y);
 		saveRoom(newRoom);
 		return newRoom;
 	}

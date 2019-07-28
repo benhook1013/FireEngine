@@ -48,7 +48,7 @@ public class DestroyRoom extends CommandCharacter {
 
 		if (direction != null) {
 			try {
-				character.getMap().destroyRoom(character.getRoom(), direction);
+				character.getMap().deleteRoom(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput(
 						"Room sucessfully destropyed to the " + direction.toString() + "!", null, null));
 			} catch (MapExceptionOutOfBounds e) {

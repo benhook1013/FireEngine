@@ -45,15 +45,17 @@ public class Gameworld {
 	// TODO This should probably be a hashmap etc based on map id
 	private static ArrayList<GameMap> mapList = new ArrayList<>();
 
-	public static void setupGameworld() throws CheckedHibernateException, MapExceptionMapLoad, MapExceptionOutOfBounds, MapExceptionRoomExists {
+	public static void setupGameworld()
+			throws CheckedHibernateException, MapExceptionMapLoad, MapExceptionOutOfBounds, MapExceptionRoomExists {
 		loadMaps();
 
 		GameMap mainMap = findMap("Mainland");
 
 		if (mainMap == null) {
-			System.out.println("Creating new map: Mainland");
+			MyLogger.log(Level.SEVERE, "Gameworld: Creating new map: Mainland");
 			try {
-				GameMap.createMap("Mainland");
+				GameMap newMap = GameMap.createMap("Mainland");
+				addMap(newMap);
 			} catch (CheckedHibernateException e) {
 				FireEngineMain.hibernateException(e);
 				return;
@@ -63,11 +65,12 @@ public class Gameworld {
 		}
 
 		// Create spawn room if non exists
-		if (Gameworld.findMap("Mainland").getRoom(0, 0) == null) {
-			Gameworld.findMap("Mainland").createRoom(0, 0);
-			Room spawnRoom = Gameworld.findMap("Mainland").getRoom(0, 0);
+		if (Gameworld.findMap("Mainland").getRoom(0, 0, 0) == null) {
+			Gameworld.findMap("Mainland").createRoom(0, 0, 0);
+			Room spawnRoom = Gameworld.findMap("Mainland").getRoom(0, 0, 0);
 			spawnRoom.setName("The Lounge");
-			spawnRoom.setDesc("Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server.");
+			spawnRoom.setDesc(
+					"Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server.");
 		}
 
 		// Create admin with map editor privs if not existing
@@ -97,7 +100,7 @@ public class Gameworld {
 			tx.commit();
 
 			if (mapsFound.isEmpty()) {
-				System.out.println("NO MAPS FOUND");
+				MyLogger.log(Level.SEVERE, "Gameworld: NO MAPS FOUND while trying to loadMaps.");
 				return;
 			} else {
 				System.out.println(mapsFound.size() + " MAPS FOUND");
@@ -131,8 +134,7 @@ public class Gameworld {
 	}
 
 	/**
-	 * Attempts to load all {@link Room}s from the database, give supplied map
-	 * id.
+	 * Attempts to load all {@link Room}s from the database, give supplied map id.
 	 *
 	 * @param mapId int id of map to load
 	 * @throws CheckedHibernateException
@@ -167,7 +169,7 @@ public class Gameworld {
 
 				for (Room foundRoom : roomsFound) {
 					try {
-						gameMap.setRoom(foundRoom.getX(), foundRoom.getY(), foundRoom);
+						gameMap.setRoom(foundRoom.getZ(), foundRoom.getX(), foundRoom.getY(), foundRoom);
 					} catch (MapExceptionOutOfBounds e) {
 						MyLogger.log(Level.WARNING,
 								"Gameworld: MapExceptionOutOfBounds while trying to setRoom on found room.", e);

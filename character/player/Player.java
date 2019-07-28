@@ -239,10 +239,10 @@ public class Player extends Character {
 
 			Room sendRoom = null;
 			try {
-				sendRoom = Gameworld.findMap(1).getRoom(1, 1);
+				sendRoom = Gameworld.findMap(1).getRoom(0, 0, 0);
 			} catch (MapExceptionOutOfBounds e1) {
 				MyLogger.log(Level.WARNING,
-						"Player: Origin room out of bounds while trying to find origin room to send null room player to.",
+						"Player: Spawn room out of bounds while trying to find spawn room to send null room player to.",
 						e);
 				return;
 			}

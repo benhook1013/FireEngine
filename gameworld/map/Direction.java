@@ -28,6 +28,8 @@ import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
  * @author Ben Hook
  */
 public class Direction {
+	private static Pattern upPattern = Pattern.compile("(?i)U(?:P)?");
+	private static Pattern downPattern = Pattern.compile("(?i)D(?:OWN)?");
 	private static Pattern northPattern = Pattern.compile("(?i)N(?:ORTH)?");
 	private static Pattern northEastPattern = Pattern.compile("(?i)N(?:ORTH)?E(?:AST)?");
 	private static Pattern eastPattern = Pattern.compile("(?i)E(?:AST)?");
@@ -43,7 +45,7 @@ public class Direction {
 	 * @author Ben Hook
 	 */
 	public static enum DIRECTION {
-		NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NORTHWEST
+		UP, DOWN, NORTH, NORTHEAST, EAST, SOUTHEAST, SOUTH, SOUTHWEST, WEST, NORTHWEST
 	}
 
 	/**
@@ -54,6 +56,12 @@ public class Direction {
 	 * @return
 	 */
 	public static DIRECTION parseDirection(String text) {
+		if (upPattern.matcher(text).matches()) {
+			return DIRECTION.UP;
+		}
+		if (downPattern.matcher(text).matches()) {
+			return DIRECTION.DOWN;
+		}
 		if (northPattern.matcher(text).matches()) {
 			return DIRECTION.NORTH;
 		}
@@ -91,6 +99,12 @@ public class Direction {
 	 */
 	public static DIRECTION oppositeDirection(DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
+		case UP: {
+			return DIRECTION.DOWN;
+		}
+		case DOWN: {
+			return DIRECTION.UP;
+		}
 		case NORTH: {
 			return DIRECTION.SOUTH;
 		}
