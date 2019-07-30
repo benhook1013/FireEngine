@@ -578,6 +578,30 @@ public class GameMap {
 		case DOWN: {
 			return (z - 1);
 		}
+		case NORTHWEST: {
+			return (z + 0);
+		}
+		case NORTH: {
+			return (z + 0);
+		}
+		case NORTHEAST: {
+			return (z + 0);
+		}
+		case EAST: {
+			return (z + 0);
+		}
+		case SOUTHEAST: {
+			return (z + 0);
+		}
+		case SOUTH: {
+			return (z + 0);
+		}
+		case SOUTHWEST: {
+			return (z + 0);
+		}
+		case WEST: {
+			return (z + 0);
+		}
 		default: {
 			MyLogger.log(Level.WARNING,
 					"GameMap: Failed to zAdjustDirection for direction: " + direction.toString() + ".");
@@ -598,6 +622,12 @@ public class GameMap {
 	 */
 	public static int xAdjustDirection(int x, Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
+		case UP: {
+			return (x + 0);
+		}
+		case DOWN: {
+			return (x + 0);
+		}
 		case NORTHWEST: {
 			return (x - 1);
 		}
@@ -642,6 +672,12 @@ public class GameMap {
 	 */
 	public static int yAdjustDirection(int y, Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
+		case UP: {
+			return (y + 0);
+		}
+		case DOWN: {
+			return (y + 0);
+		}
 		case NORTHWEST: {
 			return (y + 1);
 		}
