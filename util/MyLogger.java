@@ -1,5 +1,7 @@
 package fireengine.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
@@ -136,31 +138,62 @@ public class MyLogger {
 			builder.append("]");
 
 			builder.append(" [");
-			builder.append(record.getSourceClassName());
+//			builder.append(record.getSourceClassName());
+	        if (record.getSourceClassName() != null) {
+	        	builder.append(record.getSourceClassName());
+	            if (record.getSourceMethodName() != null) {
+	               builder.append(" " + record.getSourceMethodName());
+	            }
+	        } else {
+	        	builder.append(record.getLoggerName());
+	        }
+			
 			builder.append("]");
 
 			builder.append(" [");
 			builder.append(record.getLevel().getName());
 			builder.append("]");
 
-			builder.append(ANSI_RESET);
-			builder.append(ANSI_BLACK);
+//			builder.append(ANSI_RESET);
+//			builder.append(ANSI_BLACK);
 			builder.append(" - ");
-			builder.append(record.getMessage());
+//			builder.append(record.getMessage());
+			builder.append(formatMessage(record));
 
-			Object[] params = record.getParameters();
+			
+			
+//			Object[] params = record.getParameters();
+//
+//			if (params != null) {
+//				builder.append("\t");
+//				for (int i = 0; i < params.length; i++) {
+//					builder.append(params[i]);
+//					if (i < params.length - 1)
+//						builder.append(", ");
+//				}
+//			}
+//			builder.append("\n");
+//
+//			if (record.getThrown() != null) {
+//				for (StackTraceElement ste : record.getThrown().getStackTrace()) {
+//					builder.append(ANSI_BRIGHT_RED);
+//					builder.append(ste.toString() + "\n");
+//				}
+//			}
+			
+	        if (record.getThrown() != null) {
+	            StringWriter sw = new StringWriter();
+	            PrintWriter pw = new PrintWriter(sw);
+	            pw.println();
+	            record.getThrown().printStackTrace(pw);
+	            pw.close();
+	            builder.append(sw.toString());
+	        }
+	        
 
-			if (params != null) {
-				builder.append("\t");
-				for (int i = 0; i < params.length; i++) {
-					builder.append(params[i]);
-					if (i < params.length - 1)
-						builder.append(", ");
-				}
-			}
+			builder.append("\n");
 
 			builder.append(ANSI_RESET);
-			builder.append("\n");
 			return builder.toString();
 		}
 

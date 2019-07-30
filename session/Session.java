@@ -134,7 +134,7 @@ public class Session {
 						try {
 							phaseManager.acceptInput(input);
 						} catch (Exception e) {
-							MyLogger.log(Level.WARNING, "Session: Unexpected exception caught.", e);
+							MyLogger.log(Level.SEVERE, "Session: Unexpected exception caught.", e);
 						}
 					}
 
