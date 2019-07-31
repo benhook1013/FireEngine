@@ -29,6 +29,8 @@ import java.util.logging.Logger;
 
 /**
  * Wrapper class for custom implementation of {@link Logger}.
+ * 
+ * TODO Clean this call up once we are comfortable that its acting correctly.
  *
  * @author Ben Hook
  */
@@ -38,23 +40,32 @@ public class MyLogger {
 
 	Handler consoleHandler;
 	Handler fileHandler;
+	Level logLevel;
 
 	private MyLogger() {
+		logLevel = Level.FINER;
+		
 		try {
-			// consoleHandler = new ConsoleHandler();
-			// fileHandler = new FileHandler("Log");
+//			LOGGER.setUseParentHandlers(false);
 
-			// LOGGER.addHandler(consoleHandler);
-			// LOGGER.addHandler(fileHandler);
+//			consoleHandler = new ConsoleHandler();
+//			fileHandler = new FileHandler("Log");
 
-			// consoleHandler.setLevel(Level.ALL);
-			// fileHandler.setLevel(Level.ALL);
-			LOGGER.setLevel(Level.ALL);
+//			LOGGER.addHandler(fileHandler);
+
+//			consoleHandler.setLevel(Level.INFO);
+//			fileHandler.setLevel(Level.ALL);
+			LOGGER.setLevel(logLevel);
+//			LOGGER.getParent().setLevel(Level.FINEST);
 
 			MyLoggerFormatter formatter = new MyLoggerFormatter();
+//			consoleHandler.setFormatter(formatter);
+
+//			LOGGER.addHandler(consoleHandler);
 
 			for (Handler handler : LOGGER.getParent().getHandlers()) {
 				handler.setFormatter(formatter);
+				handler.setLevel(logLevel);
 			}
 
 			LOGGER.log(Level.CONFIG, "Logger configuration completed successfully.");
@@ -121,8 +132,6 @@ public class MyLogger {
 			// followed by the log message and it's parameters in white .
 			StringBuilder builder = new StringBuilder();
 
-			// builder.append(ANSI_BACKGROUND_BRIGHT_WHITE);
-
 			if (record.getLevel().intValue() == Level.SEVERE.intValue()) {
 				builder.append(ANSI_BRIGHT_RED);
 			} else if (record.getLevel().intValue() == Level.WARNING.intValue()) {
@@ -139,15 +148,15 @@ public class MyLogger {
 
 			builder.append(" [");
 //			builder.append(record.getSourceClassName());
-	        if (record.getSourceClassName() != null) {
-	        	builder.append(record.getSourceClassName());
-	            if (record.getSourceMethodName() != null) {
-	               builder.append(" " + record.getSourceMethodName());
-	            }
-	        } else {
-	        	builder.append(record.getLoggerName());
-	        }
-			
+			if (record.getSourceClassName() != null) {
+				builder.append(record.getSourceClassName());
+				if (record.getSourceMethodName() != null) {
+					builder.append(" " + record.getSourceMethodName());
+				}
+			} else {
+				builder.append(record.getLoggerName());
+			}
+
 			builder.append("]");
 
 			builder.append(" [");
@@ -160,8 +169,6 @@ public class MyLogger {
 //			builder.append(record.getMessage());
 			builder.append(formatMessage(record));
 
-			
-			
 //			Object[] params = record.getParameters();
 //
 //			if (params != null) {
@@ -180,20 +187,40 @@ public class MyLogger {
 //					builder.append(ste.toString() + "\n");
 //				}
 //			}
-			
-	        if (record.getThrown() != null) {
-	            StringWriter sw = new StringWriter();
-	            PrintWriter pw = new PrintWriter(sw);
-	            pw.println();
-	            record.getThrown().printStackTrace(pw);
-	            pw.close();
-	            builder.append(sw.toString());
-	        }
-	        
 
-			builder.append("\n");
+			// Everything prior to this is the first line such as:
+			// [2019-07-30 21:56:31] [fireengine.util.MyLogger log] [SEVERE] - Session:
+			// Unexpected exception caught.
+
+			// The below will create the rest of the stack trace, as below:
+//			java.lang.ArrayIndexOutOfBoundsException: -1
+//			at fireengine.gameworld.map.GameMap.getRoom(GameMap.java:119)
+//			at fireengine.gameworld.map.GameMap.createRoom(GameMap.java:181)
+//			at fireengine.gameworld.map.GameMap.createRoom(GameMap.java:233)
+//			at fireengine.character.command.character_comand.map_editor.CreateRoom.doAction(CreateRoom.java:51)
+//			at fireengine.character.player.Player.acceptInput(Player.java:227)
+//			at fireengine.character.player.Player.acceptInput(Player.java:214)
+//			at mud_game.session.phase.PhaseInWorld.acceptInput(PhaseInWorld.java:54)
+//			at fireengine.session.phase.PhaseManager.acceptInput(PhaseManager.java:81)
+//			at fireengine.session.Session$2.call(Session.java:135)
+//			at fireengine.session.Session$2.call(Session.java:128)
+//			at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+//			at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1135)
+//			at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+//			at java.base/java.lang.Thread.run(Thread.java:844)
+
+			if (record.getThrown() != null) {
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				pw.println();
+				record.getThrown().printStackTrace(pw);
+				pw.close();
+				builder.append(sw.toString());
+			}
 
 			builder.append(ANSI_RESET);
+			builder.append("\n");
+
 			return builder.toString();
 		}
 
