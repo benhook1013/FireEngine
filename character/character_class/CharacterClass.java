@@ -2,6 +2,7 @@ package fireengine.character.character_class;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Level;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotNull;
 import fireengine.character.character_class.skillset.Skillset;
 import fireengine.util.ConfigLoader;
 import fireengine.util.MyClassLoader;
+import fireengine.util.MyLogger;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -65,7 +67,7 @@ public class CharacterClass {
 
 		skillsetClassList = new ArrayList<>();
 		for (String skillsetName : skillsetNameArray) {
-			System.out.println("skillsetName: '" + skillsetName + "'");
+			MyLogger.log(Level.INFO, "skillsetName: '" + skillsetName + "'");
 			skillsetClassList.add((Class<Skillset>) classLoader.loadClass(skillsetName));
 		}
 	}

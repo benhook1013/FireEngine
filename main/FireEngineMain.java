@@ -81,6 +81,7 @@ public class FireEngineMain {
 	 * @param args File path of config file.
 	 */
 	public static void main(String[] args) {
+		// TODO Log error if no argument
 		configFilePath = args[0];
 
 		try {
@@ -182,7 +183,7 @@ public class FireEngineMain {
 		running = true;
 
 		while (running) {
-			MyLogger.log(Level.FINE, "Running main thread loop...");
+			MyLogger.log(Level.FINEST, "FireEngineMain: Running main thread loop...");
 
 			if (!telnet.isAlive()) {
 				MyLogger.log(Level.SEVERE,

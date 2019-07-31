@@ -241,7 +241,8 @@ public class ClientIOTelnet extends Thread {
 				break;
 			}
 
-			// System.out.println("SELECTED: " + numSelected);
+//			MyLogger.log(Level.INFO, "SELECTED: " + numSelected);
+
 			Set<SelectionKey> selKeys = sel.selectedKeys();
 			Iterator<SelectionKey> selIter = selKeys.iterator();
 
@@ -275,22 +276,22 @@ public class ClientIOTelnet extends Thread {
 				if (numSelected == 0) {
 					if (keyList.isEmpty()) {
 						MyLogger.log(Level.FINE, "ClientIOTelnet: Selected 0.");
-						// MyLogger.log(Level.WARNING, "ClientIOTelnet:
-						// Possible failure to register properly.");
-						// int i = 0;
-						// while (keyList.isEmpty() && (i <= 10)) {
-						// i++;
-						// try {
-						// Thread.sleep(10);
-						// } catch (InterruptedException e) {
-						// }
-						// }
+//						 MyLogger.log(Level.WARNING, "ClientIOTelnet:
+//						 Possible failure to register properly.");
+//						 int i = 0;
+//						 while (keyList.isEmpty() && (i <= 10)) {
+//						 i++;
+//						 try {
+//						 Thread.sleep(10);
+//						 } catch (InterruptedException e) {
+//						 }
+//						 }
 					}
 				}
 
-				// if (!keyList.isEmpty()) {
-				// System.out.println("KEYS DETECTED");
-				// }
+//				if (!keyList.isEmpty()) {
+//				MyLogger.log(Level.INFO, "KEYS DETECTED");
+//				}
 
 				// Do key registration actions queued in keyList
 				while (!keyList.isEmpty()) {
@@ -307,16 +308,13 @@ public class ClientIOTelnet extends Thread {
 						continue;
 					}
 
-					if (item.key == SelectionKey.OP_READ) {
-						// System.out.println("Registering for READ " +
-						// Thread.currentThread().getName());
-					} else if (item.key == SelectionKey.OP_WRITE) {
-						// System.out.println("Registering for WRITE " +
-						// Thread.currentThread().getName());
-					} else if (item.key == 0) {
-						// System.out.println("Registering for NONE " +
-						// Thread.currentThread().getName());
-					}
+//					if (item.key == SelectionKey.OP_READ) {
+//						MyLogger.log(Level.INFO, "Registering for READ " + Thread.currentThread().getName());
+//					} else if (item.key == SelectionKey.OP_WRITE) {
+//						MyLogger.log(Level.INFO, "Registering for WRITE " + Thread.currentThread().getName());
+//					} else if (item.key == 0) {
+//						MyLogger.log(Level.INFO, "Registering for NONE " + Thread.currentThread().getName());
+//					}
 					SelectionKey foundKey = item.getCcon().getSc().keyFor(this.sel);
 					if (foundKey == null) {
 						try {
@@ -371,7 +369,7 @@ public class ClientIOTelnet extends Thread {
 	}
 
 	private void read(SelectionKey key) {
-		// System.out.println("CALL TO READ");
+//		MyLogger.log(Level.INFO, "CALL TO READ");
 
 		// Number of reads, returned by the read operation.
 		int numRead = 0;
@@ -401,7 +399,7 @@ public class ClientIOTelnet extends Thread {
 				return;
 			}
 
-			// System.out.println("numRead: " + numRead);
+//			MyLogger.log(Level.INFO, "numRead: " + numRead);
 			while (readBuffer.hasRemaining()) {
 				byte b = readBuffer.get();
 
@@ -444,7 +442,7 @@ public class ClientIOTelnet extends Thread {
 		synchronized (keyList) {
 			for (SelectItem selItem : keyList) {
 				if (ccon == selItem.getCcon()) {
-					// System.out.println("FOUND SAME CCON!!!!!!!!");
+//					MyLogger.log(Level.INFO, "FOUND SAME CCON!!!!!!!!");
 					if (selItem.getKey() == SelectionKey.OP_READ) {
 						if (key == SelectionKey.OP_READ) {
 							MyLogger.log(Level.FINE, "Ignoring queue for READ when already queue for READ.");
@@ -467,13 +465,11 @@ public class ClientIOTelnet extends Thread {
 			}
 
 			if (key == SelectionKey.OP_READ) {
-				// System.out.println(
-				// "Queueing key for READ " + Thread.currentThread().getName() +
-				// ", wakeUp is: " + wakeUp);
+//				MyLogger.log(Level.INFO,
+//						"Queueing key for READ " + Thread.currentThread().getName() + ", wakeUp is: " + wakeUp);
 			} else if (key == SelectionKey.OP_WRITE) {
-				// System.out.println(
-				// "Queueing key for WRITE " + Thread.currentThread().getName()
-				// + ", wakeUp is: " + wakeUp);
+//				MyLogger.log(Level.INFO,
+//						"Queueing key for WRITE " + Thread.currentThread().getName() + ", wakeUp is: " + wakeUp);
 			}
 			keyList.add(new SelectItem(ccon, key));
 		}

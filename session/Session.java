@@ -116,7 +116,7 @@ public class Session {
 		synchronized (sessionFutureLock) {
 			if (sessionFuture != null) {
 				if (!sessionFuture.isDone()) {
-					System.out.println("notifyInput WAITING");
+					MyLogger.log(Level.INFO, "notifyInput WAITING");
 					return;
 				}
 			}

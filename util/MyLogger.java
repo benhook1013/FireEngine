@@ -44,7 +44,7 @@ public class MyLogger {
 
 	private MyLogger() {
 		logLevel = Level.FINER;
-		
+
 		try {
 //			LOGGER.setUseParentHandlers(false);
 
@@ -147,16 +147,17 @@ public class MyLogger {
 			builder.append("]");
 
 			builder.append(" [");
-//			builder.append(record.getSourceClassName());
-			if (record.getSourceClassName() != null) {
-				builder.append(record.getSourceClassName());
-				if (record.getSourceMethodName() != null) {
-					builder.append(" " + record.getSourceMethodName());
-				}
-			} else {
-				builder.append(record.getLoggerName());
-			}
-
+			// Below if usual way of getting log name, results in:
+			// [fireengine.util.MyLogger log]
+//			if (record.getSourceClassName() != null) {
+//				builder.append(record.getSourceClassName());
+//				if (record.getSourceMethodName() != null) {
+//					builder.append(" " + record.getSourceMethodName());
+//				}
+//			} else {
+//				builder.append(record.getLoggerName());
+//			}
+			builder.append("fireengine log");
 			builder.append("]");
 
 			builder.append(" [");

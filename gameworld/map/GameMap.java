@@ -116,6 +116,7 @@ public class GameMap {
 	 * @throws MapExceptionOutOfBounds
 	 */
 	public Room getRoom(int z, int x, int y) throws MapExceptionOutOfBounds {
+		MyLogger.log(Level.FINER, String.format("GameMap: getRoom(%s, %s, %s).", z, x, y));
 		return roomArray[z][y][x];
 	}
 
@@ -290,7 +291,7 @@ public class GameMap {
 	 */
 	public void deleteRoom(Room room, Direction.DIRECTION direction) throws MapExceptionOutOfBounds,
 			MapExceptionRoomNull, CheckedHibernateException, MapExceptionDirectionNotSupported {
-		System.out.println("Destroying (" + xAdjustDirection(room.getX(), direction) + ","
+		MyLogger.log(Level.INFO, "Destroying (" + xAdjustDirection(room.getX(), direction) + ","
 				+ yAdjustDirection(room.getY(), direction) + ").");
 		deleteRoom(zAdjustDirection(room.getZ(), direction), xAdjustDirection(room.getX(), direction),
 				yAdjustDirection(room.getY(), direction));

@@ -61,7 +61,7 @@ public class GameWorld {
 				return;
 			}
 		} else {
-			System.out.println("Using old map: " + mainMap.getName());
+			MyLogger.log(Level.INFO, "Using old map: " + mainMap.getName());
 		}
 
 		// Create spawn room if non exists
@@ -103,7 +103,7 @@ public class GameWorld {
 				MyLogger.log(Level.SEVERE, "GameWorld: NO MAPS FOUND while trying to loadMaps.");
 				return;
 			} else {
-				System.out.println(mapsFound.size() + " MAPS FOUND");
+				MyLogger.log(Level.INFO, mapsFound.size() + " MAPS FOUND");
 
 				synchronized (mapList) {
 					for (GameMap foundMap : mapsFound) {
@@ -162,10 +162,10 @@ public class GameWorld {
 			tx.commit();
 
 			if (roomsFound.isEmpty()) {
-				System.out.println("NO ROOMS FOUND");
+				MyLogger.log(Level.INFO, "NO ROOMS FOUND");
 				return;
 			} else {
-				System.out.println(roomsFound.size() + " ROOMS FOUND");
+				MyLogger.log(Level.INFO, roomsFound.size() + " ROOMS FOUND");
 
 				for (Room foundRoom : roomsFound) {
 					try {

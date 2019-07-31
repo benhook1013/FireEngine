@@ -122,7 +122,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 
 			output.nextPart();
 		}
-		System.out.println("parseOutput output: '" + string + "'");
+		MyLogger.log(Level.INFO, "parseOutput output: '" + string + "'");
 		string = string + EOL;
 		return string;
 	}
@@ -361,7 +361,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 				return;
 			}
 
-			System.out.println("readToConnection: '" + string + "'");
+			MyLogger.log(Level.INFO, "readToConnection: '" + string + "'");
 			if (!(recieveList.size() >= RECIEVE_LIMIT)) {
 				recieveList.add(string);
 			}
@@ -372,8 +372,6 @@ public class ClientConnectionTelnet implements ClientConnection {
 	// Read input to Connection for combination and parsing.
 	public void readToConnectionPart(char c) {
 		if ((c == '\r') | (c == '\n')) {
-			// System.out.println("EOL detected.");
-			// System.out.println(sb.toString());
 
 			if (sb.length() > 0) {
 				readToConnection(sb.toString());
