@@ -96,7 +96,7 @@ public class FireEngineMain {
 			}
 
 		} catch (Exception e) {
-			MyLogger.log(Level.SEVERE, "FireEngineMain: Failed to start up app.", e);
+			MyLogger.log(Level.SEVERE, "FireEngineMain: Exception while starting up app.", e);
 			shutdown();
 		}
 
@@ -109,13 +109,13 @@ public class FireEngineMain {
 	 *                   purposeful shutdown.
 	 */
 	private static void setUp() throws Exception {
-		MyLogger.log(Level.INFO, "FireEngineMain: Bootstrapping FireEngine!");
-
 		try {
 			ConfigLoader.loadSettings(configFilePath);
 		} catch (IOException e) {
 			throw new FireEngineMainSetupException("FireEngineMain: Failed to load config file", e);
 		}
+
+		MyLogger.log(Level.INFO, "FireEngineMain: Bootstrapping FireEngine!");
 
 		serverName = ConfigLoader.getSetting("serverName"); // TODO This is not used for anything yet.
 		telnetAddress = ConfigLoader.getSetting("serverIP");

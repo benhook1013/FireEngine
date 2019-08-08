@@ -9,6 +9,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -43,43 +44,111 @@ public class MyLogger {
 	Level logLevel;
 
 	private MyLogger() {
-		logLevel = Level.FINER;
-
+		// Initialise logger level to config to show config message below before it can
+		// be set.
 		try {
-//			LOGGER.setUseParentHandlers(false);
+			logLevel = Level.CONFIG;
+			// TODO Enable and configure file handler.
 
-//			consoleHandler = new ConsoleHandler();
 //			fileHandler = new FileHandler("Log");
 
 //			LOGGER.addHandler(fileHandler);
 
-//			consoleHandler.setLevel(Level.INFO);
 //			fileHandler.setLevel(Level.ALL);
 			LOGGER.setLevel(logLevel);
-//			LOGGER.getParent().setLevel(Level.FINEST);
 
 			MyLoggerFormatter formatter = new MyLoggerFormatter();
-//			consoleHandler.setFormatter(formatter);
-
-//			LOGGER.addHandler(consoleHandler);
 
 			for (Handler handler : LOGGER.getParent().getHandlers()) {
 				handler.setFormatter(formatter);
 				handler.setLevel(logLevel);
 			}
 
-			LOGGER.log(Level.CONFIG, "Logger configuration completed successfully.");
+			LOGGER.log(Level.CONFIG,
+					String.format("MyLogger: Logger formatter set and Level initialised to %s.", logLevel.toString()));
 		} catch (SecurityException e) {
-			LOGGER.log(Level.SEVERE, "Failed to initiate handlers for Logger in MyLogger.", e);
+			LOGGER.log(Level.SEVERE, "MyLogger: Failed to set formatter or initialise logger level.", e);
+		}
+
+		String configFileLoggerLevel = ConfigLoader.getSetting("loggerLevel");
+
+		if (configFileLoggerLevel == null) {
+			logLevel = Level.INFO;
+			MyLogger.log(Level.SEVERE, "MyLogger: loggerLevel not found in server config file, defaulting to INFO.");
+		}
+
+		switch (configFileLoggerLevel) {
+		case "ALL": {
+			logLevel = Level.ALL;
+			break;
+		}
+		case "CONFIG": {
+			logLevel = Level.CONFIG;
+			break;
+		}
+		case "FINE": {
+			logLevel = Level.FINE;
+			break;
+		}
+		case "FINER": {
+			logLevel = Level.FINER;
+			break;
+		}
+		case "FINEST": {
+			logLevel = Level.FINEST;
+			break;
+		}
+		case "INFO": {
+			logLevel = Level.INFO;
+			break;
+		}
+		case "OFF": {
+			logLevel = Level.OFF;
+			break;
+		}
+		case "SEVERE": {
+			logLevel = Level.SEVERE;
+			break;
+		}
+		case "WARNING": {
+			logLevel = Level.WARNING;
+			break;
+		}
+		default: {
+			logLevel = Level.INFO;
+			MyLogger.log(Level.SEVERE,
+					String.format("MyLogger: Could not parse configFileLoggerLevel '%s', defaulting to INFO.",
+							configFileLoggerLevel));
+			break;
+		}
+		}
+
+		try {
+//			fileHandler.setLevel(Level.ALL);
+			MyLogger.log(Level.FINE, String.format("MyLogger: Setting log level to %s.", logLevel.toString()));
+			LOGGER.setLevel(logLevel);
+
+			for (Handler handler : LOGGER.getParent().getHandlers()) {
+				handler.setLevel(logLevel);
+			}
+
+			LOGGER.log(Level.INFO, String.format("MyLogger: Logger Level set to %s.", logLevel.toString()));
+		} catch (SecurityException e) {
+			LOGGER.log(Level.SEVERE, "MyLogger: Failed to set Level.", e);
 		}
 	}
 
+	private static String stripColour(String text) {
+		Pattern p = Pattern.compile("\u001B\\[[\\d;]*[^\\d;]", Pattern.DOTALL);
+		return p.matcher(text).replaceAll("");
+	}
+
 	public static void log(Level level, String msg) {
-		LOGGER.log(level, msg);
+		LOGGER.log(level, stripColour(msg));
 	}
 
 	public static void log(Level level, String msg, Throwable thrown) {
-		LOGGER.log(level, msg, thrown);
+		LOGGER.log(level, stripColour(msg), thrown);
 	}
 
 	public class MyLoggerFormatter extends Formatter {
@@ -95,16 +164,16 @@ public class MyLogger {
 		public static final String ANSI_CYAN = "\u001B[36m";
 		public static final String ANSI_WHITE = "\u001B[37m";
 
-		public static final String ANSI_BRIGHT_BLACK = "\u001b[30;1m";
-		public static final String ANSI_BRIGHT_RED = "\u001b[31;1m";
-		public static final String ANSI_BRIGHT_GREEN = "\u001b[32;1m";
-		public static final String ANSI_BRIGHT_YELLOW = "\u001b[33;1m";
-		public static final String ANSI_BRIGHT_BLUE = "\u001b[34;1m";
-		public static final String ANSI_BRIGHT_MAGENTA = "\u001b[35;1m";
-		public static final String ANSI_BRIGHT_CYAN = "\u001b[36;1m";
-		public static final String ANSI_BRIGHT_WHITE = "\u001b[37;1m";
+		public static final String ANSI_BRIGHT_BLACK = "\u001B[30;1m";
+		public static final String ANSI_BRIGHT_RED = "\u001B[31;1m";
+		public static final String ANSI_BRIGHT_GREEN = "\u001B[32;1m";
+		public static final String ANSI_BRIGHT_YELLOW = "\u001B[33;1m";
+		public static final String ANSI_BRIGHT_BLUE = "\u001B[34;1m";
+		public static final String ANSI_BRIGHT_MAGENTA = "\u001B[35;1m";
+		public static final String ANSI_BRIGHT_CYAN = "\u001B[36;1m";
+		public static final String ANSI_BRIGHT_WHITE = "\u001B[37;1m";
 
-		public static final String ANSI_BACKGROUND_BLACK = "\u001b[40m";
+		public static final String ANSI_BACKGROUND_BLACK = "\u001B[40m";
 		public static final String ANSI_BACKGROUND_RED = "\u001B[41m";
 		public static final String ANSI_BACKGROUND_GREEN = "\u001B[42m";
 		public static final String ANSI_BACKGROUND_YELLOW = "\u001B[43m";
@@ -113,14 +182,14 @@ public class MyLogger {
 		public static final String ANSI_BACKGROUND_CYAN = "\u001B[46m";
 		public static final String ANSI_BACKGROUND_WHITE = "\u001B[47m";
 
-		public static final String ANSI_BACKGROUND_BRIGHT_BLACK = "\u001b[40;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_RED = "\u001b[41;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_GREEN = "\u001b[42;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_YELLOW = "\u001b[43;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_BLUE = "\u001b[44;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_MAGENTA = "\u001b[45;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_CYAN = "\u001b[46;1m";
-		public static final String ANSI_BACKGROUND_BRIGHT_WHITE = "\u001b[47;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_BLACK = "\u001B[40;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_RED = "\u001B[41;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_GREEN = "\u001B[42;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_YELLOW = "\u001B[43;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_BLUE = "\u001B[44;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_MAGENTA = "\u001B[45;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_CYAN = "\u001B[46;1m";
+		public static final String ANSI_BACKGROUND_BRIGHT_WHITE = "\u001B[47;1m";
 
 		// Here you can configure the format of the output and
 		// its colour by using the ANSI escape codes defined above.

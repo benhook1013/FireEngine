@@ -70,8 +70,6 @@ public class DestroyRoom extends CommandCharacter {
 						null, null));
 			} catch (CheckedHibernateException e) {
 				FireEngineMain.hibernateException(e);
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		} else {
 			character.sendToListeners(new ClientConnectionOutput(

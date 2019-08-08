@@ -72,9 +72,10 @@ public class Room {
 	@NotNull
 	private int roomId;
 
-	@Column(name = "ROOM_MAP_ID", nullable = false)
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "ROOM_MAP", nullable = false)
 	@NotNull
-	private int mapId;
+	private GameMap map;
 
 	@Column(name = "ROOM_Z", nullable = false)
 	@NotNull
@@ -143,12 +144,12 @@ public class Room {
 		playerList = new ArrayList<>();
 	}
 
-	public Room(int mapId, int z, int x, int y) {
+	public Room(GameMap map, int z, int y, int x) {
 		this();
-		this.mapId = mapId;
+		this.map = map;
 		this.z = z;
-		this.x = x;
 		this.y = y;
+		this.x = x;
 		this.name = "Placeholder name";
 		this.desc = "Placeholder description";
 	}
@@ -162,13 +163,13 @@ public class Room {
 		this.roomId = roomId;
 	}
 
-	public int getMapId() {
-		return mapId;
+	public GameMap getMap() {
+		return this.map;
 	}
 
 	@SuppressWarnings("unused")
-	private void setMapId(int mapId) {
-		this.mapId = mapId;
+	private void setMap(GameMap map) {
+		this.map = map;
 	}
 
 	public int getZ() {
@@ -180,15 +181,6 @@ public class Room {
 		this.z = z;
 	}
 
-	public int getX() {
-		return x;
-	}
-
-	@SuppressWarnings("unused")
-	private void setX(int x) {
-		this.x = x;
-	}
-
 	public int getY() {
 		return y;
 	}
@@ -196,6 +188,15 @@ public class Room {
 	@SuppressWarnings("unused")
 	private void setY(int y) {
 		this.y = y;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	@SuppressWarnings("unused")
+	private void setX(int x) {
+		this.x = x;
 	}
 
 	/**
@@ -434,9 +435,9 @@ public class Room {
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static Room createRoom(int mapId, int z, int x, int y)
+	public static Room createRoom(GameMap map, int z, int y, int x)
 			throws MapExceptionRoomNull, CheckedHibernateException {
-		Room newRoom = new Room(mapId, z, x, y);
+		Room newRoom = new Room(map, z, y, x);
 		saveRoom(newRoom);
 		return newRoom;
 	}
@@ -535,7 +536,7 @@ public class Room {
 
 	/**
 	 * DO NOT CALL DIRECTLY. Removes {@link RoomExit} from database. Call
-	 * {@link GameMap#destroyExit(Room, DIRECTION)} instead.
+	 * {@link GameMap#removeExit(Room, DIRECTION)} instead.
 	 * 
 	 * @param roomExit
 	 * @throws MapExceptionRoomNull

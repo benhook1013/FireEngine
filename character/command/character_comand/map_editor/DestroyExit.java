@@ -49,7 +49,7 @@ public class DestroyExit extends CommandCharacter {
 
 		if (direction != null) {
 			try {
-				character.getMap().destroyExit(character.getRoom(), direction);
+				character.getMap().removeExit(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput("RoomExit destroyed " + direction.toString()
 						+ " from \"" + character.getRoom().getName() + "\".", null, null));
 				return;

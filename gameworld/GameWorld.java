@@ -13,10 +13,10 @@ import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.exception.MapExceptionMapLoad;
 import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
-import fireengine.gameworld.map.exception.MapExceptionRoomLoad;
 import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
+import fireengine.util.ConfigLoader;
 import fireengine.util.MyLogger;
 
 /*
@@ -49,28 +49,30 @@ public class GameWorld {
 			throws CheckedHibernateException, MapExceptionMapLoad, MapExceptionOutOfBounds, MapExceptionRoomExists {
 		loadMaps();
 
-		GameMap mainMap = findMap("Mainland");
+		GameMap mainMap = getMainMap();
 
 		if (mainMap == null) {
-			MyLogger.log(Level.SEVERE, "GameWorld: Creating new map: Mainland");
+			MyLogger.log(Level.SEVERE, "GameWorld: Creating new map: Mainland.");
 			try {
-				GameMap newMap = GameMap.createMap("Mainland");
-				addMap(newMap);
+				mainMap = GameMap.createMap("Mainland");
+				addMap(mainMap);
 			} catch (CheckedHibernateException e) {
 				FireEngineMain.hibernateException(e);
 				return;
 			}
 		} else {
-			MyLogger.log(Level.INFO, "Using old map: " + mainMap.getName());
+			MyLogger.log(Level.INFO, String.format("GameWorld: Using old map '%s'.", mainMap.getName()));
 		}
 
 		// Create spawn room if non exists
-		if (GameWorld.findMap("Mainland").getRoom(0, 0, 0) == null) {
-			GameWorld.findMap("Mainland").createRoom(0, 0, 0);
-			Room spawnRoom = GameWorld.findMap("Mainland").getRoom(0, 0, 0);
+		if (mainMap.getSpawnRoom() == null) {
+			MyLogger.log(Level.SEVERE, String
+					.format("GameWorld: Spawn room not found for GameMap %s, creating spawn room.", mainMap.getName()));
+			Room spawnRoom = mainMap.createRoom(0, 0, 0);
 			spawnRoom.setName("The Lounge");
 			spawnRoom.setDesc(
 					"Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server.");
+			mainMap.setSpawnRoom(spawnRoom);
 		}
 
 		// Create admin with map editor privs if not existing
@@ -82,113 +84,45 @@ public class GameWorld {
 
 	/**
 	 * Attempts to load {@link GameMap}s from the database.
-	 *
+	 * 
 	 * @throws CheckedHibernateException
-	 * @throws MapExceptionMapLoad
 	 */
-	private static void loadMaps() throws CheckedHibernateException, MapExceptionMapLoad {
-		org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
-		Transaction tx = null;
+	private static void loadMaps() throws CheckedHibernateException {
+		synchronized (mapList) {
+			org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
+			Transaction tx = null;
 
-		try {
-			tx = hibSess.beginTransaction();
+			try {
+				tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("FROM GameMap");
+				Query<?> query = hibSess.createQuery("FROM GameMap");
 
-			@SuppressWarnings("unchecked")
-			List<GameMap> mapsFound = (List<GameMap>) query.list();
-			tx.commit();
+				@SuppressWarnings("unchecked")
+				List<GameMap> mapsFound = (List<GameMap>) query.list();
+				tx.commit();
 
-			if (mapsFound.isEmpty()) {
-				MyLogger.log(Level.SEVERE, "GameWorld: NO MAPS FOUND while trying to loadMaps.");
-				return;
-			} else {
-				MyLogger.log(Level.INFO, mapsFound.size() + " MAPS FOUND");
+				if (mapsFound.isEmpty()) {
+					MyLogger.log(Level.SEVERE, "GameWorld: NO MAPS FOUND while trying to loadMaps.");
+					return;
+				} else {
+					MyLogger.log(Level.INFO, String.format("GameWorld: %s GameMap(s) found.", mapsFound.size()));
 
-				synchronized (mapList) {
 					for (GameMap foundMap : mapsFound) {
 						addMap(foundMap);
 					}
 				}
-			}
 
-		} catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
+			} catch (HibernateException e) {
+				if (tx != null) {
+					tx.rollback();
+				}
+				throw new CheckedHibernateException("GameWorld: Hibernate error while trying to loadMaps.", e);
+			} finally {
+				hibSess.close();
 			}
-			throw new CheckedHibernateException("GameWorld: Hibernate error while trying to loadMaps.", e);
-		} finally {
-			hibSess.close();
-		}
-
-		synchronized (mapList) {
 			for (GameMap foundMap : mapList) {
-				try {
-					loadRooms(foundMap.getId());
-				} catch (MapExceptionRoomLoad e) {
-					throw new MapExceptionMapLoad(
-							"GameWorld: Tried to loadMaps but encountered MapExceptionRoomLoad from loadRooms.", e);
-				}
+				foundMap.loadRooms();
 			}
-		}
-	}
-
-	/**
-	 * Attempts to load all {@link Room}s from the database, give supplied map id.
-	 *
-	 * @param mapId int id of map to load
-	 * @throws CheckedHibernateException
-	 * @throws MapExceptionRoomLoad
-	 */
-	private static void loadRooms(int mapId) throws CheckedHibernateException, MapExceptionRoomLoad {
-		GameMap gameMap = findMap(mapId);
-
-		if (gameMap == null) {
-			throw new MapExceptionRoomLoad(
-					"GameWorld: Tried to loadRooms but cannot findMap with mapId " + mapId + ".");
-		}
-
-		org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
-		Transaction tx = null;
-
-		try {
-			tx = hibSess.beginTransaction();
-
-			Query<?> query = hibSess.createQuery("FROM Room WHERE mapId = :mapId");
-			query.setParameter("mapId", mapId);
-
-			@SuppressWarnings("unchecked")
-			List<Room> roomsFound = (List<Room>) query.list();
-			tx.commit();
-
-			if (roomsFound.isEmpty()) {
-				MyLogger.log(Level.INFO, "NO ROOMS FOUND");
-				return;
-			} else {
-				MyLogger.log(Level.INFO, roomsFound.size() + " ROOMS FOUND");
-
-				for (Room foundRoom : roomsFound) {
-					try {
-						gameMap.setRoom(foundRoom.getZ(), foundRoom.getX(), foundRoom.getY(), foundRoom);
-					} catch (MapExceptionOutOfBounds e) {
-						MyLogger.log(Level.WARNING,
-								"GameWorld: MapExceptionOutOfBounds while trying to setRoom on found room.", e);
-					} catch (MapExceptionRoomExists e) {
-						MyLogger.log(Level.WARNING,
-								"GameWorld: MapExceptionRoomExists while trying to setRoom on found room "
-										+ foundRoom.getCoordsText() + ".",
-								e);
-					}
-				}
-			}
-
-		} catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			throw new CheckedHibernateException("GameWorld: Hibernate error while trying to loadRooms.", e);
-		} finally {
-			hibSess.close();
 		}
 	}
 
@@ -243,5 +177,9 @@ public class GameWorld {
 			}
 			mapList.add(gameMap);
 		}
+	}
+
+	public static GameMap getMainMap() {
+		return GameWorld.findMap(Integer.parseInt(ConfigLoader.getSetting("mainMapID")));
 	}
 }

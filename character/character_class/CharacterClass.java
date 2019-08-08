@@ -67,7 +67,7 @@ public class CharacterClass {
 
 		skillsetClassList = new ArrayList<>();
 		for (String skillsetName : skillsetNameArray) {
-			MyLogger.log(Level.INFO, "skillsetName: '" + skillsetName + "'");
+			MyLogger.log(Level.INFO, String.format("CharacterClass: skillset '%s'.", skillsetName));
 			skillsetClassList.add((Class<Skillset>) classLoader.loadClass(skillsetName));
 		}
 	}

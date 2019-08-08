@@ -41,11 +41,8 @@ public class Map extends CommandCharacter {
 		output.addPart("You look around and see...", null, null);
 
 		Room room = character.getRoom();
-		try {
-			output = fireengine.gameworld.map.GameMap.displayMap(output, room, size);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+
+		output = fireengine.gameworld.map.GameMap.displayMap(output, room, size);
 
 		character.sendToListeners(output);
 	}

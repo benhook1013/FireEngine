@@ -35,7 +35,6 @@ import fireengine.character.player.state.StatePlayerInWorld;
 import fireengine.character.player.state.parser.InputParserInWorld;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.GameWorld;
-import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
 import fireengine.session.Session;
@@ -237,15 +236,7 @@ public class Player extends Character {
 			sendToListeners(message);
 			MyLogger.log(Level.WARNING, "Player: PlayerExceptionNullRoom error when trying to acceptInput.", e);
 
-			Room sendRoom = null;
-			try {
-				sendRoom = GameWorld.findMap(1).getRoom(0, 0, 0);
-			} catch (MapExceptionOutOfBounds e1) {
-				MyLogger.log(Level.WARNING,
-						"Player: Spawn room out of bounds while trying to find spawn room to send null room player to.",
-						e);
-				return;
-			}
+			Room sendRoom = GameWorld.getMainMap().getSpawnRoomOrCentre();
 
 			if (sendRoom != null) {
 				try {
