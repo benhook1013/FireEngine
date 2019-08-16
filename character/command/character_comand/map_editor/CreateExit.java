@@ -50,9 +50,8 @@ public class CreateExit extends CommandCharacter {
 		if (direction != null) {
 			try {
 				character.getMap().createExit(character.getRoom(), direction);
-				character.sendToListeners(new ClientConnectionOutput(
-						"RoomExit created " + direction.toString() + " from \"" + character.getRoom().getName() + "\".",
-						null, null));
+				character.sendToListeners(new ClientConnectionOutput(String.format("RoomExit created %s from \"%s\".",
+						direction.toString(), character.getRoom().getName()), null, null));
 				return;
 			} catch (MapExceptionRoomNull e) {
 				character.sendToListeners(
@@ -63,25 +62,26 @@ public class CreateExit extends CommandCharacter {
 						new ClientConnectionOutput("Can't create exit as adjacent room is null.", null, null));
 				return;
 			} catch (MapExceptionExitExists e) {
-				character.sendToListeners(new ClientConnectionOutput(
-						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getName()
-								+ "\", exit already exists there." + " Try DESTROY EXIT first if exit is oneway.",
-						null, null));
+				character.sendToListeners(new ClientConnectionOutput(String.format(
+						"Can't create exit %s from \"%s\", exit already exists there. Try DESTROY EXIT first if exit is oneway.",
+						direction.toString(), character.getRoom().getName()), null, null));
+				MyLogger.log(Level.FINER, String.format(
+						"Can't create exit %s from \"%s\", exit already exists there. Try DESTROY EXIT first if exit is oneway.",
+						direction.toString(), character.getRoom().getName()), e);
 				return;
 			} catch (MapExceptionDirectionNotSupported e) {
 				MyLogger.log(Level.WARNING, "CreateExit: MapExceptionDirectionNotSupported while trying to createExit.",
 						e);
-				character.sendToListeners(new ClientConnectionOutput(
-						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getName()
-								+ "\", direction not supported in exit creation code. Contact a God to fix this.",
-						null, null));
+				character.sendToListeners(new ClientConnectionOutput(String.format(
+						"Can't create exit %s from \"%s\", direction not supported in exit creation code. Contact a God to fix this.",
+						direction.toString(), character.getRoom().getName()), null, null));
 				return;
 			} catch (CheckedHibernateException e) {
 				FireEngineMain.hibernateException(e);
 			}
 		} else {
 			character.sendToListeners(new ClientConnectionOutput(
-					"Could not parse '" + directionText + "' into a direction.", null, null));
+					String.format("Could not parse '%s' into a direction.", directionText), null, null));
 			return;
 		}
 	}

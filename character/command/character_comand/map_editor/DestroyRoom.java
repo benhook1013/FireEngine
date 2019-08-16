@@ -49,7 +49,7 @@ public class DestroyRoom extends CommandCharacter {
 			try {
 				character.getMap().deleteRoom(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput(
-						"Room sucessfully destropyed to the " + direction.toString() + "!", null, null));
+						String.format("Room sucessfully destropyed to the %s!", direction.toString()), null, null));
 			} catch (MapExceptionRoomNull e) {
 				character.sendToListeners(new ClientConnectionOutput(
 						"Cannot destroy room in that direction, there is no room there.", null, null));
@@ -57,16 +57,15 @@ public class DestroyRoom extends CommandCharacter {
 			} catch (MapExceptionDirectionNotSupported e) {
 				MyLogger.log(Level.WARNING,
 						"DestroyRoom: MapExceptionDirectionNotSupported while trying to destroyRoom.", e);
-				character.sendToListeners(new ClientConnectionOutput(
-						"Can't destroy room " + direction.toString() + " from \"" + character.getRoom().getName()
-								+ "\", direction not supported in room destruction code. Contact a God to fix this.",
-						null, null));
+				character.sendToListeners(new ClientConnectionOutput(String.format(
+						"Can't destroy room %s from \"%s\", direction not supported in room destruction code. Contact a God to fix this.",
+						direction.toString(), character.getRoom().getName()), null, null));
 			} catch (CheckedHibernateException e) {
 				FireEngineMain.hibernateException(e);
 			}
 		} else {
 			character.sendToListeners(new ClientConnectionOutput(
-					"Could not parse '" + directionText + "' into a direction.", null, null));
+					String.format("Could not parse '%s' into a direction.", directionText), null, null));
 			return;
 		}
 	}

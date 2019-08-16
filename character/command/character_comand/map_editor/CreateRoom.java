@@ -49,7 +49,7 @@ public class CreateRoom extends CommandCharacter {
 			try {
 				character.getMap().createRoom(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput(
-						"New room sucessfully created to the " + direction.toString() + "!", null, null));
+						String.format("New room sucessfully created to the %s!", direction.toString()), null, null));
 			} catch (MapExceptionRoomExists e) {
 				character.sendToListeners(new ClientConnectionOutput(
 						"Cannot create room in the direction, room already exists there.", null, null));
@@ -57,17 +57,16 @@ public class CreateRoom extends CommandCharacter {
 			} catch (MapExceptionDirectionNotSupported e) {
 				MyLogger.log(Level.WARNING, "CreateRoom: MapExceptionDirectionNotSupported while trying to createRoom.",
 						e);
-				character.sendToListeners(new ClientConnectionOutput(
-						"Can't create room " + direction.toString() + " from \"" + character.getRoom().getName()
-								+ "\", direction not supported in room creation code. Contact a God to fix this.",
-						null, null));
+				character.sendToListeners(new ClientConnectionOutput(String.format(
+						"Can't create room %s from \"%s\", direction not supported in room creation code. Contact a God to fix this.",
+						direction.toString(), character.getRoom().getName()), null, null));
 				return;
 			} catch (CheckedHibernateException e) {
 				FireEngineMain.hibernateException(e);
 			}
 		} else {
 			character.sendToListeners(new ClientConnectionOutput(
-					"Could not parse '" + directionText + "' into a direction.", null, null));
+					String.format("Could not parse '%s' into a direction.", directionText), null, null));
 			return;
 		}
 	}

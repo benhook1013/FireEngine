@@ -381,16 +381,16 @@ public class GameMap {
 		}
 		if (room.getExit(direction) != null) {
 			throw new MapExceptionExitExists(
-					"GameMap: RoomExit is not null " + direction.toString() + " of " + room.getName() + ".");
+					String.format("GameMap: RoomExit is not null %s of %s.", direction.toString(), room.getName()));
 		}
 
 		Room otherRoom = getRoom(room, direction);
 		if (otherRoom == null) {
 			throw new MapExceptionExitRoomNull("GameMap: Tried to set exit on null adjacent room.");
 		}
-		if (room.getExit(Direction.oppositeDirection(direction)) != null) {
-			throw new MapExceptionExitExists("GameMap: RoomExit is not null "
-					+ Direction.oppositeDirection(direction).toString() + " of " + otherRoom.getName());
+		if (otherRoom.getExit(Direction.oppositeDirection(direction)) != null) {
+			throw new MapExceptionExitExists(String.format("GameMap: RoomExit is not null %s of %s.",
+					Direction.oppositeDirection(direction).toString(), otherRoom.getName()));
 		}
 
 		RoomExit newExit = new RoomExit();
@@ -419,33 +419,16 @@ public class GameMap {
 		if (room == null) {
 			throw new MapExceptionRoomNull("GameMap: Tried to remove exit on null room.");
 		}
-		RoomExit roomExit = room.getExit(direction);
 
 		Room otherRoom = getRoom(room, direction);
 		if (otherRoom == null) {
 			throw new MapExceptionExitRoomNull("GameMap: Tried to remove exit to a null room.");
 		}
-		RoomExit otherRoomExit = otherRoom.getExit(Direction.oppositeDirection(direction));
 
-		if ((roomExit != null) && (otherRoomExit != null)) {
-			if (roomExit.getId() == otherRoomExit.getId()) {
-				Room.deleteExit(roomExit);
-			} else {
-				Room.deleteExit(roomExit);
-				Room.deleteExit(otherRoomExit);
-			}
-		} else {
-			if (roomExit != null) {
-				Room.deleteExit(roomExit);
-			}
-			if (otherRoomExit != null) {
-				Room.deleteExit(otherRoomExit);
-			}
-		}
 		room.setExit(direction, null);
-		Room.saveRoom(room);
 		otherRoom.setExit(Direction.oppositeDirection(direction), null);
-		Room.saveRoom(otherRoom);
+
+		saveMap(this);
 	}
 
 	/**

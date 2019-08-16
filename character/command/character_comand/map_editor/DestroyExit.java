@@ -49,8 +49,8 @@ public class DestroyExit extends CommandCharacter {
 		if (direction != null) {
 			try {
 				character.getMap().removeExit(character.getRoom(), direction);
-				character.sendToListeners(new ClientConnectionOutput("RoomExit destroyed " + direction.toString()
-						+ " from \"" + character.getRoom().getName() + "\".", null, null));
+				character.sendToListeners(new ClientConnectionOutput(String.format("RoomExit destroyed %s from \"%s\".",
+						direction.toString(), character.getRoom().getName()), null, null));
 				return;
 			} catch (MapExceptionRoomNull e) {
 				character.sendToListeners(
@@ -63,17 +63,16 @@ public class DestroyExit extends CommandCharacter {
 			} catch (MapExceptionDirectionNotSupported e) {
 				MyLogger.log(Level.WARNING,
 						"DestroyExit: MapExceptionDirectionNotSupported while trying to destroyExit.", e);
-				character.sendToListeners(new ClientConnectionOutput(
-						"Can't create exit " + direction.toString() + " from \"" + character.getRoom().getName()
-								+ "\", direction not supported in exit creation code. Contact a God to fix this.",
-						null, null));
+				character.sendToListeners(new ClientConnectionOutput(String.format(
+						"Can't create exit %s from \"%s\", direction not supported in exit creation code. Contact a God to fix this.",
+						direction.toString(), character.getRoom().getName()), null, null));
 				return;
 			} catch (CheckedHibernateException e) {
 				FireEngineMain.hibernateException(e);
 			}
 		} else {
 			character.sendToListeners(new ClientConnectionOutput(
-					"Could not parse '" + directionText + "' into a direction.", null, null));
+					String.format("Could not parse '%s' into a direction.", directionText), null, null));
 			return;
 		}
 	}

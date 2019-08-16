@@ -599,43 +599,4 @@ public class Room {
 			}
 		}
 	}
-
-	/**
-	 * TODO Delete using native Hibernate functions.
-	 * 
-	 * DO NOT CALL DIRECTLY. Removes {@link RoomExit} from database. Call
-	 * {@link GameMap#removeExit(Room, DIRECTION)} instead.
-	 * 
-	 * @param roomExit
-	 * @throws MapExceptionRoomNull
-	 * @throws CheckedHibernateException
-	 */
-	public static void deleteExit(RoomExit roomExit) throws MapExceptionRoomNull, CheckedHibernateException {
-		if (roomExit == null) {
-			throw new MapExceptionRoomNull("Room: Tried to deleteExit on a null exit.");
-		}
-
-		org.hibernate.Session hibSess = null;
-		Transaction tx = null;
-
-		try {
-			hibSess = FireEngineMain.hibSessFactory.openSession();
-			tx = hibSess.beginTransaction();
-
-			Query<?> query = hibSess.createQuery("DELETE FROM RoomExit WHERE ROOM_EXIT_ID = :id");
-			query.setParameter("id", roomExit.getId());
-			query.executeUpdate();
-
-			tx.commit();
-		} catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			throw new CheckedHibernateException("MapColumn: Hibernate error when trying to deleteRoom.", e);
-		} finally {
-			if (hibSess != null) {
-				hibSess.close();
-			}
-		}
-	}
 }
