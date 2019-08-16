@@ -319,6 +319,12 @@ public class Room {
 	 */
 	public RoomExit getExit(Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
+		case UP: {
+			return upExit;
+		}
+		case DOWN: {
+			return downExit;
+		}
 		case NORTH: {
 			return northExit;
 		}
@@ -357,8 +363,11 @@ public class Room {
 	 * @param direction
 	 * @param newExit
 	 * @throws MapExceptionDirectionNotSupported
+	 * @throws CheckedHibernateException
+	 * @throws MapExceptionRoomNull
 	 */
-	public void setExit(Direction.DIRECTION direction, RoomExit newExit) throws MapExceptionDirectionNotSupported {
+	public void setExit(Direction.DIRECTION direction, RoomExit newExit)
+			throws MapExceptionDirectionNotSupported, MapExceptionRoomNull, CheckedHibernateException {
 		switch (direction) {
 		case UP: {
 			this.upExit = newExit;
@@ -405,6 +414,7 @@ public class Room {
 					"Room: setExit missing case for direction " + direction.toString() + ".");
 		}
 		}
+		saveRoom(this);
 	}
 
 	/**

@@ -77,7 +77,7 @@ public class GameMap {
 	// https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
 
 	// https://www.baeldung.com/hibernate-persisting-maps
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinTable(name = "COORD_ROOM_MAPPING", joinColumns = {
 			@JoinColumn(name = "gamemap", referencedColumnName = "id") }, inverseJoinColumns = {
 					@JoinColumn(name = "room", referencedColumnName = "id") })
@@ -314,9 +314,11 @@ public class GameMap {
 			throw new MapExceptionRoomNull("GameMap: Tried to deleteRoom but found no room at supplied Coordinate.");
 		}
 
+		// TODO Don't think the below should be necessary if mapped properly. Possibly
+		// need cascade + orphan removal.
 		for (Direction.DIRECTION direction : Direction.DIRECTION.values()) {
 			try {
-				removeExit(foundRoom, direction);
+				deleteExit(foundRoom, direction);
 			} catch (MapExceptionExitRoomNull e) {
 				// This is expected in some situations and is allowed
 			} catch (MapExceptionDirectionNotSupported e) {
@@ -325,16 +327,8 @@ public class GameMap {
 			}
 		}
 
-		try {
-			Room.deleteRoom(foundRoom);
-		} catch (MapExceptionExitExists e) {
-			MyLogger.log(Level.WARNING,
-					"GameMap: MapExceptionExitExists while deleteRoom, but all exits should have already been destroyed.",
-					e);
-			return;
-		}
-
 		rooms.remove(coord);
+		saveMap(this);
 	}
 
 	/**
@@ -394,10 +388,9 @@ public class GameMap {
 		}
 
 		RoomExit newExit = new RoomExit();
+		// TODO If fails to set exit, delete partway created exit.
 		room.setExit(direction, newExit);
-		Room.saveRoom(room);
 		otherRoom.setExit(Direction.oppositeDirection(direction), newExit);
-		Room.saveRoom(otherRoom);
 	}
 
 	/**
@@ -414,7 +407,7 @@ public class GameMap {
 	 * @throws MapExceptionDirectionNotSupported direction not supported by method
 	 * @throws CheckedHibernateException         hibernate exception
 	 */
-	public void removeExit(Room room, Direction.DIRECTION direction) throws MapExceptionRoomNull,
+	public void deleteExit(Room room, Direction.DIRECTION direction) throws MapExceptionRoomNull,
 			MapExceptionExitRoomNull, MapExceptionDirectionNotSupported, CheckedHibernateException {
 		if (room == null) {
 			throw new MapExceptionRoomNull("GameMap: Tried to remove exit on null room.");
@@ -428,7 +421,7 @@ public class GameMap {
 		room.setExit(direction, null);
 		otherRoom.setExit(Direction.oppositeDirection(direction), null);
 
-		saveMap(this);
+//		saveMap(this); // Probably unnecessary
 	}
 
 	/**
