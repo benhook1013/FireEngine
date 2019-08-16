@@ -36,15 +36,15 @@ import javax.validation.constraints.NotNull;
 public abstract class Skillset {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "SKILLSET_ID")
+	@Column(name = "ID")
 	@NotNull
 	private int id;
 
-	@Column(name = "SKILLSET_NAME")
+	@Column(name = "NAME")
 	@NotNull
 	protected String skillsetName;
 
-	@Column(name = "SKILLSET_SKILLSET_EXPERIENCE")
+	@Column(name = "EXPERIENCE")
 	@NotNull
 	private int skillsetExperience;
 

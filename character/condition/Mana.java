@@ -32,11 +32,11 @@ import fireengine.character.condition.exception.ManaExceptionZeroMana;
 public class Mana {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "CHAR_MANA_ID")
+	@Column(name = "ID")
 	@NotNull
 	private int id;
 
-	@Column(name = "CHAR_MANA_MANA")
+	@Column(name = "MANA")
 	@NotNull
 	private volatile int mana;
 

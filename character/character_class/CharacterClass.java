@@ -40,11 +40,11 @@ import fireengine.util.MyLogger;
 public class CharacterClass {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "CHAR_CLASS_ID")
+	@Column(name = "ID")
 	@NotNull
 	private int id;
 
-	@Column(name = "CHAR_CLASS_NAME")
+	@Column(name = "NAME")
 	@NotNull
 	protected String className;
 

@@ -67,21 +67,21 @@ public class Player extends Character {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "PLAYER_ID")
+	@Column(name = "ID")
 	@NotNull
 	private int id;
 
-	@Column(name = "PLAYER_NAME")
+	@Column(name = "NAME")
 	@NotNull
 	private String name; // 40 characters max
 
-	@Column(name = "PLAYER_PASSWORD")
+	@Column(name = "PASSWORD")
 	@NotNull
 	private String password; // 40 characters max
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "PLAYER_PLAYER_SETTINGS_ID")
+	@JoinColumn(name = "PLAYER_SETTINGS_ID")
 	@NotNull
 	private PlayerSetting settings;
 

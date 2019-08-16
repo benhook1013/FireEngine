@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
 public class RoomExit {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ROOM_EXIT_ID")
+	@Column(name = "ID")
 	@NotNull
 	private int id;
 

@@ -30,11 +30,11 @@ import javax.validation.constraints.NotNull;
 public class PlayerSetting {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "PLAYER_SETTINGS_ID")
+	@Column(name = "ID")
 	@NotNull
 	private int id;
 
-	@Column(name = "PLAYER_SETTINGS_MAP_EDITOR")
+	@Column(name = "MAP_EDITOR")
 	@NotNull
 	private boolean mapEditor;
 

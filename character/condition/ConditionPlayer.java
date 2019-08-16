@@ -36,25 +36,25 @@ import org.hibernate.annotations.CascadeType;
 public class ConditionPlayer extends Condition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "COND_PLAYER_ID")
+	@Column(name = "ID")
 	@NotNull
 	private int id;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "COND_PLAYER_LEVEL_ID")
+	@JoinColumn(name = "LEVEL_ID")
 	@NotNull
 	private Level level;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "COND_PLAYER_HEALTH_ID")
+	@JoinColumn(name = "HEALTH_ID")
 	@NotNull
 	private Health health;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "COND_PLAYER_MANA_ID")
+	@JoinColumn(name = "MANA_ID")
 	@NotNull
 	private Mana mana;
 
