@@ -9,7 +9,6 @@ import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
-import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
@@ -58,11 +57,6 @@ public class CreateExit extends CommandCharacter {
 			} catch (MapExceptionRoomNull e) {
 				character.sendToListeners(
 						new ClientConnectionOutput("Can't create exit as player room is null.", null, null));
-				return;
-			} catch (MapExceptionOutOfBounds e) {
-				character.sendToListeners(new ClientConnectionOutput("Can't create exit " + direction.toString()
-						+ " from \"" + character.getRoom().getName() + "\", adjoining room is out of map boundary."
-						+ " If you think room is actaully there, contact a God.", null, null));
 				return;
 			} catch (MapExceptionExitRoomNull e) {
 				character.sendToListeners(

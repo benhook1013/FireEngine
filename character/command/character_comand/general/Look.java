@@ -9,7 +9,6 @@ import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
-import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exit.RoomExit;
 import fireengine.gameworld.map.room.Room;
 import fireengine.util.StringUtils;
@@ -98,11 +97,6 @@ public class Look extends CommandCharacter {
 							+ " as there is no exit that-a-way.", null, null);
 					return output;
 				}
-			} catch (MapExceptionOutOfBounds e) {
-				output.addPart("Could not look " + StringUtils.capitalise(direction.toString())
-						+ " as the doom in that direction is out of map boundary."
-						+ " If you think there is a room in that direction, contact a God.", null, null);
-				return output;
 			} catch (MapExceptionDirectionNotSupported e) {
 				output.addPart("Could not look " + StringUtils.capitalise(direction.toString())
 						+ " as the direction is no supported for LOOK." + " Please contact a God to get this fixed.",
@@ -111,9 +105,9 @@ public class Look extends CommandCharacter {
 			}
 		}
 
-		output.addPart("\"" + lookRoom.getName() + "\" " + lookRoom.getCoordsText(), null, null);
+		output.addPart("\"" + lookRoom.getName() + "\" " + lookRoom.getCoord().toString(), null, null);
 		output.newLine();
-		output.addPart(lookRoom.getDesc(), null, null);
+		output.addPart(lookRoom.getDescription(), null, null);
 		output.newLine();
 		ArrayList<Player> playerList = lookRoom.getPlayers();
 		if (playerList.isEmpty()) {

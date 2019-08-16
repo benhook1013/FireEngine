@@ -7,7 +7,6 @@ import fireengine.character.command.character_comand.CommandCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
-import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
@@ -51,10 +50,6 @@ public class CreateRoom extends CommandCharacter {
 				character.getMap().createRoom(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput(
 						"New room sucessfully created to the " + direction.toString() + "!", null, null));
-			} catch (MapExceptionOutOfBounds e) {
-				character.sendToListeners(new ClientConnectionOutput(
-						"Cannot create room in the direction, it would run over map boundary.", null, null));
-				return;
 			} catch (MapExceptionRoomExists e) {
 				character.sendToListeners(new ClientConnectionOutput(
 						"Cannot create room in the direction, room already exists there.", null, null));

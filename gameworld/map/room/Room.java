@@ -1,6 +1,7 @@
 package fireengine.gameworld.map.room;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -25,6 +27,7 @@ import fireengine.character.Character;
 import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.GameMap;
+import fireengine.gameworld.map.Coordinate;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.Direction.DIRECTION;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
@@ -68,73 +71,79 @@ public class Room {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ROOM_ID", nullable = false)
+	@Column(name = "ID", nullable = false)
 	@NotNull
-	private int roomId;
+	private int id;
 
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "ROOM_MAP", nullable = false)
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "MAP", nullable = false)
 	@NotNull
 	private GameMap map;
 
-	@Column(name = "ROOM_Z", nullable = false)
+	@OneToOne(fetch = FetchType.EAGER)
+	@Cascade(CascadeType.ALL)
+	@JoinColumn(name = "COORD", nullable = false)
 	@NotNull
-	private int z;
+	private Coordinate coord;
 
-	@Column(name = "ROOM_X", nullable = false)
-	@NotNull
-	private int x;
-
-	@Column(name = "ROOM_Y", nullable = false)
-	@NotNull
-	private int y;
-
-	@Column(name = "ROOM_NAME")
+	@Column(name = "NAME")
 	@NotNull
 	private String name;
 
-	@Column(name = "ROOM_DESC")
+	@Column(name = "DESCRIPTION")
 	@NotNull
-	private String desc;
+	private String description;
+
+	// TODO Should probably store the below directional exits into a direction keyed
+	// map.
+	@OneToOne(fetch = FetchType.EAGER)
+	@Cascade(CascadeType.ALL)
+	@JoinColumn(name = "EXIT_U")
+	private RoomExit upExit;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "ROOM_EXIT_N")
+	@JoinColumn(name = "EXIT_D")
+	private RoomExit downExit;
+
+	@OneToOne(fetch = FetchType.EAGER)
+	@Cascade(CascadeType.ALL)
+	@JoinColumn(name = "EXIT_N")
 	private RoomExit northExit;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "ROOM_EXIT_NE")
+	@JoinColumn(name = "EXIT_NE")
 	private RoomExit northEastExit;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "ROOM_EXIT_E")
+	@JoinColumn(name = "EXIT_E")
 	private RoomExit eastExit;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "ROOM_EXIT_SE")
+	@JoinColumn(name = "EXIT_SE")
 	private RoomExit southEastExit;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "ROOM_EXIT_S")
+	@JoinColumn(name = "EXIT_S")
 	private RoomExit southExit;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "ROOM_EXIT_SW")
+	@JoinColumn(name = "EXIT_SW")
 	private RoomExit southWestExit;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "ROOM_EXIT_W")
+	@JoinColumn(name = "EXIT_W")
 	private RoomExit westExit;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "ROOM_EXIT_NW")
+	@JoinColumn(name = "EXIT_NW")
 	private RoomExit northWestExit;
 
 	@Transient
@@ -144,23 +153,19 @@ public class Room {
 		playerList = new ArrayList<>();
 	}
 
-	public Room(GameMap map, int z, int y, int x) {
+	public Room(GameMap map, Coordinate coord) {
 		this();
 		this.map = map;
-		this.z = z;
-		this.y = y;
-		this.x = x;
-		this.name = "Placeholder name";
-		this.desc = "Placeholder description";
+		this.coord = coord;
 	}
 
-	public int getRoomId() {
-		return roomId;
+	public int getId() {
+		return id;
 	}
 
 	@SuppressWarnings("unused")
-	private void setRoomId(int roomId) {
-		this.roomId = roomId;
+	private void setId(int id) {
+		this.id = id;
 	}
 
 	public GameMap getMap() {
@@ -172,56 +177,43 @@ public class Room {
 		this.map = map;
 	}
 
-	public int getZ() {
-		return z;
-	}
-
-	@SuppressWarnings("unused")
-	private void setZ(int z) {
-		this.z = z;
-	}
-
-	public int getY() {
-		return y;
-	}
-
-	@SuppressWarnings("unused")
-	private void setY(int y) {
-		this.y = y;
-	}
-
-	public int getX() {
-		return x;
-	}
-
-	@SuppressWarnings("unused")
-	private void setX(int x) {
-		this.x = x;
+	/**
+	 * @return the Room's Coordinate
+	 */
+	public Coordinate getCoord() {
+		return coord;
 	}
 
 	/**
-	 * Returns a String that looks like "(x,y)".
-	 *
-	 * @return
+	 * @param coord the Coordinate to set
 	 */
-	public String getCoordsText() {
-		return "(" + getZ() + "," + getX() + "," + getY() + ")";
+	@SuppressWarnings("unused")
+	private void setCoord(Coordinate coord) {
+		this.coord = coord;
 	}
 
 	public String getName() {
-		return name;
+		if (name == null) {
+			return "Null name";
+		} else {
+			return name;
+		}
 	}
 
 	public void setName(String name) {
 		this.name = name;
 	}
 
-	public String getDesc() {
-		return desc;
+	public String getDescription() {
+		if (description == null) {
+			return "Null description.";
+		} else {
+			return description;
+		}
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**
@@ -368,29 +360,45 @@ public class Room {
 	 */
 	public void setExit(Direction.DIRECTION direction, RoomExit newExit) throws MapExceptionDirectionNotSupported {
 		switch (direction) {
+		case UP: {
+			this.upExit = newExit;
+			break;
+		}
+		case DOWN: {
+			this.downExit = newExit;
+			break;
+		}
 		case NORTH: {
 			this.northExit = newExit;
+			break;
 		}
 		case NORTHEAST: {
 			this.northEastExit = newExit;
+			break;
 		}
 		case EAST: {
 			this.eastExit = newExit;
+			break;
 		}
 		case SOUTHEAST: {
 			this.southEastExit = newExit;
+			break;
 		}
 		case SOUTH: {
 			this.southExit = newExit;
+			break;
 		}
 		case SOUTHWEST: {
 			this.southWestExit = newExit;
+			break;
 		}
 		case WEST: {
 			this.westExit = newExit;
+			break;
 		}
 		case NORTHWEST: {
 			this.northWestExit = newExit;
+			break;
 		}
 		default: {
 			throw new MapExceptionDirectionNotSupported(
@@ -422,23 +430,50 @@ public class Room {
 		return false;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 7;
+		result = prime * result + id;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Room other = (Room) obj;
+		if (id != other.getId())
+			return false;
+		MyLogger.log(Level.WARNING,
+				"Room: When comparing rooms with equals, object was not of same instance but had the same id."
+						+ " StackTrace: " + Arrays.toString(Thread.currentThread().getStackTrace()));
+		if (name == null) {
+			if (other.getName() != null)
+				return false;
+		} else if (!name.equals(other.getName()))
+			return false;
+		return true;
+	}
+
 	/**
 	 * NOT TO BE CALLED DIRECTLY. This function does not check for existing room
 	 * etc; use the room creation in the {@link GameMap} class.
 	 *
 	 * Creates new {@link Room} at specified coordinates and returns new room.
 	 *
-	 * @param mapId
-	 * @param x
-	 * @param y
 	 * @return
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static Room createRoom(GameMap map, int z, int y, int x)
+	public static Room createRoom(GameMap map, Coordinate coord)
 			throws MapExceptionRoomNull, CheckedHibernateException {
-		Room newRoom = new Room(map, z, y, x);
-		saveRoom(newRoom);
+		Room newRoom = new Room(map, coord);
 		return newRoom;
 	}
 
@@ -451,7 +486,7 @@ public class Room {
 	 */
 	public static void saveRoom(Room room) throws MapExceptionRoomNull, CheckedHibernateException {
 		if (room == null) {
-			throw new MapExceptionRoomNull("Room: Tried to deleteRoom on a null room.");
+			throw new MapExceptionRoomNull("Room: Tried to saveRoom on a null room.");
 		}
 
 		org.hibernate.Session hibSess = null;
@@ -492,6 +527,8 @@ public class Room {
 //	}
 
 	/**
+	 * TODO Remove using native Hibernate functions.
+	 * 
 	 * DO NOT CALL DIRECTLY. Removes {@link Room} from database but does not remove
 	 * room from {@link MapColumn} etc, meaning it could be re-saved. Use the room
 	 * destroy function in {@link GameMap} instead.
@@ -501,6 +538,37 @@ public class Room {
 	 * @throws MapExceptionExitExists
 	 * @throws CheckedHibernateException
 	 */
+//	public static void deleteRoom(Room room)
+//			throws MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
+//		if (room == null) {
+//			throw new MapExceptionRoomNull("Room: Tried to deleteRoom on a null room.");
+//		}
+//		if (room.hasExit()) {
+//			throw new MapExceptionExitExists("Room: Tried to deleteRoom that still had exits.");
+//		}
+//
+//		org.hibernate.Session hibSess = null;
+//		Transaction tx = null;
+//
+//		try {
+//			hibSess = FireEngineMain.hibSessFactory.openSession();
+//			tx = hibSess.beginTransaction();
+//
+//			Query<?> query = hibSess.createQuery("DELETE FROM Room WHERE ROOM_ID = :id");
+//			query.setParameter("id", room.getId());
+//			query.executeUpdate();
+//
+//			tx.commit();
+//		} catch (HibernateException e) {
+//			if (tx != null) {
+//				tx.rollback();
+//			}
+//			throw new CheckedHibernateException("MapColumn: Hibernate error when trying to deleteRoom.", e);
+//		} finally {
+//			if (hibSess != null) {
+//				hibSess.close();
+//			}
+//		}
 	public static void deleteRoom(Room room)
 			throws MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
 		if (room == null) {
@@ -517,9 +585,7 @@ public class Room {
 			hibSess = FireEngineMain.hibSessFactory.openSession();
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("DELETE FROM Room WHERE ROOM_ID = :id");
-			query.setParameter("id", room.getRoomId());
-			query.executeUpdate();
+			hibSess.remove(room);
 
 			tx.commit();
 		} catch (HibernateException e) {
@@ -535,6 +601,8 @@ public class Room {
 	}
 
 	/**
+	 * TODO Delete using native Hibernate functions.
+	 * 
 	 * DO NOT CALL DIRECTLY. Removes {@link RoomExit} from database. Call
 	 * {@link GameMap#removeExit(Room, DIRECTION)} instead.
 	 * 

@@ -7,7 +7,6 @@ import fireengine.character.command.character_comand.CommandCharacter;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
-import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
@@ -51,12 +50,6 @@ public class DestroyRoom extends CommandCharacter {
 				character.getMap().deleteRoom(character.getRoom(), direction);
 				character.sendToListeners(new ClientConnectionOutput(
 						"Room sucessfully destropyed to the " + direction.toString() + "!", null, null));
-			} catch (MapExceptionOutOfBounds e) {
-				MyLogger.log(Level.WARNING, "DestroyRoom: MapExceptionOutOfBounds while trying to deleteRoom.", e);
-				character.sendToListeners(
-						new ClientConnectionOutput("Cannot destroy room in the direction, it's outside map boundary."
-								+ " If do you think there is a room there, contact a God.", null, null));
-				return;
 			} catch (MapExceptionRoomNull e) {
 				character.sendToListeners(new ClientConnectionOutput(
 						"Cannot destroy room in that direction, there is no room there.", null, null));

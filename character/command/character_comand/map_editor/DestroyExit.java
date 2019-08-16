@@ -8,7 +8,6 @@ import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
-import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
@@ -56,11 +55,6 @@ public class DestroyExit extends CommandCharacter {
 			} catch (MapExceptionRoomNull e) {
 				character.sendToListeners(
 						new ClientConnectionOutput("Can't destroy exit as player room is null.", null, null));
-				return;
-			} catch (MapExceptionOutOfBounds e) {
-				character.sendToListeners(new ClientConnectionOutput("Can't destroy exit " + direction.toString()
-						+ " from \"" + character.getRoom().getName() + "\", adjoining room is out of map boundary."
-						+ " If you think room is actaully there, contact a God.", null, null));
 				return;
 			} catch (MapExceptionExitRoomNull e) {
 				character.sendToListeners(

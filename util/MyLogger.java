@@ -201,43 +201,22 @@ public class MyLogger {
 			// followed by the log message and it's parameters in white .
 			StringBuilder builder = new StringBuilder();
 
-			if (record.getLevel().intValue() == Level.SEVERE.intValue()) {
-				builder.append(ANSI_BRIGHT_RED);
-			} else if (record.getLevel().intValue() == Level.WARNING.intValue()) {
-				builder.append(ANSI_BRIGHT_MAGENTA);
-			} else if (record.getLevel().intValue() == Level.INFO.intValue()) {
-				builder.append(ANSI_BLACK);
-			} else {
-				builder.append(ANSI_YELLOW);
-			}
+			String firstLine = "";
 
-			builder.append("[");
-			builder.append(calcDate(record.getMillis()));
-			builder.append("]");
+			firstLine = firstLine + "[";
+			firstLine = firstLine + calcDate(record.getMillis());
+			firstLine = firstLine + "]";
 
-			builder.append(" [");
-			// Below if usual way of getting log name, results in:
-			// [fireengine.util.MyLogger log]
-//			if (record.getSourceClassName() != null) {
-//				builder.append(record.getSourceClassName());
-//				if (record.getSourceMethodName() != null) {
-//					builder.append(" " + record.getSourceMethodName());
-//				}
-//			} else {
-//				builder.append(record.getLoggerName());
-//			}
-			builder.append("fireengine log");
-			builder.append("]");
+			firstLine = firstLine + " [" + "fireengine log" + "]";
 
-			builder.append(" [");
-			builder.append(record.getLevel().getName());
-			builder.append("]");
+			firstLine = firstLine + " [" + record.getLevel().getName() + "]";
 
-//			builder.append(ANSI_RESET);
-//			builder.append(ANSI_BLACK);
-			builder.append(" - ");
+			firstLine = firstLine + " - ";
 //			builder.append(record.getMessage());
-			builder.append(formatMessage(record));
+			firstLine = firstLine + formatMessage(record);
+
+			colourWrapString(builder, record, firstLine);
+			builder.append("\n");
 
 //			Object[] params = record.getParameters();
 //
@@ -282,16 +261,28 @@ public class MyLogger {
 			if (record.getThrown() != null) {
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw);
-				pw.println();
 				record.getThrown().printStackTrace(pw);
 				pw.close();
-				builder.append(sw.toString());
+				colourWrapString(builder, record, sw.toString());
 			}
 
-			builder.append(ANSI_RESET);
-			builder.append("\n");
-
 			return builder.toString();
+		}
+
+		private void colourWrapString(StringBuilder builder, LogRecord record, String text) {
+			if (record.getLevel().intValue() == Level.SEVERE.intValue()) {
+				builder.append(ANSI_BRIGHT_RED);
+			} else if (record.getLevel().intValue() == Level.WARNING.intValue()) {
+				builder.append(ANSI_BRIGHT_MAGENTA);
+			} else if (record.getLevel().intValue() == Level.INFO.intValue()) {
+				builder.append(ANSI_BLACK);
+			} else {
+				builder.append(ANSI_YELLOW);
+			}
+			builder.append(text);
+			// TODO Remove end of line here, add reset and add EOL again to prevent reset on
+			// newline
+			builder.append(ANSI_RESET);
 		}
 
 		private String calcDate(long millisecs) {

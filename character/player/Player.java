@@ -85,6 +85,7 @@ public class Player extends Character {
 	@NotNull
 	private PlayerSetting settings;
 
+	// TODO Mixing different class names in variable and column name below.
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PLAYER_CHAR_CLASS_ID")
@@ -362,15 +363,15 @@ public class Player extends Character {
 	public static Player findCharacter(String name) throws CheckedHibernateException {
 		name = StringUtils.capitalise(name);
 
-		for (Player listPlayer : playerList) {
-			if (listPlayer.getName().equals(name)) {
-				return listPlayer;
+		for (Player foundPlayer : playerList) {
+			if (foundPlayer.getName().equals(name)) {
+				return foundPlayer;
 			}
 		}
 
 		org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
 		Transaction tx = null;
-		Player player = null;
+		Player loadedPlayer = null;
 
 		try {
 			tx = hibSess.beginTransaction();
@@ -387,10 +388,10 @@ public class Player extends Character {
 				if (players.size() > 1) {
 					MyLogger.log(Level.WARNING, "Player: Multiple DB results for player name.");
 				}
-				player = (Player) players.get(0);
-				addPlayerList(player);
+				loadedPlayer = (Player) players.get(0);
+				addPlayerList(loadedPlayer);
 
-				return player;
+				return loadedPlayer;
 			}
 
 		} catch (HibernateException e) {
@@ -457,10 +458,6 @@ public class Player extends Character {
 			hibSess = FireEngineMain.hibSessFactory.openSession();
 			tx = hibSess.beginTransaction();
 
-			// hibSess.saveOrUpdate(player.getCondition().getLevel());
-			// hibSess.saveOrUpdate(player.getCondition().getHealth());
-			// hibSess.saveOrUpdate(player.getCondition().getMana());
-			// hibSess.saveOrUpdate(player.getCondition());
 			hibSess.saveOrUpdate(player);
 
 			tx.commit();
@@ -496,9 +493,12 @@ public class Player extends Character {
 
 				for (Iterator<?> iterator = players.iterator(); iterator.hasNext();) {
 					Player player = (Player) iterator.next();
-					info.addPart("ID: " + player.getId() + ", Name: '" + player.getName() + "', Class: '"
-							+ player.getCharClass().getClassName() + "', Level: " + player.getLevel() + ", Experience: "
-							+ player.getExperience() + "", null, null);
+//					info.addPart("ID: " + player.getId() + ", Name: '" + player.getName() + "', Class: '"
+//							+ player.getCharClass().getClassName() + "', Level: " + player.getLevel() + ", Experience: "
+//							+ player.getExperience() + "", null, null);
+					info.addPart(String.format("ID: %s, Name: '%s', Class: '%s', Level: %s, Experience: %s",
+							player.getId(), player.getName(), player.getCharClass().getClassName(), player.getLevel(),
+							player.getExperience()), null, null);
 					if (iterator.hasNext()) {
 						info.newLine();
 					}

@@ -9,9 +9,9 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
 import fireengine.character.player.Player;
+import fireengine.gameworld.map.Coordinate;
 import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.exception.MapExceptionMapLoad;
-import fireengine.gameworld.map.exception.MapExceptionOutOfBounds;
 import fireengine.gameworld.map.exception.MapExceptionRoomExists;
 import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
@@ -43,10 +43,13 @@ import fireengine.util.MyLogger;
  */
 public class GameWorld {
 	// TODO This should probably be a hashmap etc based on map id
+	// TODO See if concurrent list can be used.
 	private static ArrayList<GameMap> mapList = new ArrayList<>();
 
-	public static void setupGameworld()
-			throws CheckedHibernateException, MapExceptionMapLoad, MapExceptionOutOfBounds, MapExceptionRoomExists {
+	private static int initialMapDimension = Integer.parseInt(ConfigLoader.getSetting("mapDimensionInitial"));
+	private static int incrementMapDimension = Integer.parseInt(ConfigLoader.getSetting("mapDimensionIncrement"));
+
+	public static void setupGameworld() throws CheckedHibernateException, MapExceptionMapLoad, MapExceptionRoomExists {
 		loadMaps();
 
 		GameMap mainMap = getMainMap();
@@ -54,7 +57,8 @@ public class GameWorld {
 		if (mainMap == null) {
 			MyLogger.log(Level.SEVERE, "GameWorld: Creating new map: Mainland.");
 			try {
-				mainMap = GameMap.createMap("Mainland");
+				mainMap = GameMap.createMap("Mainland", initialMapDimension, initialMapDimension, initialMapDimension,
+						incrementMapDimension, incrementMapDimension, incrementMapDimension);
 				addMap(mainMap);
 			} catch (CheckedHibernateException e) {
 				FireEngineMain.hibernateException(e);
@@ -68,9 +72,9 @@ public class GameWorld {
 		if (mainMap.getSpawnRoom() == null) {
 			MyLogger.log(Level.SEVERE, String
 					.format("GameWorld: Spawn room not found for GameMap %s, creating spawn room.", mainMap.getName()));
-			Room spawnRoom = mainMap.createRoom(0, 0, 0);
+			Room spawnRoom = mainMap.createRoom(new Coordinate(0, 0, 0));
 			spawnRoom.setName("The Lounge");
-			spawnRoom.setDesc(
+			spawnRoom.setDescription(
 					"Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server.");
 			mainMap.setSpawnRoom(spawnRoom);
 		}
@@ -79,6 +83,7 @@ public class GameWorld {
 		if (Player.findCharacter("Admin") == null) {
 			Player.createCharacter("Admin", "adminpass");
 			Player.findCharacter("Admin").getSettings().setMapEditor(true);
+			Player.saveCharacter(Player.findCharacter("Admin"));
 		}
 	}
 
@@ -119,9 +124,6 @@ public class GameWorld {
 				throw new CheckedHibernateException("GameWorld: Hibernate error while trying to loadMaps.", e);
 			} finally {
 				hibSess.close();
-			}
-			for (GameMap foundMap : mapList) {
-				foundMap.loadRooms();
 			}
 		}
 	}
@@ -176,6 +178,8 @@ public class GameWorld {
 				}
 			}
 			mapList.add(gameMap);
+			MyLogger.log(Level.INFO, String.format("GameWorld: Loaded GameMap '%s' with %s room(s).", gameMap.getName(),
+					gameMap.getRoomCount()));
 		}
 	}
 
