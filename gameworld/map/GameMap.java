@@ -170,76 +170,6 @@ public class GameMap {
 		return rooms.size();
 	}
 
-	// TODO Remove if not needed.
-	// The below should be redundant since Room now stores its Coordinate
-//	public Coordinate getRoomCoord(Room room) {
-//		Coordinate[] coordList = (Coordinate[]) rooms.entrySet().stream().filter(foundRoom -> room.equals(foundRoom))
-//				.map(Map.Entry::getKey).toArray();
-//		if (coordList.length > 1) {
-//			MyLogger.log(Level.SEVERE, "GameMap: Found multiple keys in roomMap when getRoomCoord." + " StackTrace: "
-//					+ Arrays.toString(Thread.currentThread().getStackTrace()));
-//		}
-//		return coordList[0];
-//	}
-
-	// TODO Remove if not needed.
-	// Should not need the below when loading Map object with properly referenced
-	// Room objects.
-//	/**
-//	 * Attempts to load all {@link Room}s from the database.
-//	 *
-//	 * @throws CheckedHibernateException hibernate exception
-//	 */
-//	public void loadRooms() throws CheckedHibernateException {
-//			org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
-//			Transaction tx = null;
-//
-//			try {
-//				tx = hibSess.beginTransaction();
-//
-//				Query<?> query = hibSess.createQuery("FROM Room WHERE ROOM_MAP = :mapId");
-//				query.setParameter("mapId", this.getId());
-//
-//				@SuppressWarnings("unchecked")
-//				List<Room> roomsFound = (List<Room>) query.list();
-//				tx.commit();
-//
-//				if (roomsFound.isEmpty()) {
-//					MyLogger.log(Level.INFO, "GameMap: NO ROOMS FOUND"); // TODO Remove or modify temporary scaffold
-//																			// logging
-//					return;
-//				} else {
-//					MyLogger.log(Level.INFO, String.format("GameMap: %s Room(s) found.", roomsFound.size())); // TODO
-//																												// Remove
-//																												// or
-//																												// modify
-//																												// temporary
-//					// scaffold logging
-//
-//					for (Room foundRoom : roomsFound) {
-//						try {
-//							arrayAddRoom(foundRoom.getZ(), foundRoom.getY(), foundRoom.getX(), foundRoom);
-//						} catch (MapExceptionOutOfBounds e) {
-//							MyLogger.log(Level.WARNING,
-//									"GameMap: MapExceptionOutOfBounds while trying to arrayAddRoom on found room.", e);
-//						} catch (MapExceptionRoomExists e) {
-//							MyLogger.log(Level.WARNING, String.format(
-//									"GameMap: MapExceptionRoomExists while trying to arrayAddRoom on found room %s.",
-//									foundRoom.getCoordsText()), e);
-//						}
-//					}
-//				}
-//
-//			} catch (HibernateException e) {
-//				if (tx != null) {
-//					tx.rollback();
-//				}
-//				throw new CheckedHibernateException("GameMap: Hibernate error while trying to loadRooms.", e);
-//			} finally {
-//				hibSess.close();
-//			}
-//	}
-
 	/**
 	 * Attempts to create a {@link Room} at the specified coordinates.
 	 *
@@ -508,6 +438,8 @@ public class GameMap {
 						lineMid = lineMid + "  *  ";
 						lineBot = lineBot + "     ";
 					} else {
+						String u = "]";
+						String d = "[";
 						String nw = " ";
 						String n = " ";
 						String ne = " ";
@@ -519,10 +451,15 @@ public class GameMap {
 						String se = " ";
 
 						try {
+							if (foundRoom.getExit(Direction.DIRECTION.UP) != null) {
+								u = "^";
+							}
+							if (foundRoom.getExit(Direction.DIRECTION.DOWN) != null) {
+								d = "v";
+							}
 							if (foundRoom.getExit(Direction.DIRECTION.NORTHWEST) != null) {
 								nw = "\\";
 							}
-
 							if (foundRoom.getExit(Direction.DIRECTION.NORTH) != null) {
 								n = "|";
 							}
@@ -555,7 +492,7 @@ public class GameMap {
 						}
 
 						lineTop = lineTop + nw + " " + n + " " + ne;
-						lineMid = lineMid + w + "[" + center + "]" + e;
+						lineMid = lineMid + w + d + center + u + e;
 						lineBot = lineBot + sw + " " + s + " " + se;
 					}
 				}

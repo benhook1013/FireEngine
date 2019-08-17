@@ -376,7 +376,7 @@ public class Player extends Character {
 		try {
 			tx = hibSess.beginTransaction();
 
-			Query<?> query = hibSess.createQuery("FROM Player WHERE PLAYER_NAME = :name");
+			Query<?> query = hibSess.createQuery("FROM Player WHERE NAME = :name");
 			query.setParameter("name", name);
 
 			List<?> players = query.list();
