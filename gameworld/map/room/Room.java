@@ -521,21 +521,6 @@ public class Room {
 		}
 	}
 
-//	/**
-//	 * TODO Consider usage of this. Save on Maps should do this behaviour. NOT
-//	 * CURRENTLY USED. TODO Remove
-//	 *
-//	 * Saves all rooms on list of all rooms.
-//	 *
-//	 * @throws MapExceptionRoomNull
-//	 * @throws CheckedHibernateException
-//	 */
-//	protected static void saveRooms() throws MapExceptionRoomNull, CheckedHibernateException {
-//		for (Room room : roomList) {
-//			saveRoom(room);
-//		}
-//	}
-
 	/**
 	 * TODO Remove using native Hibernate functions.
 	 * 
@@ -548,37 +533,6 @@ public class Room {
 	 * @throws MapExceptionExitExists
 	 * @throws CheckedHibernateException
 	 */
-//	public static void deleteRoom(Room room)
-//			throws MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
-//		if (room == null) {
-//			throw new MapExceptionRoomNull("Room: Tried to deleteRoom on a null room.");
-//		}
-//		if (room.hasExit()) {
-//			throw new MapExceptionExitExists("Room: Tried to deleteRoom that still had exits.");
-//		}
-//
-//		org.hibernate.Session hibSess = null;
-//		Transaction tx = null;
-//
-//		try {
-//			hibSess = FireEngineMain.hibSessFactory.openSession();
-//			tx = hibSess.beginTransaction();
-//
-//			Query<?> query = hibSess.createQuery("DELETE FROM Room WHERE ROOM_ID = :id");
-//			query.setParameter("id", room.getId());
-//			query.executeUpdate();
-//
-//			tx.commit();
-//		} catch (HibernateException e) {
-//			if (tx != null) {
-//				tx.rollback();
-//			}
-//			throw new CheckedHibernateException("MapColumn: Hibernate error when trying to deleteRoom.", e);
-//		} finally {
-//			if (hibSess != null) {
-//				hibSess.close();
-//			}
-//		}
 	public static void deleteRoom(Room room)
 			throws MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
 		if (room == null) {
