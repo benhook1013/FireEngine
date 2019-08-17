@@ -412,17 +412,6 @@ public class GameMap {
 	 */
 	public static ClientConnectionOutput displayMap(ClientConnectionOutput output, Room room, int radius) {
 		class Line_Builder {
-			// TODO Review the below
-			// public String getBorder(int size) {
-			// String border = "";
-			//
-			// for (int i = 0; i < size; i++) {
-			// border = border + "-";
-			// }
-			//
-			// return border;
-			// }
-
 			public ClientConnectionOutput buildLines(ClientConnectionOutput output, GameMap gameMap, int lineX,
 					int lineY, int lineZ, int lineSize) {
 				String lineTop = "";
