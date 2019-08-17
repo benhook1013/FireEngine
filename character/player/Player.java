@@ -67,7 +67,7 @@ public class Player extends Character {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
 
@@ -75,20 +75,20 @@ public class Player extends Character {
 	@NotNull
 	private String name; // 40 characters max
 
-	@Column(name = "PASSWORD")
+	@Column(name = "PASSWORD", nullable = false)
 	@NotNull
 	private String password; // 40 characters max
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "PLAYER_SETTINGS_ID")
+	@JoinColumn(name = "PLAYER_SETTING", nullable = false)
 	@NotNull
 	private PlayerSetting settings;
 
 	// TODO Mixing different class names in variable and column name below.
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "PLAYER_CHAR_CLASS_ID")
+	@JoinColumn(name = "CHAR_CLASS", nullable = false)
 	@NotNull
 	private CharacterClass charClass;
 
@@ -97,7 +97,7 @@ public class Player extends Character {
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "PLAYER_COND_PLAYER_ID")
+	@JoinColumn(name = "COND_PLAYER", nullable = false)
 	@NotNull
 	private ConditionPlayer condition;
 	// TODO test cascade see if can remove saving sub classes individually.

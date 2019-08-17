@@ -17,15 +17,15 @@ public class Coordinate {
 	@NotNull
 	private int id;
 
-	@Column(name = "X")
+	@Column(name = "X", nullable = false)
 	@NotNull
 	private int x;
 
-	@Column(name = "Y")
+	@Column(name = "Y", nullable = false)
 	@NotNull
 	private int y;
 
-	@Column(name = "Z")
+	@Column(name = "Z", nullable = false)
 	@NotNull
 	private int z;
 

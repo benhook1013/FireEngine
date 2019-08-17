@@ -34,7 +34,7 @@ import fireengine.character.condition.exception.LevelExceptionAlreadyMin;
 public class Level {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
 
@@ -43,11 +43,11 @@ public class Level {
 	private static int baseStat = 100;
 	private static int statPerLevel = 30;
 
-	@Column(name = "LEVEL")
+	@Column(name = "LEVEL", nullable = false)
 	@NotNull
 	private volatile int level;
 
-	@Column(name = "EXPERIENCE")
+	@Column(name = "EXPERIENCE", nullable = false)
 	@NotNull
 	private volatile int experience;
 

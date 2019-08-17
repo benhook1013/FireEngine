@@ -26,15 +26,15 @@ import javax.validation.constraints.NotNull;
  */
 
 @Entity
-@Table(name = "PLAYER_SETTINGS")
+@Table(name = "PLAYER_SETTING")
 public class PlayerSetting {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
 
-	@Column(name = "MAP_EDITOR")
+	@Column(name = "MAP_EDITOR", nullable = false)
 	@NotNull
 	private boolean mapEditor;
 

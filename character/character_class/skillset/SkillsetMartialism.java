@@ -28,11 +28,10 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "SKILLSET_MARTIALISM")
-@PrimaryKeyJoinColumn(name = "MARTIALISM_SKILLSET_ID")
 public class SkillsetMartialism extends Skillset {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
 

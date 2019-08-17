@@ -36,18 +36,19 @@ import javax.validation.constraints.NotNull;
 public abstract class Skillset {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
 
-	@Column(name = "NAME")
+	@Column(name = "NAME", nullable = false)
 	@NotNull
 	protected String skillsetName;
 
-	@Column(name = "EXPERIENCE")
+	@Column(name = "EXPERIENCE", nullable = false)
 	@NotNull
 	private int skillsetExperience;
 
+	// TODO Make sure this garbage is looked at.
 	@Transient
 	protected ArrayList<Skill> skillList;
 

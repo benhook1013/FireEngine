@@ -32,11 +32,11 @@ import fireengine.character.condition.exception.HealthExceptionZeroHealth;
 public class Health {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
 
-	@Column(name = "HEALTH")
+	@Column(name = "HEALTH", nullable = false)
 	@NotNull
 	private volatile int health;
 

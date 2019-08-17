@@ -31,30 +31,31 @@ import org.hibernate.annotations.CascadeType;
  *    limitations under the License.
  */
 
+// TODO Do not need seperate condition class for PC vs NPC
 @Entity
 @Table(name = "CONDITION_PLAYER")
 public class ConditionPlayer extends Condition {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "LEVEL_ID")
+	@JoinColumn(name = "LEVEL", nullable = false)
 	@NotNull
 	private Level level;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "HEALTH_ID")
+	@JoinColumn(name = "HEALTH", nullable = false)
 	@NotNull
 	private Health health;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "MANA_ID")
+	@JoinColumn(name = "MANA", nullable = false)
 	@NotNull
 	private Mana mana;
 
