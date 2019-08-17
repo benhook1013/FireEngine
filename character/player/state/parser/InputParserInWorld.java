@@ -25,6 +25,7 @@ public class InputParserInWorld implements InputParser {
 
 	private InputParserMatcherInWorldGeneral generalMatcher = new InputParserMatcherInWorldGeneral();
 	private InputParserMatcherInWorldMapEditor mapEditorMatcher = new InputParserMatcherInWorldMapEditor();
+	private InputParserMatcherInWorldAdmin adminMatcher = new InputParserMatcherInWorldAdmin();
 
 	private InputParserInWorld() {
 	}
@@ -39,6 +40,10 @@ public class InputParserInWorld implements InputParser {
 			return foundCommand;
 		}
 		foundCommand = mapEditorMatcher.match(text);
+		if (foundCommand != null) {
+			return foundCommand;
+		}
+		foundCommand = adminMatcher.match(text);
 		if (foundCommand != null) {
 			return foundCommand;
 		}

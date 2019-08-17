@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import org.hibernate.HibernateException;
@@ -70,7 +71,7 @@ public class FireEngineMain {
 	/**
 	 * Executor used to process user input.
 	 */
-	static public ExecutorService session_Executor;
+	static public ExecutorService sessionExecutor;
 	/**
 	 * Number of threads/executors in the pool available to {@link Session}s for
 	 * user input processing.
@@ -94,12 +95,10 @@ public class FireEngineMain {
 			} finally {
 				shutdown();
 			}
-
 		} catch (Exception e) {
 			MyLogger.log(Level.SEVERE, "FireEngineMain: Exception while starting up app.", e);
 			shutdown();
 		}
-
 	}
 
 	/**
@@ -136,7 +135,7 @@ public class FireEngineMain {
 		CharacterClass.loadSkillsets();
 
 		MyLogger.log(Level.INFO, "FireEngineMain: Initiating Session Executors");
-		session_Executor = Executors.newFixedThreadPool(SESSION_EXECUTOR_POOL);
+		sessionExecutor = Executors.newFixedThreadPool(SESSION_EXECUTOR_POOL);
 
 		startClientIO();
 		telnet.setAccepting(true);
@@ -232,8 +231,18 @@ public class FireEngineMain {
 	private static void shutdown() {
 		MyLogger.log(Level.INFO, "FireEngineMain: Starting FireEngine shutdown.");
 		shutdownClientIO();
-		// TODO Save persistent classes
-		cleanUp();
+		sessionExecutor.shutdown();
+		try {
+			sessionExecutor.awaitTermination(10, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			MyLogger.log(Level.WARNING,
+					"FireEngineMain: sessionExecutor threw InterruptedException while waiting for shutdown. For shutting down sessionExecutor.",
+					e);
+			sessionExecutor.shutdownNow();
+		}
+		if (hibSessFactory != null) {
+			hibSessFactory.close();
+		}
 		MyLogger.log(Level.INFO, "FireEngineMain: Finished FireEngine shutdown.");
 	}
 
@@ -292,18 +301,6 @@ public class FireEngineMain {
 						"FireEngineMain: ClientIOTelnet thread did not shutdown, continuing anyway.");
 			}
 		}
-	}
-
-	/**
-	 * Starts post shutdown cleanup.
-	 */
-	private static void cleanUp() {
-		MyLogger.log(Level.INFO, "FireEngineMain: Starting shutdown cleanup.");
-		if (hibSessFactory != null) {
-			hibSessFactory.close();
-		}
-		// cleanUpClientIO();
-		MyLogger.log(Level.INFO, "FireEngineMain: Finished shutdown cleanup.");
 	}
 
 	// /**

@@ -63,7 +63,7 @@ public class Session {
 				sessionList.add(this);
 			}
 
-			sessionFuture = FireEngineMain.session_Executor.submit(new Callable<Integer>() {
+			sessionFuture = FireEngineMain.sessionExecutor.submit(new Callable<Integer>() {
 				@Override
 				public Integer call() throws Exception {
 					try {
@@ -125,7 +125,7 @@ public class Session {
 				return;
 			}
 
-			sessionFuture = FireEngineMain.session_Executor.submit(new Callable<Integer>() {
+			sessionFuture = FireEngineMain.sessionExecutor.submit(new Callable<Integer>() {
 				@Override
 				public Integer call() throws Exception {
 					String input;
@@ -197,7 +197,7 @@ public class Session {
 	 * finished writing out all data, to allow graceful closing of Session.
 	 */
 	public void notifyCconFinished() {
-		FireEngineMain.session_Executor.submit(new Callable<Integer>() {
+		FireEngineMain.sessionExecutor.submit(new Callable<Integer>() {
 			@Override
 			public Integer call() throws Exception {
 				close();
