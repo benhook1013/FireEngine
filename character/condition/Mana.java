@@ -38,14 +38,16 @@ public class Mana {
 
 	@Column(name = "MANA", nullable = false)
 	@NotNull
-	private volatile int mana;
+	private int mana;
 
 	@SuppressWarnings("unused")
 	private Mana() {
 	}
 
 	public Mana(int mana) {
-		this.mana = mana;
+		synchronized (this) {
+			this.mana = mana;
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -59,17 +61,21 @@ public class Mana {
 	}
 
 	public int getMana(int maxMana) {
-		if (mana > maxMana) {
-			mana = maxMana;
+		synchronized (this) {
+			if (mana > maxMana) {
+				mana = maxMana;
+			}
+			return mana;
 		}
-		return mana;
 	}
 
 	public void setMana(int maxMana, int mana) {
-		if (mana > maxMana) {
-			this.mana = maxMana;
-		} else {
-			this.mana = mana;
+		synchronized (this) {
+			if (mana > maxMana) {
+				this.mana = maxMana;
+			} else {
+				this.mana = mana;
+			}
 		}
 	}
 

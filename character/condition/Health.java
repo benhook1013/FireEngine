@@ -38,14 +38,16 @@ public class Health {
 
 	@Column(name = "HEALTH", nullable = false)
 	@NotNull
-	private volatile int health;
+	private int health;
 
 	@SuppressWarnings("unused")
 	private Health() {
 	}
 
 	public Health(int health) {
-		this.health = health;
+		synchronized (this) {
+			this.health = health;
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -59,17 +61,21 @@ public class Health {
 	}
 
 	public int getHealth(int maxHealth) {
-		if (health > maxHealth) {
-			health = maxHealth;
+		synchronized (this) {
+			if (health > maxHealth) {
+				health = maxHealth;
+			}
+			return health;
 		}
-		return health;
 	}
 
 	public void setHealth(int maxHealth, int health) {
-		if (health > maxHealth) {
-			this.health = maxHealth;
-		} else {
-			this.health = health;
+		synchronized (this) {
+			if (health > maxHealth) {
+				this.health = maxHealth;
+			} else {
+				this.health = health;
+			}
 		}
 	}
 

@@ -45,27 +45,28 @@ public class Level {
 
 	@Column(name = "LEVEL", nullable = false)
 	@NotNull
-	private volatile int level;
+	private int level;
 
 	@Column(name = "EXPERIENCE", nullable = false)
 	@NotNull
-	private volatile int experience;
-
-	@Transient
-	private Object levelLock = new Object();
+	private int experience;
 
 	@SuppressWarnings("unused")
 	private Level() {
 	}
 
 	public Level(int level) {
-		this.level = level;
-		this.experience = 0;
+		synchronized (this) {
+			this.level = level;
+			this.experience = 0;
+		}
 	}
 
 	public Level(int level, int experience) {
-		this.level = level;
-		this.experience = experience;
+		synchronized (this) {
+			this.level = level;
+			this.experience = experience;
+		}
 	}
 
 	@SuppressWarnings("unused")
@@ -79,11 +80,13 @@ public class Level {
 	}
 
 	public int getLevel() {
-		return level;
+		synchronized (this) {
+			return level;
+		}
 	}
 
 	public void setLevel(int level) {
-		synchronized (levelLock) {
+		synchronized (this) {
 			if (level < 1) {
 				level = 1;
 			} else if (level > experienceList.length) {
@@ -95,11 +98,13 @@ public class Level {
 	}
 
 	public int getExperience() {
-		return experience;
+		synchronized (this) {
+			return experience;
+		}
 	}
 
 	public void setExperience(int experience) {
-		synchronized (levelLock) {
+		synchronized (this) {
 			if (experience > getExperienceForLevel(level + 1)) {
 				experience = getExperienceForLevel(level + 1) - 1;
 			}
@@ -108,34 +113,44 @@ public class Level {
 	}
 
 	public int getMaxStat() {
-		return baseStat + (statPerLevel * level);
+		synchronized (this) {
+			return baseStat + (statPerLevel * level);
+		}
 	}
 
 	private boolean canLevelUp() {
-		if (level < experienceList.length) {
-			return true;
-		} else {
-			return false;
+		synchronized (this) {
+			if (level < experienceList.length) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
 	private boolean canLevelDown() {
-		if (level > 1) {
-			return true;
-		} else {
-			return false;
+		synchronized (this) {
+			if (level > 1) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
 	private int getExperienceForLevel(int level) {
-		if (level > experienceList.length) {
-			level = experienceList.length;
+		synchronized (this) {
+			if (level > experienceList.length) {
+				level = experienceList.length;
+			}
+			return experienceList[level + 1];
 		}
-		return experienceList[level + 1];
 	}
 
 	private int experienceToLevelUp() {
-		return getExperienceForLevel(level + 1) - experience;
+		synchronized (this) {
+			return getExperienceForLevel(level + 1) - experience;
+		}
 	}
 
 	/**
@@ -145,7 +160,7 @@ public class Level {
 	 * @throws LevelExceptionAlreadyMax
 	 */
 	public boolean addExperience(int experience) throws LevelExceptionAlreadyMax {
-		synchronized (levelLock) {
+		synchronized (this) {
 			if (experience >= experienceToLevelUp()) {
 				if (canLevelUp()) {
 					addLevel();
@@ -175,7 +190,7 @@ public class Level {
 	 * @throws LevelExceptionAlreadyMin
 	 */
 	public boolean removeExperience(int experience) throws LevelExceptionAlreadyMin {
-		synchronized (levelLock) {
+		synchronized (this) {
 			if (experience >= (this.experience + 1)) {
 				if (canLevelDown()) {
 					removeLevel();
@@ -200,7 +215,7 @@ public class Level {
 	}
 
 	public void addLevel() throws LevelExceptionAlreadyMax {
-		synchronized (levelLock) {
+		synchronized (this) {
 			if (canLevelUp()) {
 				setLevel(level + 1);
 			} else {
@@ -210,7 +225,7 @@ public class Level {
 	}
 
 	public void removeLevel() throws LevelExceptionAlreadyMin {
-		synchronized (levelLock) {
+		synchronized (this) {
 			if (canLevelDown()) {
 				setLevel(level - 1);
 			} else {

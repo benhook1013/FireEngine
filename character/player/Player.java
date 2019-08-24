@@ -107,7 +107,7 @@ public class Player extends Character {
 	// TODO Load room on character load.
 
 	@Transient
-	private volatile Room room;
+	private Room room;
 
 	// TODO Periodic check for attached session, if not, protect or remove Player.
 
@@ -191,21 +191,25 @@ public class Player extends Character {
 
 	@Override
 	public Room getRoom() {
-		return room;
+		synchronized (room) {
+			return room;
+		}
 	}
 
 	@Override
 	public void setRoom(Room room) throws PlayerExceptionNullRoom {
-		if (room == null) {
-			throw new PlayerExceptionNullRoom("Player: Player tried to be sent to null room.");
-		}
+		synchronized (room) {
+			if (room == null) {
+				throw new PlayerExceptionNullRoom("Player: Player tried to be sent to null room.");
+			}
 
-		if (this.room != null) {
-			this.room.removeCharacter(this);
-		}
+			if (this.room != null) {
+				this.room.removeCharacter(this);
+			}
 
-		this.room = room;
-		this.room.addCharacter(this);
+			this.room = room;
+			this.room.addCharacter(this);
+		}
 	}
 
 	@Override
@@ -223,11 +227,13 @@ public class Player extends Character {
 				output.newLine();
 				sendToListeners(output);
 			} else {
-				if (room != null) {
-					command.doAction(this);
-				} else {
-					throw new PlayerExceptionNullRoom(
-							"Player: Player tried to do action " + command.getClass() + " with no room.");
+				synchronized (room) {
+					if (room != null) {
+						command.doAction(this);
+					} else {
+						throw new PlayerExceptionNullRoom(
+								"Player: Player tried to do action " + command.getClass() + " with no room.");
+					}
 				}
 			}
 		} catch (PlayerExceptionNullRoom e) {
@@ -275,7 +281,9 @@ public class Player extends Character {
 	 * @throws PlayerExceptionNullRoom
 	 */
 	public void connect(Session sess) throws PlayerExceptionNullRoom {
-		connect(sess, this.room);
+		synchronized (room) {
+			connect(sess, this.room);
+		}
 	}
 
 	/**
