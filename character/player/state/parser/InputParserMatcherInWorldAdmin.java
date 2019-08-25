@@ -5,10 +5,6 @@ import java.util.regex.Pattern;
 
 import fireengine.character.command.CommandAction;
 import fireengine.character.command.character_comand.admin.Shutdown;
-import fireengine.character.command.character_comand.map_editor.CreateExit;
-import fireengine.character.command.character_comand.map_editor.CreateRoom;
-import fireengine.character.command.character_comand.map_editor.DestroyExit;
-import fireengine.character.command.character_comand.map_editor.DestroyRoom;
 
 /*
  *    Copyright 2019 Ben Hook

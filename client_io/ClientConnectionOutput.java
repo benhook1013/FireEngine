@@ -22,11 +22,9 @@ import java.util.Iterator;
 
 /**
  * Class to contain an Object representation of a packet of output to be sent to
- * the client/user. Can contain multiple {@link Client_Connection_Output_Line}
- * containing multiple
- * {@link Client_Connection_Output_Line.Client_Connection_Output_Part}
- * (including blank lines), with each part containing text, foreground colour
- * and background colour(colours optional).
+ * the client/user. Can contain multiple output lines, containing multiple out
+ * line parts (including blank lines), with each part containing text,
+ * foreground colour and background colour(colours optional).
  *
  * @author Ben Hook
  */
@@ -34,7 +32,7 @@ public class ClientConnectionOutput {
 	private ArrayList<Client_Connection_Output_Line> lineList;
 
 	/**
-	 * No arg constructor with a guess of 5 lines.
+	 * No arg constructor with a starting capacity of 5 lines.
 	 */
 	public ClientConnectionOutput() {
 		this(5);
@@ -45,7 +43,7 @@ public class ClientConnectionOutput {
 	 * good guess/knowledge beforehand can avoid unnecessary resizing of array
 	 * during use.
 	 *
-	 * @param guessedSize Guessed number of lines in output.
+	 * @param guessedSize Guessed number of lines in output
 	 */
 	public ClientConnectionOutput(int guessedSize) {
 		lineList = new ArrayList<>(guessedSize);
@@ -55,7 +53,7 @@ public class ClientConnectionOutput {
 	/**
 	 * Instantiates and adds first part to the new output object.
 	 *
-	 * @param text
+	 * @param text String to add to the client output
 	 */
 	public ClientConnectionOutput(String text) {
 		this(1);
@@ -65,9 +63,9 @@ public class ClientConnectionOutput {
 	/**
 	 * Instantiates and adds first part to the new output object.
 	 *
-	 * @param text
-	 * @param colourFG
-	 * @param colourBG
+	 * @param text     String to add to the client output
+	 * @param colourFG foreground colour
+	 * @param colourBG background colour
 	 */
 	public ClientConnectionOutput(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG) {
 		this(1);
@@ -80,11 +78,38 @@ public class ClientConnectionOutput {
 	 * to a group of people, where their own prompt etc will be attached before
 	 * sending.
 	 *
-	 * @param original
+	 * @param copyOutput client output to copy in to a new client output
 	 */
-	public ClientConnectionOutput(ClientConnectionOutput original) {
-		this(original.getLines().size());
-		Iterator<?> iter = original.getLines().iterator();
+	public ClientConnectionOutput(ClientConnectionOutput copyOutput) {
+		this(copyOutput.lineList.size());
+		addOutput(copyOutput);
+	}
+
+	/**
+	 * Adds a new line to the output. Can be used to add black lines for
+	 * presentation reasons.
+	 */
+	public void newLine() {
+		lineList.add(new Client_Connection_Output_Line());
+	}
+
+	/**
+	 * The main function used to add line parts; text and colours, to the output
+	 * object.
+	 *
+	 * @param text     text to add to client output
+	 * @param colourFG foreground colour of added text
+	 * @param colourBG background colour of added text
+	 */
+	public void addPart(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG) {
+		if (lineList.size() == 0) {
+			newLine();
+		}
+		lineList.get(lineList.size() - 1).addPart(text, colourFG, colourBG);
+	}
+
+	public void addOutput(ClientConnectionOutput copyOutput) {
+		Iterator<?> iter = copyOutput.lineList.iterator();
 		while (iter.hasNext()) {
 			Client_Connection_Output_Line line = (Client_Connection_Output_Line) iter.next();
 			for (fireengine.client_io.ClientConnectionOutput.Client_Connection_Output_Line.Client_Connection_Output_Part part : line
@@ -98,32 +123,10 @@ public class ClientConnectionOutput {
 	}
 
 	/**
-	 * Adds a new line to the output. Can be used to add black lines for
-	 * presentation reasons.
-	 */
-	public void newLine() {
-		lineList.add(new Client_Connection_Output_Line());
-	}
-
-	/**
-	 * The main function used to add parts; text and colours, to the output object.
-	 *
-	 * @param text
-	 * @param colourFG
-	 * @param colourBG
-	 */
-	public void addPart(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG) {
-		if (lineList.size() == 0) {
-			newLine();
-		}
-		lineList.get(lineList.size() - 1).addPart(text, colourFG, colourBG);
-	}
-
-	/**
 	 * Used by the sending client IO to test if output object contains more lines to
 	 * send.
 	 *
-	 * @return
+	 * @return Boolean indicating if more lines in client output to send, or not
 	 */
 	public boolean hasNextLine() {
 		if (!lineList.isEmpty()) {
@@ -137,7 +140,7 @@ public class ClientConnectionOutput {
 	 * Used by the sending client IO to test if output object contains more parts to
 	 * send.
 	 *
-	 * @return
+	 * @return Boolean indicating if more parts to send on current line, or not
 	 */
 	public boolean hasNextPart() {
 		if (hasNextLine()) {
@@ -152,27 +155,29 @@ public class ClientConnectionOutput {
 	}
 
 	/**
-	 * Used by the sending client IO to get text of current part.
+	 * Used by the sending client IO to get text of current part of current line.
 	 *
-	 * @return
+	 * @return String of text for current part of current line
 	 */
 	public String getText() {
 		return lineList.get(0).getText();
 	}
 
 	/**
-	 * Used by the sending client IO to get foreground colour of current part.
+	 * Used by the sending client IO to get foreground colour of current part of
+	 * current line.
 	 *
-	 * @return
+	 * @return colour of foreground of current part of current line
 	 */
 	public ClientIOColour.COLOURS getColourFG() {
 		return lineList.get(0).getColourFG();
 	}
 
 	/**
-	 * Used by the sending client IO to get background colour of current part.
+	 * Used by the sending client IO to get background colour of current part of
+	 * current line.
 	 *
-	 * @return
+	 * @return colour of background of current part of current line
 	 */
 	public ClientIOColour.COLOURS getColourBG() {
 		return lineList.get(0).getColourBG();
@@ -194,15 +199,6 @@ public class ClientConnectionOutput {
 		if (hasNextLine()) {
 			lineList.remove(0);
 		}
-	}
-
-	/**
-	 * Returns array of lines, used in copy constructor.
-	 *
-	 * @return
-	 */
-	public ArrayList<Client_Connection_Output_Line> getLines() {
-		return lineList;
 	}
 
 	/**

@@ -3,6 +3,7 @@ package fireengine.session.phase;
 import fireengine.session.Session;
 import fireengine.util.ConfigLoader;
 import fireengine.util.MyClassLoader;
+import mud_game.session.phase.PhaseWelcome;
 
 /*
  *    Copyright 2019 Ben Hook

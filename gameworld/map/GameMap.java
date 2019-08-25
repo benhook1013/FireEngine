@@ -156,9 +156,6 @@ public class GameMap {
 	 * @param direction {@link Direction.DIRECTION} from origin room the sought
 	 *                  after room is
 	 * @return {@link Room} at specified coordinates
-	 * @throws MapExceptionOutOfBounds           coordinates generated from
-	 *                                           direction supplied are out of map
-	 *                                           bounds
 	 * @throws MapExceptionDirectionNotSupported method does not support supplied
 	 *                                           direction
 	 */
@@ -175,7 +172,6 @@ public class GameMap {
 	 *
 	 * 
 	 * @return room created
-	 * @throws MapExceptionOutOfBounds   coordinates provided are out of map bounds
 	 * @throws MapExceptionRoomExists    room already exists at provided coordinates
 	 * @throws CheckedHibernateException hibernate error
 	 */
@@ -212,9 +208,6 @@ public class GameMap {
 	 *
 	 * @param room      origin room to create new room off of
 	 * @param direction direction to create new room off of origin room
-	 * @throws MapExceptionOutOfBounds           coordinates generated from
-	 *                                           direction supplied are out of map
-	 *                                           bounds
 	 * @throws MapExceptionRoomExists            room already exists at provided
 	 *                                           coordinates
 	 * @throws CheckedHibernateException         hibernate error
@@ -233,7 +226,6 @@ public class GameMap {
 	 * @param z z coordinate of room to delete
 	 * @param y y coordinate of room to delete
 	 * @param x x coordinate of room to delete
-	 * @throws MapExceptionOutOfBounds   coordinates provided are out of map bounds
 	 * @throws MapExceptionRoomNull      no room found at supplied coordinates
 	 * @throws CheckedHibernateException hibernate exception
 	 */
@@ -267,9 +259,6 @@ public class GameMap {
 	 *
 	 * @param room      origin room to delete off of
 	 * @param direction direction off of origin room to delete
-	 * @throws MapExceptionOutOfBounds           coordinates generated from
-	 *                                           direction supplied are out of map
-	 *                                           bounds
 	 * @throws MapExceptionRoomNull              no room found at supplied
 	 *                                           coordinates
 	 * @throws CheckedHibernateException         hibernate exception
@@ -288,8 +277,6 @@ public class GameMap {
 	 * @param room      origin room to create exit off of
 	 * @param direction direction to create exit off of origin room
 	 * @throws MapExceptionRoomNull              provided origin room is null
-	 * @throws MapExceptionOutOfBounds           coordinates of room at direction
-	 *                                           are out of map bounds
 	 * @throws MapExceptionExitRoomNull          could not find room in supplied
 	 *                                           direction
 	 * @throws MapExceptionExitExists            exit already exists for origin room
@@ -330,8 +317,6 @@ public class GameMap {
 	 * @param room      origin room to remove exit off of
 	 * @param direction direction to remove exit off of origin room
 	 * @throws MapExceptionRoomNull              provided origin room is null
-	 * @throws MapExceptionOutOfBounds           coordinates of room at direction
-	 *                                           are out of map bounds
 	 * @throws MapExceptionExitRoomNull          could not find room in supplied
 	 *                                           direction
 	 * @throws MapExceptionDirectionNotSupported direction not supported by method

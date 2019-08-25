@@ -30,6 +30,7 @@ import fireengine.client_io.exception.ClientConnectionException;
 import fireengine.main.FireEngineMain;
 import fireengine.session.phase.PhaseManager;
 import fireengine.util.MyLogger;
+import mud_game.session.phase.PhaseWelcome;
 
 /**
  * Session of the connection for a {@link Player}.

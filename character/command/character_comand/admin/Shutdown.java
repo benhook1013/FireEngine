@@ -1,18 +1,8 @@
 package fireengine.character.command.character_comand.admin;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import fireengine.character.Character;
 import fireengine.character.command.character_comand.CommandCharacter;
-import fireengine.character.player.Player;
-import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.Direction;
-import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
-import fireengine.gameworld.map.exit.RoomExit;
-import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
-import fireengine.util.StringUtils;
 
 /*
  *    Copyright 2019 Ben Hook

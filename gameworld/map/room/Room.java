@@ -29,7 +29,6 @@ import fireengine.gameworld.map.Coordinate;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.Direction.DIRECTION;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
-import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
 import fireengine.gameworld.map.exit.RoomExit;
 import fireengine.main.FireEngineMain;
@@ -313,7 +312,7 @@ public class Room {
 
 	/**
 	 * Returns {@link RoomExit} of {@link Room} for given
-	 * {@link Direction.DIRECTION}.
+	 * {@link fireengine.gameworld.map.Direction.DIRECTION}.
 	 *
 	 * @param direction
 	 * @return
@@ -360,7 +359,7 @@ public class Room {
 
 	/**
 	 * Assigns {@link RoomExit} to {@link Room}, of given
-	 * {@link Direction.DIRECTION}.
+	 * {@link fireengine.gameworld.map.Direction.DIRECTION}.
 	 *
 	 * @param direction
 	 * @param newExit

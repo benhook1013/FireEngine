@@ -439,8 +439,8 @@ public class ClientIOTelnet extends Thread {
 	/**
 	 * Queue up changes to a SelectionKey for given connection.
 	 *
-	 * @param ccon
-	 * @param key
+	 * @param ccon   ClientConnectionTelnet to queue up the key change for
+	 * @param key    SelectionKey to set
 	 * @param wakeUp Whether to wake up the selector or not (do not want to wake up
 	 *               if queueing from selector's thread)
 	 */

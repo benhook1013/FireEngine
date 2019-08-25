@@ -2,6 +2,8 @@ package fireengine.session.phase;
 
 import fireengine.character.player.Player;
 import fireengine.session.Session;
+import mud_game.session.phase.PhaseInWorld;
+import mud_game.session.phase.PhaseLogin;
 
 /*
  *    Copyright 2019 Ben Hook
