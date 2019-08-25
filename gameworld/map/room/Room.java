@@ -21,8 +21,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
-import org.hibernate.query.Query;
-
 import fireengine.character.Character;
 import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
@@ -284,7 +282,7 @@ public class Room {
 	/**
 	 * Sends to listeners of room, without any exclusion.
 	 *
-	 * @see Room#sendToRoomExcluding(ClientConnectionOutput, Player)
+	 * @see Room#sendToRoomExcluding(ClientConnectionOutput, Character)
 	 *
 	 * @param output
 	 */
@@ -518,49 +516,6 @@ public class Room {
 				tx.rollback();
 			}
 			throw new CheckedHibernateException("Room: Hibernate error while trying to saveRoom.", e);
-		} finally {
-			if (hibSess != null) {
-				hibSess.close();
-			}
-		}
-	}
-
-	/**
-	 * TODO Remove using native Hibernate functions.
-	 * 
-	 * DO NOT CALL DIRECTLY. Removes {@link Room} from database but does not remove
-	 * room from {@link MapColumn} etc, meaning it could be re-saved. Use the room
-	 * destroy function in {@link GameMap} instead.
-	 *
-	 * @param room
-	 * @throws MapExceptionRoomNull
-	 * @throws MapExceptionExitExists
-	 * @throws CheckedHibernateException
-	 */
-	public static void deleteRoom(Room room)
-			throws MapExceptionRoomNull, MapExceptionExitExists, CheckedHibernateException {
-		if (room == null) {
-			throw new MapExceptionRoomNull("Room: Tried to deleteRoom on a null room.");
-		}
-		if (room.hasExit()) {
-			throw new MapExceptionExitExists("Room: Tried to deleteRoom that still had exits.");
-		}
-
-		org.hibernate.Session hibSess = null;
-		Transaction tx = null;
-
-		try {
-			hibSess = FireEngineMain.hibSessFactory.openSession();
-			tx = hibSess.beginTransaction();
-
-			hibSess.remove(room);
-
-			tx.commit();
-		} catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			throw new CheckedHibernateException("MapColumn: Hibernate error when trying to deleteRoom.", e);
 		} finally {
 			if (hibSess != null) {
 				hibSess.close();
