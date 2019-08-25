@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 
 import fireengine.client_io.exception.ClientIOTelnetException;
@@ -37,7 +36,7 @@ import fireengine.util.MyLogger;
  */
 
 /**
- * Workhorse of the telnet IO, a single thread that scales extremely well and
+ * Workhorse of the Telnet IO, a single thread that scales extremely well and
  * should be able to serve thousands of connections.
  *
  * @author Ben Hook
@@ -47,8 +46,7 @@ public class ClientIOTelnet extends Thread {
 	private int port;
 	private Selector sel;
 	private ServerSocketChannel ssc;
-	private static final int BUFFER_SIZE = 64; // The buffer into which we'll
-												// read data when it's available
+	private static final int BUFFER_SIZE = 64; // The buffer into which we'll read data when it's available
 	private ByteBuffer readBuffer = ByteBuffer.allocate(BUFFER_SIZE);
 	private List<SelectItem> keyList;
 
@@ -79,6 +77,13 @@ public class ClientIOTelnet extends Thread {
 		}
 	}
 
+	/**
+	 * Constructor for ClientIOTelnet
+	 * 
+	 * @param address IP address for IO thread to listen on
+	 * @param port    port for IO thread to listen on
+	 * @throws ClientIOTelnetException exception thrown on thread setup
+	 */
 	public ClientIOTelnet(String address, int port) throws ClientIOTelnetException {
 		this.address = address;
 		this.port = port;
@@ -94,9 +99,10 @@ public class ClientIOTelnet extends Thread {
 	}
 
 	/**
-	 * Sets whether to accept new incoming connections or not,
+	 * Sets whether to accept new incoming connections or not.
 	 *
-	 * @param accepting
+	 * @param accepting A boolean representing whether to allow new incoming
+	 *                  connections or not
 	 */
 	public void setAccepting(boolean accepting) {
 		this.accepting = accepting;
@@ -134,7 +140,6 @@ public class ClientIOTelnet extends Thread {
 		try {
 			// Set ServerSocketChannel into non blocking mode, as NIO requires.
 			ssc.configureBlocking(false);
-
 		} catch (IOException e) {
 			try {
 				sel.close();
@@ -154,6 +159,7 @@ public class ClientIOTelnet extends Thread {
 		}
 
 		try {
+			// Set ServerSocketChannel to listen on given address and port.
 			ssc.bind(new InetSocketAddress(address, port));
 		} catch (IOException e) {
 			try {
@@ -199,7 +205,7 @@ public class ClientIOTelnet extends Thread {
 
 	/**
 	 * Loops (waits and is woken up) checking for new input and output to be
-	 * received and sent, and registers and {@link SelectionKey} changes.
+	 * received and sent, and registers any {@link SelectionKey} changes.
 	 */
 	@Override
 	public void run() {
@@ -243,8 +249,7 @@ public class ClientIOTelnet extends Thread {
 
 //			MyLogger.log(Level.INFO, "SELECTED: " + numSelected);
 
-			Set<SelectionKey> selKeys = sel.selectedKeys();
-			Iterator<SelectionKey> selIter = selKeys.iterator();
+			Iterator<SelectionKey> selIter = sel.selectedKeys().iterator();
 
 			while (selIter.hasNext()) {
 				// Get next key and remove it from iterator.
@@ -259,39 +264,22 @@ public class ClientIOTelnet extends Thread {
 				// Selected key is acceptable; a new client connection.
 				if (currKey.isAcceptable()) {
 					this.accept(currKey);
-				}
-
-				else if (currKey.isReadable()) {
+				} else if (currKey.isReadable()) {
 					this.read(currKey);
 				} else if (currKey.isWritable()) {
 					this.write(currKey);
 				}
-
 			}
 
 			synchronized (keyList) {
 				// If selected 0, means was woken up after register but register
-				// had not had time to take effect yet. Pause before re-select
-				// to re-try.
+				// had not had time to take effect yet. Do not need to pause before re-trying as
+				// Selector's select() function is blocking.
 				if (numSelected == 0) {
 					if (keyList.isEmpty()) {
 						MyLogger.log(Level.FINE, "ClientIOTelnet: Selected 0.");
-//						 MyLogger.log(Level.WARNING, "ClientIOTelnet:
-//						 Possible failure to register properly.");
-//						 int i = 0;
-//						 while (keyList.isEmpty() && (i <= 10)) {
-//						 i++;
-//						 try {
-//						 Thread.sleep(10);
-//						 } catch (InterruptedException e) {
-//						 }
-//						 }
 					}
 				}
-
-//				if (!keyList.isEmpty()) {
-//				MyLogger.log(Level.INFO, "KEYS DETECTED");
-//				}
 
 				// Do key registration actions queued in keyList
 				while (!keyList.isEmpty()) {
@@ -335,15 +323,25 @@ public class ClientIOTelnet extends Thread {
 		MyLogger.log(Level.INFO, "ClientIOTelnet: Gracefully closed Telnet_IO.");
 	}
 
+	/**
+	 * Accepts a new client network connection on the ServerSocketChannel, creating
+	 * a new SocketChannel and configuring it for Selector use. Assigns the new
+	 * SocketChannel to a new ClientConnectionTelnet and spawns a new Session from
+	 * it.
+	 * 
+	 * @param key the SelectionKey that is ready to accept a new network connection
+	 */
 	private void accept(SelectionKey key) {
 		if (!accepting) {
-			MyLogger.log(Level.WARNING, "ClientIOTelnet: Refused accept on new connection.");
+			MyLogger.log(Level.WARNING, "ClientIOTelnet: Refusing accept on new connection.");
 			return;
 		}
 
 		SocketChannel sc;
 		try {
-			// New client channel.
+			// New client SocketChannel. The SocketChannel for this key is the
+			// ServerSocketChannel as that is the only SocketChannel that is registered to
+			// allow accepting of new network connections.
 			sc = ((ServerSocketChannel) key.channel()).accept();
 		} catch (IOException e) {
 			MyLogger.log(Level.WARNING, "ClientIOTelnet: Failed to accept new client SocketChannel.", e);
@@ -368,14 +366,17 @@ public class ClientIOTelnet extends Thread {
 		new Session(new ClientConnectionTelnet(this, sc));
 	}
 
+	/**
+	 * Reads new client input from the client SocketChannel.
+	 * 
+	 * @param key the SelectionKey that is ready to read new client input from
+	 */
 	private void read(SelectionKey key) {
-//		MyLogger.log(Level.INFO, "CALL TO READ");
-
 		// Number of reads, returned by the read operation.
-		int numRead = 0;
+		int numRead;
 		while (true) {
 			// Clear buffer so its ready for new data.
-			this.readBuffer.clear();
+			readBuffer.clear();
 			try {
 				numRead = ((SocketChannel) key.channel()).read(this.readBuffer);
 				readBuffer.flip();
@@ -399,7 +400,6 @@ public class ClientIOTelnet extends Thread {
 				return;
 			}
 
-//			MyLogger.log(Level.INFO, "numRead: " + numRead);
 			while (readBuffer.hasRemaining()) {
 				byte b = readBuffer.get();
 
@@ -408,30 +408,36 @@ public class ClientIOTelnet extends Thread {
 		}
 	}
 
-	private void write(SelectionKey currKey) {
-		ClientConnectionTelnet ccon = (ClientConnectionTelnet) currKey.attachment();
+	/**
+	 * Writes output to the client SocketChannel.
+	 * 
+	 * @param key the SelectionKey that is ready to write new client input to
+	 */
+	private void write(SelectionKey key) {
+		ClientConnectionTelnet ccon = (ClientConnectionTelnet) key.attachment();
 
 		ByteBuffer buff;
 		synchronized (ccon) {
 			while ((buff = ccon.writeFromConnection()) != null) {
 				try {
-					((SocketChannel) currKey.channel()).write(buff);
+					((SocketChannel) key.channel()).write(buff);
 				} catch (IOException e) {
 					ccon.finishedWrite();
 					MyLogger.log(Level.WARNING, "ClientIOTelnet: Failed to write to SocketChannel.", e);
 				}
-				// SocketChannel's internal buffer is full
+				// SocketChannel's internal buffer is full. The break prevents loss of client
+				// output as will wait for SocketChannel to be ready for writing again, to try
+				// and finish writing, before telling ClientConnection that writing is finished.
 				if (buff.remaining() > 0) {
 					break;
 				}
 				ccon.finishedWrite();
 			}
-
 		}
 	}
 
 	/**
-	 * Queue up changed to a SelectionKey for given connection.
+	 * Queue up changes to a SelectionKey for given connection.
 	 *
 	 * @param ccon
 	 * @param key
@@ -445,18 +451,18 @@ public class ClientIOTelnet extends Thread {
 //					MyLogger.log(Level.INFO, "FOUND SAME CCON!!!!!!!!");
 					if (selItem.getKey() == SelectionKey.OP_READ) {
 						if (key == SelectionKey.OP_READ) {
-							MyLogger.log(Level.FINE, "Ignoring queue for READ when already queue for READ.");
+							MyLogger.log(Level.FINER, "Ignoring queue for READ when already queue for READ.");
 							return;
 						} else if (key == SelectionKey.OP_WRITE) {
-							MyLogger.log(Level.FINE, "Allowing queue for WRITE when already queue for READ.");
+							MyLogger.log(Level.FINER, "Allowing queue for WRITE when already queue for READ.");
 							break;
 						}
 					} else if (selItem.getKey() == SelectionKey.OP_WRITE) {
 						if (key == SelectionKey.OP_READ) {
-							MyLogger.log(Level.FINE, "Ignoring queue for READ when already queue for WRITE.");
+							MyLogger.log(Level.FINER, "Ignoring queue for READ when already queue for WRITE.");
 							return;
 						} else if (key == SelectionKey.OP_WRITE) {
-							MyLogger.log(Level.FINE, "Ignoring queue for WRITE when already queue for WRITE.");
+							MyLogger.log(Level.FINER, "Ignoring queue for WRITE when already queue for WRITE.");
 							return;
 						}
 					}
@@ -464,18 +470,16 @@ public class ClientIOTelnet extends Thread {
 				}
 			}
 
-			if (key == SelectionKey.OP_READ) {
+//			if (key == SelectionKey.OP_READ) {
 //				MyLogger.log(Level.INFO,
 //						"Queueing key for READ " + Thread.currentThread().getName() + ", wakeUp is: " + wakeUp);
-			} else if (key == SelectionKey.OP_WRITE) {
+//			} else if (key == SelectionKey.OP_WRITE) {
 //				MyLogger.log(Level.INFO,
 //						"Queueing key for WRITE " + Thread.currentThread().getName() + ", wakeUp is: " + wakeUp);
-			}
+//			}
 			keyList.add(new SelectItem(ccon, key));
 		}
-		if (wakeUp)
-
-		{
+		if (wakeUp) {
 			sel.wakeup();
 		}
 	}
@@ -490,7 +494,7 @@ public class ClientIOTelnet extends Thread {
 	}
 
 	/**
-	 * Cleans up telnet IO resources in case of shut down or telnet IO restart.
+	 * Cleans up Telnet IO resources in case of shutdown or Telnet IO restart.
 	 * Closes off all channels/sockets and removes {@link SelectionKey}s.
 	 */
 	public void clearResources() {
@@ -525,5 +529,4 @@ public class ClientIOTelnet extends Thread {
 			MyLogger.log(Level.WARNING, "ClientIOTelnet: IOException while closing Selector.", e);
 		}
 	}
-
 }

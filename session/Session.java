@@ -47,8 +47,7 @@ public class Session {
 
 	private volatile boolean closing;
 	private volatile boolean closed;
-	private volatile Future<Integer> sessionFuture;
-	private volatile Object sessionFutureLock = new Object();
+	private Future<Integer> sessionFuture;
 
 	/**
 	 * Creates a new Session for the provided {@link ClientConnection}
@@ -56,13 +55,15 @@ public class Session {
 	 * @param ccon ClientConnection to make the session for
 	 */
 	public Session(ClientConnection ccon) {
-		synchronized (sessionFutureLock) {
+		synchronized (this) {
 			this.ccon = ccon;
 			this.sess = this;
 			synchronized (sessionList) {
 				sessionList.add(this);
 			}
 
+			// Seems unnecessary to be multi-threaded here but is called from ClientIO
+			// thread.
 			sessionFuture = FireEngineMain.sessionExecutor.submit(new Callable<Integer>() {
 				@Override
 				public Integer call() throws Exception {
@@ -70,6 +71,8 @@ public class Session {
 						ccon.setupConnection(sess);
 					} catch (ClientConnectionException e) {
 						MyLogger.log(Level.WARNING, "Session: Failed to setup ClientConnection.", e);
+						sess.send(new ClientConnectionOutput(
+								"Error setting up session, you may want to notify a God out of game."));
 						sess.close();
 						return 1;
 					}
@@ -83,10 +86,10 @@ public class Session {
 						phaseManager.setWelcomePhase();
 					} catch (InstantiationException | IllegalAccessException e) {
 						MyLogger.log(Level.SEVERE,
-								"Session: Error thrown while trying to phaseManager.setWelcomePhase() in call().", e);
+								"Session: Error thrown while trying to phaseManager.setWelcomePhase().", e);
 						send(new ClientConnectionOutput(
-								"Error occured: This has been logged and will be reviewed by a developer.", null,
-								null));
+								"Error trying to take you to the welcome screen, you may want to notify a God out of game.",
+								null, null));
 						end();
 					}
 					ccon.acceptInput();
@@ -106,14 +109,14 @@ public class Session {
 		ccon.writeToConnection(output, ansi);
 	}
 
-	// TODO SYNCH
-	// TODO Keep alive thread.
+	// TODO Needs to exit from call early if already processing command, and check
+	// for more input after finished processing.
 	/**
 	 * Let the Session know that input has been received by the
 	 * {@link ClientConnection}.
 	 */
 	public void notifyInput() {
-		synchronized (sessionFutureLock) {
+		synchronized (this) {
 			if (sessionFuture != null) {
 				if (!sessionFuture.isDone()) {
 					MyLogger.log(Level.INFO, "notifyInput WAITING");
@@ -122,6 +125,7 @@ public class Session {
 			}
 
 			if (closed) {
+				MyLogger.log(Level.WARNING, "Session: notifyInput recieved while session closed.");
 				return;
 			}
 
@@ -194,9 +198,11 @@ public class Session {
 
 	/**
 	 * Used by the {@link ClientConnection} to let the Session know that it has
-	 * finished writing out all data, to allow graceful closing of Session.
+	 * finished writing out all data, to allow graceful closing of Session. May be
+	 * called by ClientConnection in case where connection is unexpectedly
+	 * terminated.
 	 */
-	public void notifyCconFinished() {
+	public void notifyCconShutdown() {
 		FireEngineMain.sessionExecutor.submit(new Callable<Integer>() {
 			@Override
 			public Integer call() throws Exception {
@@ -219,7 +225,6 @@ public class Session {
 				ccon = null;
 			}
 			sessionFuture = null;
-			sessionFutureLock = null;
 			sess = null;
 		}
 		synchronized (sessionList) {

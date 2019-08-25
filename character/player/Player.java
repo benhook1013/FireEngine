@@ -325,7 +325,7 @@ public class Player extends Character {
 		setSession(null);
 		Room room = getRoom();
 		if (room != null) {
-			room.sendToRoom(new ClientConnectionOutput(getName() + " slows down and appears frozen."));
+			room.sendToRoom(new ClientConnectionOutput(getName() + " slows down and appears frozen in time."));
 		}
 		// TODO Timer to force logout.
 	}

@@ -36,12 +36,13 @@ public class ClientConnectionTelnet implements ClientConnection {
 	private final SocketChannel sc;
 	private String address;
 
-	private boolean closing;
+	private volatile boolean acceptInput;
+	private boolean shutdown;
+
 	private ArrayList<ByteBuffer> sendList;
 	private final int SEND_LIMIT = 1000;
 	private ArrayList<String> recieveList;
 	private final int RECIEVE_LIMIT = 1000;
-	private volatile boolean acceptInput;
 	private StringBuilder sb = new StringBuilder();
 
 	private Session sess;
@@ -58,8 +59,8 @@ public class ClientConnectionTelnet implements ClientConnection {
 			ccon = this;
 			this.telnet = telnet;
 			this.sc = sc;
-			closing = false;
 			acceptInput = false;
+			shutdown = false;
 		}
 	}
 
@@ -86,11 +87,14 @@ public class ClientConnectionTelnet implements ClientConnection {
 	}
 
 	public SocketChannel getSc() {
-		return this.sc;
+		return sc;
 	}
 
+	/**
+	 * Write output to ClientConnection from the game. To later be written from
+	 * ClientConnection to {@link ClientIOTelnet} with {@link #writeFromConnection}.
+	 */
 	@Override
-	// Write to connection from the game.
 	public void writeToConnection(ClientConnectionOutput output, boolean ansi) {
 		synchronized (sendList) {
 			while ((!(sendList.size() >= SEND_LIMIT)) && output.hasNextLine()) {
@@ -102,6 +106,14 @@ public class ClientConnectionTelnet implements ClientConnection {
 		}
 	}
 
+	/**
+	 * Used by {@link #writeToConnection} to format the text (including colour) for
+	 * Telnet IO.
+	 * 
+	 * @param output the output object to be sent to client
+	 * @param ansi   whether to format output with colour or not
+	 * @return Telnet colour formatted string
+	 */
 	private String parseOutput(ClientConnectionOutput output, boolean ansi) {
 		String string = "";
 
@@ -118,8 +130,11 @@ public class ClientConnectionTelnet implements ClientConnection {
 				}
 			}
 			string = string + output.getText();
-			if (ansi && ((colourFG != null) | (colourBG != null))) {
-				string = string + colourReset;
+
+			if (ansi) {
+				if ((colourFG != null) | (colourBG != null)) {
+					string = string + colourReset;
+				}
 			}
 
 			output.nextPart();
@@ -129,27 +144,17 @@ public class ClientConnectionTelnet implements ClientConnection {
 		return string;
 	}
 
-	// Bright background colours not supported in Mudlet (and presumably telnet).
+	/**
+	 * Used by {@link #parseOutput} to get Telnet colour codes.
+	 * 
+	 * Bright background colours not supported in Mudlet (and presumably Telnet).
+	 * 
+	 * @param colour {@link ClientIOColour} to turn into Telnet colour code
+	 * @param isFG   Where to get code for FG or BG colouring
+	 * @return Telnet colour code
+	 */
 	private String parseOutputColour(ClientIOColour.COLOURS colour, boolean isFG) {
 		String code = null;
-
-//		public static final String ANSI_BLACK = "\u001B[30m";
-//		public static final String ANSI_RED = "\u001B[31m";
-//		public static final String ANSI_GREEN = "\u001B[32m";
-//		public static final String ANSI_YELLOW = "\u001B[33m";
-//		public static final String ANSI_BLUE = "\u001B[34m";
-//		public static final String ANSI_MAGENTA = "\u001B[35m";
-//		public static final String ANSI_CYAN = "\u001B[36m";
-//		public static final String ANSI_WHITE = "\u001B[37m";
-//
-//		public static final String ANSI_BRIGHT_BLACK = "\u001B[30;1m";
-//		public static final String ANSI_BRIGHT_RED = "\u001B[31;1m";
-//		public static final String ANSI_BRIGHT_GREEN = "\u001B[32;1m";
-//		public static final String ANSI_BRIGHT_YELLOW = "\u001B[33;1m";
-//		public static final String ANSI_BRIGHT_BLUE = "\u001B[34;1m";
-//		public static final String ANSI_BRIGHT_MAGENTA = "\u001B[35;1m";
-//		public static final String ANSI_BRIGHT_CYAN = "\u001B[36;1m";
-//		public static final String ANSI_BRIGHT_WHITE = "\u001B[37;1m";
 
 		switch (colour) {
 		case RESET: {
@@ -301,12 +306,17 @@ public class ClientConnectionTelnet implements ClientConnection {
 		return colourPrefix + code + colourSuffix;
 	}
 
+	/**
+	 * Called by {@link ClientIOTelnet} to get output to send to client.
+	 * 
+	 * @return a {@link ByteBuffer} of the next line of output to send
+	 */
 	public ByteBuffer writeFromConnection() {
 		synchronized (sendList) {
 			if (!sendList.isEmpty()) {
 				return sendList.get(0);
 			} else {
-				if (closing) {
+				if (shutdown) {
 					// Register with no SelectionKey as only want to finish
 					// writing; wont stop registering for WRITE to finish writes
 					// later.
@@ -319,23 +329,37 @@ public class ClientConnectionTelnet implements ClientConnection {
 		}
 	}
 
+	/**
+	 * Used by {@link ClientIOTelnet} to indicated to ClientConnectionTelnet that
+	 * all bytes for current output line have been sent (as they may be sent in
+	 * multiple chunks due to various layers' ByteBuffer sizes), so that the current
+	 * output can be removed from sendList.
+	 * 
+	 * <p>
+	 * Will also notify {@link Session} that all output to client has finished being
+	 * sent if ClientConnectionTelnet is in shutdown state, by calling
+	 * {@link Session#notifyCconShutdown()}
+	 * </p>
+	 */
 	public void finishedWrite() {
 		synchronized (sendList) {
 			sendList.remove(0);
 
-			if (closing) {
+			if (shutdown) {
 				if (sendList.isEmpty()) {
-					sess.notifyCconFinished();
+					sess.notifyCconShutdown();
 				}
 			}
 		}
 	}
 
+	/**
+	 * Sets the CLientConnectionTelnet into a state that allows receiving client
+	 * input.
+	 */
 	@Override
 	public void acceptInput() {
 		acceptInput = true;
-		// TODO Unsure if need this
-		// telnet.addKeyQueue(ccon, SelectionKey.OP_READ, true);
 	}
 
 	/**
@@ -349,20 +373,25 @@ public class ClientConnectionTelnet implements ClientConnection {
 		}
 	}
 
-	// Read to connection from client IO.
+	/**
+	 * Used by {@link ClientIOTelnet} indirectly from a inside
+	 * {@link #readToConnectionPart}, to read in client input to
+	 * ClientConnectionTelnet.
+	 * 
+	 * @param string String of input from client
+	 */
 	public void readToConnection(String string) {
 		if (string.length() > FireEngineMain.CLIENT_IO_INPUT_MAX_LENGTH) {
 			MyLogger.log(Level.WARNING,
 					"ClientConnectionTelnet: Input recieved exceeded maximum input length; input dropped.");
+
 			return;
 		}
 
 		synchronized (recieveList) {
-
 			if (!acceptInput) {
 				return;
 			}
-
 			MyLogger.log(Level.INFO, "readToConnection: '" + string + "'");
 			if (!(recieveList.size() >= RECIEVE_LIMIT)) {
 				recieveList.add(string);
@@ -371,7 +400,12 @@ public class ClientConnectionTelnet implements ClientConnection {
 		sess.notifyInput();
 	}
 
-	// Read input to Connection for combination and parsing.
+	/**
+	 * Used by {@link ClientIOTelnet} to read input to ClientConnectionTelnet (char
+	 * by char) for combining and parsing.
+	 * 
+	 * @param c char to be read in to ClientConnectionTelnet
+	 */
 	public void readToConnectionPart(char c) {
 		if ((c == '\r') | (c == '\n')) {
 
@@ -389,6 +423,10 @@ public class ClientConnectionTelnet implements ClientConnection {
 
 	}
 
+	/**
+	 * Used by {@link Session} to read a line of client input from the
+	 * ClientConnection.
+	 */
 	@Override
 	public String readFromConnection() {
 		synchronized (recieveList) {
@@ -400,27 +438,45 @@ public class ClientConnectionTelnet implements ClientConnection {
 		}
 	}
 
+	/**
+	 * This will remove the any SelectionKey's from the SocketChannel's Selector
+	 * once finished sending output to client.
+	 */
 	@Override
 	public void shutdown() {
-		closing = true;
+		shutdown = true;
 	}
 
+	// TODO Believe this should notify or close the attached Session as to not leave
+	// Session hanging around without an active ClientConnection (as this is not
+	// only called from Session).
+	/**
+	 * Is responsible for closing the underlying SocketChannel. Can be called from
+	 * ClientTelnetIO, so must ensure ClientConnectionTelnet is cleaned up and
+	 * notify Session that ClientConnectionTelnet is shut down.
+	 */
 	@Override
 	public void close() {
 		synchronized (this) {
+			refuseInput();
+			shutdown();
+			sendList.clear();
+
 			if (sc.isOpen()) {
 				try {
-					// MyLogger.log(Level.INFO, "ClientConnectionTelnet: ClientConnectionTelnet
-					// shutdown: '" + sc.getLocalAddress().toString() + "'(local).");
-					MyLogger.log(Level.INFO, "ClientConnectionTelnet: ClientConnectionTelnet shutdown: '"
-							+ sc.getRemoteAddress().toString() + "'(remote).");
+					MyLogger.log(Level.INFO, String.format(
+							"ClientConnectionTelnet: ClientConnectionTelnet shutdown: '%s' (remote) connected to '%s' (local).",
+							sc.getRemoteAddress().toString(), sc.getLocalAddress().toString()));
 					sc.close();
 				} catch (IOException e) {
 					MyLogger.log(Level.WARNING,
 							"ClientConnectionTelnet: IOException while trying to close ClientConnectionTelnet.", e);
 				}
+
+				if (sess != null) {
+					sess.notifyCconShutdown();
+				}
 			}
 		}
 	}
-
 }

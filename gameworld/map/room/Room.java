@@ -150,7 +150,9 @@ public class Room {
 	private ArrayList<Player> playerList;
 
 	private Room() {
-		playerList = new ArrayList<>();
+		synchronized (playerList) {
+			playerList = new ArrayList<>();
+		}
 	}
 
 	public Room(GameMap map, Coordinate coord) {
@@ -298,12 +300,14 @@ public class Room {
 	 * @param notPlayer Player, if specified, to be excluded from output.
 	 */
 	public void sendToRoomExcluding(ClientConnectionOutput output, Character ignoreCharacter) {
-		for (Player player : playerList) {
-			if (ignoreCharacter == null) {
-				player.sendToListeners(new ClientConnectionOutput(output));
-			} else {
-				if (!(player == ignoreCharacter)) {
+		synchronized (playerList) {
+			for (Player player : playerList) {
+				if (ignoreCharacter == null) {
 					player.sendToListeners(new ClientConnectionOutput(output));
+				} else {
+					if (!(player == ignoreCharacter)) {
+						player.sendToListeners(new ClientConnectionOutput(output));
+					}
 				}
 			}
 		}

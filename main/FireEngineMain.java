@@ -137,16 +137,15 @@ public class FireEngineMain {
 		MyLogger.log(Level.INFO, "FireEngineMain: Initiating Session Executors");
 		sessionExecutor = Executors.newFixedThreadPool(SESSION_EXECUTOR_POOL);
 
-		startClientIO();
-		telnet.setAccepting(true);
+		startClientIOTelnet();
 	}
 
 	/**
-	 * Starts the telnet thread and starts accepting connections.
+	 * Starts the Telnet thread and starts accepting connections.
 	 *
 	 * @throws FireEngineMainSetupException
 	 */
-	private static void startClientIO() throws FireEngineMainSetupException {
+	private static void startClientIOTelnet() throws FireEngineMainSetupException {
 		MyLogger.log(Level.INFO, "FireEngineMain: Starting Client_IO...");
 
 		if (telnet != null) {
@@ -170,6 +169,7 @@ public class FireEngineMain {
 				continue;
 			}
 		}
+		telnet.setAccepting(true);
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class FireEngineMain {
 				} else {
 					MyLogger.log(Level.SEVERE, "FireEngineMain: Restarting ClientIOTelnet.");
 					try {
-						startClientIO();
+						startClientIOTelnet();
 					} catch (FireEngineMainSetupException e) {
 						MyLogger.log(Level.SEVERE,
 								"FireEngineMain: Error while trying to restart ClientIOTelnet, shutting down.", e);
