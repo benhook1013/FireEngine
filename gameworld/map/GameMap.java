@@ -2,6 +2,7 @@ package fireengine.gameworld.map;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import javax.persistence.CascadeType;
@@ -113,7 +114,7 @@ public class GameMap {
 	public Room getSpawnRoomOrCentre() {
 		Room returnRoom = this.spawnRoom;
 		if (returnRoom == null) {
-			returnRoom = getRoom(new Coordinate(this, 0, 0, 0));
+			returnRoom = getRoom(0, 0, 0);
 		}
 
 		return returnRoom;
@@ -125,8 +126,8 @@ public class GameMap {
 	}
 
 	/**
-	 * Returns the {@link Room} (or null) at specified coordinates, throwing an
-	 * exception if coordinates are out of bounds.
+	 * Returns the {@link Room} (or null) at specified Coordinate. Use
+	 * {@link GameMap#getRoom(int, int, int)} to get based on coordinates.
 	 *
 	 * @param z z coordinate of room to find
 	 * @param y y coordinate of room to find
@@ -137,6 +138,25 @@ public class GameMap {
 		MyLogger.log(Level.FINER,
 				String.format("GameMap: getRoom(%s, %s, %s).", coord.getX(), coord.getY(), coord.getZ()));
 		return rooms.get(coord);
+	}
+
+	/**
+	 * Used to get a Room belonging to the GameMap with given coordinates (separate
+	 * for searching on the Coordinate object; see
+	 * {@link GameMap#getRoom(Coordinate)}).
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public Room getRoom(int x, int y, int z) {
+		for (Entry<Coordinate, Room> mapEntry : rooms.entrySet()) {
+			if ((mapEntry.getKey().getX() == x) && (mapEntry.getKey().getY() == y) && (mapEntry.getKey().getZ() == z)) {
+				return mapEntry.getValue();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -152,7 +172,13 @@ public class GameMap {
 	 *                                           direction
 	 */
 	public Room getRoom(Room room, Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
-		return getRoom(getAdjacentCoord(room, direction));
+		Coordinate coord = room.getCoord();
+
+		int otherX = xAdjustDirection(coord.getX(), direction);
+		int otherY = yAdjustDirection(coord.getY(), direction);
+		int otherZ = zAdjustDirection(coord.getZ(), direction);
+
+		return getRoom(otherX, otherY, otherZ);
 	}
 
 	public int getRoomCount() {
@@ -169,6 +195,23 @@ public class GameMap {
 			return null;
 		}
 		return foundList.get(0);
+	}
+
+	/**
+	 * Used to get a Coordinate belonging to the GameMap with given coordinates.
+	 * 
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	public Coordinate getCoord(int x, int y, int z) {
+		for (Entry<Coordinate, Room> mapEntry : rooms.entrySet()) {
+			if ((mapEntry.getKey().getX() == x) && (mapEntry.getKey().getY() == y) && (mapEntry.getKey().getZ() == z)) {
+				return mapEntry.getKey();
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -220,7 +263,13 @@ public class GameMap {
 	 */
 	public void createRoom(Room room, Direction.DIRECTION direction)
 			throws MapExceptionRoomExists, CheckedHibernateException, MapExceptionDirectionNotSupported {
-		createRoom(getAdjacentCoord(room, direction));
+		Coordinate coord = room.getCoord();
+
+		int otherX = xAdjustDirection(coord.getX(), direction);
+		int otherY = yAdjustDirection(coord.getY(), direction);
+		int otherZ = zAdjustDirection(coord.getZ(), direction);
+
+		createRoom(new Coordinate(this, otherX, otherY, otherZ));
 	}
 
 	/**
@@ -271,7 +320,13 @@ public class GameMap {
 	 */
 	public void deleteRoom(Room room, Direction.DIRECTION direction)
 			throws MapExceptionRoomNull, CheckedHibernateException, MapExceptionDirectionNotSupported {
-		deleteRoom(getAdjacentCoord(room, direction));
+		Coordinate coord = room.getCoord();
+
+		int otherX = xAdjustDirection(coord.getX(), direction);
+		int otherY = yAdjustDirection(coord.getY(), direction);
+		int otherZ = zAdjustDirection(coord.getZ(), direction);
+
+		deleteRoom(getCoord(otherX, otherY, otherZ));
 	}
 
 	/**
@@ -411,7 +466,7 @@ public class GameMap {
 
 				for (int i = lineX - lineSize; i <= (lineX + lineSize); i++) {
 					Room foundRoom;
-					foundRoom = gameMap.getRoom(new Coordinate(room.getMap(), i, lineY, lineZ));
+					foundRoom = gameMap.getRoom(i, lineY, lineZ);
 
 					if (foundRoom == null) {
 						lineTop = lineTop + "     ";
@@ -502,15 +557,6 @@ public class GameMap {
 		output.newLine();
 
 		return output;
-	}
-
-	public static Coordinate getAdjacentCoord(Room room, Direction.DIRECTION direction)
-			throws MapExceptionDirectionNotSupported {
-		Coordinate coord = room.getCoord();
-		int otherX = xAdjustDirection(coord.getX(), direction);
-		int otherY = yAdjustDirection(coord.getY(), direction);
-		int otherZ = zAdjustDirection(coord.getZ(), direction);
-		return new Coordinate(room.getMap(), otherX, otherY, otherZ);
 	}
 
 	/**
