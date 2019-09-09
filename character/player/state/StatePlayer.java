@@ -1,6 +1,6 @@
 package fireengine.character.player.state;
 
-import fireengine.character.command.CommandAction;
+import fireengine.client_io.ClientConnectionOutput;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -20,5 +20,5 @@ import fireengine.character.command.CommandAction;
  */
 
 public interface StatePlayer {
-	public CommandAction acceptInput(String text);
+	public ClientConnectionOutput acceptInput(String text);
 }

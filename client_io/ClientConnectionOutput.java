@@ -94,6 +94,15 @@ public class ClientConnectionOutput {
 	}
 
 	/**
+	 * Adds a part with null colours.
+	 *
+	 * @param text text to add to client output
+	 */
+	public void addPart(String text) {
+		addPart(text, null, null);
+	}
+
+	/**
 	 * The main function used to add line parts; text and colours, to the output
 	 * object.
 	 *
@@ -109,9 +118,9 @@ public class ClientConnectionOutput {
 	}
 
 	public void addOutput(ClientConnectionOutput copyOutput) {
-		Iterator<?> iter = copyOutput.lineList.iterator();
+		Iterator<Client_Connection_Output_Line> iter = copyOutput.lineList.iterator();
 		while (iter.hasNext()) {
-			Client_Connection_Output_Line line = (Client_Connection_Output_Line) iter.next();
+			Client_Connection_Output_Line line = iter.next();
 			for (fireengine.client_io.ClientConnectionOutput.Client_Connection_Output_Line.Client_Connection_Output_Part part : line
 					.getParts()) {
 				this.addPart(part.getText(), part.getColourFG(), part.getColourBG());

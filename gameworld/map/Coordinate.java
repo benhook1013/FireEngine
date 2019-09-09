@@ -2,20 +2,32 @@ package fireengine.gameworld.map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+
+import fireengine.gameworld.map.room.Room;
+import fireengine.util.IDSequenceGenerator;
 
 @Entity
 @Table(name = "COORDINATE")
 public class Coordinate {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
+
+	/**
+	 * Used for making the equals function unique, as multiple maps can have the
+	 * same z,y,z coordinate filled.
+	 */
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "MAP", nullable = false)
+	@NotNull
+	private GameMap map;
 
 	@Column(name = "X", nullable = false)
 	@NotNull
@@ -29,11 +41,13 @@ public class Coordinate {
 	@NotNull
 	private int z;
 
-	public Coordinate() {
+	@SuppressWarnings("unused")
+	private Coordinate() {
 	}
 
-	public Coordinate(int x, int y, int z) {
-		this();
+	public Coordinate(GameMap map, int x, int y, int z) {
+		id = IDSequenceGenerator.getNextID("Coordinate");
+		this.map = map;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -43,9 +57,8 @@ public class Coordinate {
 		return id;
 	}
 
-	@SuppressWarnings("unused")
-	private void setId(int id) {
-		this.id = id;
+	public GameMap getMap() {
+		return map;
 	}
 
 	/**
@@ -90,6 +103,29 @@ public class Coordinate {
 		this.z = z;
 	}
 
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * 
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 7;
+		result = (prime * result) + getId();
+		return result;
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -99,23 +135,9 @@ public class Coordinate {
 		if (getClass() != obj.getClass())
 			return false;
 		Coordinate other = (Coordinate) obj;
-		if (x != other.x)
-			return false;
-		if (y != other.y)
-			return false;
-		if (z != other.z)
-			return false;
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 7;
-		result = prime * result + x;
-		result = prime * result + y;
-		result = prime * result + z;
-		return result;
+		if (getId() != other.getId())
+			return true;
+		return false;
 	}
 
 	@Override

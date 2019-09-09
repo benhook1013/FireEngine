@@ -1,17 +1,18 @@
 package fireengine.character.player;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -25,20 +26,21 @@ import org.hibernate.query.Query;
 
 import fireengine.character.Character;
 import fireengine.character.character_class.CharacterClass;
-import fireengine.character.command.CommandAction;
-import fireengine.character.command.character_comand.general.Look;
+import fireengine.character.command.action.general.Look;
 import fireengine.character.condition.Condition;
 import fireengine.character.condition.ConditionPlayer;
-import fireengine.character.player.exception.PlayerExceptionNullRoom;
+import fireengine.character.exception.CharacterExceptionNullRoom;
 import fireengine.character.player.state.StatePlayer;
 import fireengine.character.player.state.StatePlayerInWorld;
-import fireengine.character.player.state.parser.InputParserInWorld;
+import fireengine.character.skillset.General;
+import fireengine.character.skillset.Skillset;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.GameWorld;
+import fireengine.gameworld.map.Direction.DIRECTION;
 import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
 import fireengine.session.Session;
 import fireengine.util.CheckedHibernateException;
+import fireengine.util.IDSequenceGenerator;
 import fireengine.util.MyLogger;
 import fireengine.util.StringUtils;
 
@@ -66,7 +68,6 @@ public class Player extends Character {
 	private static ArrayList<Player> playerList = new ArrayList<>();
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
@@ -85,12 +86,13 @@ public class Player extends Character {
 	@NotNull
 	private PlayerSetting settings;
 
-	// TODO Mixing different class names in variable and column name below.
-	@OneToOne(fetch = FetchType.EAGER)
-	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "CHAR_CLASS", nullable = false)
-	@NotNull
+	@Transient
 	private CharacterClass charClass;
+
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
+	@Cascade(CascadeType.ALL)
+	@JoinColumn(name = "PLAYER_ID")
+	private Set<Skillset> skillsetList;
 
 	@Transient
 	private StatePlayer playerState;
@@ -100,38 +102,34 @@ public class Player extends Character {
 	@JoinColumn(name = "COND_PLAYER", nullable = false)
 	@NotNull
 	private ConditionPlayer condition;
-	// TODO test cascade see if can remove saving sub classes individually.
 
 	@Transient
 	private Session session;
-	// TODO Load room on character load.
 
+	// TODO Load room on character load.
 	@Transient
 	private Room room;
 
 	// TODO Periodic check for attached session, if not, protect or remove Player.
 
 	private Player() {
-		super();
+		charClass = new CharacterClass(true);
 	}
 
 	public Player(String name, String password) {
 		this();
+		id = IDSequenceGenerator.getNextID("Player");
+		settings = new PlayerSetting(true);
+		condition = new ConditionPlayer(true);
+		skillsetList = new TreeSet<Skillset>();
+		refreshSkillsetList();
 		this.name = name;
 		this.password = password;
-		settings = new PlayerSetting();
-		charClass = new CharacterClass();
-		condition = new ConditionPlayer(1);
 	}
 
 	@Override
 	public int getId() {
 		return id;
-	}
-
-	@Override
-	protected void setId(int id) {
-		this.id = id;
 	}
 
 	@Override
@@ -172,6 +170,34 @@ public class Player extends Character {
 	}
 
 	@Override
+	public Set<Skillset> getSkillsetList() {
+		return skillsetList;
+	}
+
+	@Override
+	public void refreshSkillsetList() {
+		addSkillsetIfMissing(General.class);
+	}
+
+	private <T extends Skillset> void addSkillsetIfMissing(Class<T> addSkillset) {
+		for (Skillset foundSkillset : skillsetList) {
+			if (addSkillset.isInstance(foundSkillset)) {
+				return;
+			}
+		}
+		Skillset newSkillset;
+		try {
+			newSkillset = addSkillset.getDeclaredConstructor(Boolean.class).newInstance(true);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
+				| NoSuchMethodException | SecurityException e) {
+			MyLogger.log(Level.SEVERE, "Player: Exception while trying to add missing Skillset to player skillsetList.",
+					e);
+			return;
+		}
+		skillsetList.add(newSkillset);
+	}
+
+	@Override
 	public Condition getCondition() {
 		return condition;
 	}
@@ -197,10 +223,10 @@ public class Player extends Character {
 	}
 
 	@Override
-	public void setRoom(Room room) throws PlayerExceptionNullRoom {
+	public void setRoom(Room room) throws CharacterExceptionNullRoom {
 		synchronized (room) {
 			if (room == null) {
-				throw new PlayerExceptionNullRoom("Player: Player tried to be sent to null room.");
+				throw new CharacterExceptionNullRoom("Player: Player tried to be sent to null room.");
 			}
 
 			if (this.room != null) {
@@ -214,50 +240,18 @@ public class Player extends Character {
 
 	@Override
 	public void acceptInput(String text) {
-		CommandAction command = playerState.acceptInput(text);
-		acceptInput(command);
+		text = StringUtils.cleanInput(text);
+		ClientConnectionOutput actionOutput = playerState.acceptInput(text);
+		sendInputOutput(actionOutput);
 	}
 
+	/**
+	 * Debatable this is necessary. Might be required later. Can add in prompt lines
+	 * etc here.
+	 */
 	@Override
-	public void acceptInput(CommandAction command) {
-		try {
-			if (command == null) {
-				ClientConnectionOutput output = new ClientConnectionOutput(2);
-				output.addPart(InputParserInWorld.getUnkownCommandText(), null, null);
-				output.newLine();
-				sendToListeners(output);
-			} else {
-				synchronized (room) {
-					if (room != null) {
-						command.doAction(this);
-					} else {
-						throw new PlayerExceptionNullRoom(
-								"Player: Player tried to do action " + command.getClass() + " with no room.");
-					}
-				}
-			}
-		} catch (PlayerExceptionNullRoom e) {
-			ClientConnectionOutput message = new ClientConnectionOutput(2);
-			message.addPart("You are trying to do an action without being in any room!", null, null);
-			message.addPart("We will try and move you somewhere...", null, null);
-			sendToListeners(message);
-			MyLogger.log(Level.WARNING, "Player: PlayerExceptionNullRoom error when trying to acceptInput.", e);
-
-			Room sendRoom = GameWorld.getMainMap().getSpawnRoomOrCentre();
-
-			if (sendRoom != null) {
-				try {
-					setRoom(sendRoom);
-				} catch (PlayerExceptionNullRoom e1) {
-					MyLogger.log(Level.WARNING, "Player: Null error when trying to send null room player to origin.",
-							e);
-					return;
-				}
-			} else {
-				MyLogger.log(Level.WARNING, "Player: Cannot find origin room to send null room player to.", e);
-				return;
-			}
-		}
+	public void sendInputOutput(ClientConnectionOutput output) {
+		sendToListeners(output);
 	}
 
 	@Override
@@ -278,9 +272,9 @@ public class Player extends Character {
 	/**
 	 * Used to connect a {@link Session} to the {@link Player}.
 	 *
-	 * @throws PlayerExceptionNullRoom
+	 * @throws CharacterExceptionNullRoom
 	 */
-	public void connect(Session sess) throws PlayerExceptionNullRoom {
+	public void connect(Session sess) throws CharacterExceptionNullRoom {
 		synchronized (room) {
 			connect(sess, this.room);
 		}
@@ -290,9 +284,9 @@ public class Player extends Character {
 	 * Used to connect a {@link Session} to the {@link Player}, and entering the
 	 * {@link Room} specified.
 	 *
-	 * @throws PlayerExceptionNullRoom
+	 * @throws CharacterExceptionNullRoom
 	 */
-	public void connect(Session sess, Room room) throws PlayerExceptionNullRoom {
+	public void connect(Session sess, Room room) throws CharacterExceptionNullRoom {
 		if (this.session != null) {
 			this.session.send(
 					new ClientConnectionOutput("Disconnecting; another session has connected to this character."));
@@ -303,19 +297,19 @@ public class Player extends Character {
 
 		try {
 			setRoom(room);
-		} catch (PlayerExceptionNullRoom e) {
+		} catch (CharacterExceptionNullRoom e) {
 			sess.send(new ClientConnectionOutput("Failed to enter world."));
 			setSession(null);
-			throw new PlayerExceptionNullRoom("Player: Player tried to do enter world with null room.", e);
+			throw new CharacterExceptionNullRoom("Player: Player tried to do enter world with null room.", e);
 		}
 
 		if (playerState instanceof StatePlayerInWorld) {
 			room.sendToRoom(new ClientConnectionOutput(getName() + " eyes light up and starts moving again."));
 		} else {
-			playerState = new StatePlayerInWorld();
+			playerState = new StatePlayerInWorld(this);
 		}
 
-		acceptInput(new Look());
+		sendInputOutput(new Look().doAction(this, (DIRECTION) null));
 	}
 
 	/**
@@ -501,10 +495,10 @@ public class Player extends Character {
 
 				for (Iterator<?> iterator = players.iterator(); iterator.hasNext();) {
 					Player player = (Player) iterator.next();
-//					info.addPart("ID: " + player.getId() + ", Name: '" + player.getName() + "', Class: '"
+//					info.addPart("ID: " + player.getId() + ", Name: '" + player.getName() + "', CharacterClass: '"
 //							+ player.getCharClass().getClassName() + "', Level: " + player.getLevel() + ", Experience: "
 //							+ player.getExperience() + "", null, null);
-					info.addPart(String.format("ID: %s, Name: '%s', Class: '%s', Level: %s, Experience: %s",
+					info.addPart(String.format("ID: %s, Name: '%s', CharacterClass: '%s', Level: %s, Experience: %s",
 							player.getId(), player.getName(), player.getCharClass().getClassName(), player.getLevel(),
 							player.getExperience()), null, null);
 					if (iterator.hasNext()) {
@@ -523,5 +517,42 @@ public class Player extends Character {
 		}
 
 		return info;
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * 
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 7;
+		result = (prime * result) + getId();
+		return result;
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Player other = (Player) obj;
+		if (getId() != other.getId())
+			return true;
+		return false;
 	}
 }

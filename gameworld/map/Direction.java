@@ -22,22 +22,22 @@ import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
  */
 
 /**
- * Class containing supported directions (enum) and functions related to those
- * directions.
+ * CharacterClass containing supported directions (enum) and functions related
+ * to those directions.
  *
  * @author Ben Hook
  */
 public class Direction {
-	private static Pattern upPattern = Pattern.compile("(?i)U(?:P)?");
-	private static Pattern downPattern = Pattern.compile("(?i)D(?:OWN)?");
-	private static Pattern northPattern = Pattern.compile("(?i)N(?:ORTH)?");
-	private static Pattern northEastPattern = Pattern.compile("(?i)N(?:ORTH)?E(?:AST)?");
-	private static Pattern eastPattern = Pattern.compile("(?i)E(?:AST)?");
-	private static Pattern southEastPattern = Pattern.compile("(?i)S(?:OUTH)?E(?:AST)?");
-	private static Pattern southPattern = Pattern.compile("(?i)S(?:OUTH)?");
-	private static Pattern southWestPattern = Pattern.compile("(?i)S(?:OUTH)?W(?:EST)?");
-	private static Pattern westPattern = Pattern.compile("(?i)W(?:EST)?");
-	private static Pattern northWestPattern = Pattern.compile("(?i)N(?:ORTH)?W(?:EST)?");
+	private static Pattern upPattern = Pattern.compile("U(?:P)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern downPattern = Pattern.compile("D(?:OWN)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern northPattern = Pattern.compile("N(?:ORTH)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern northEastPattern = Pattern.compile("N(?:ORTH)?E(?:AST)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern eastPattern = Pattern.compile("E(?:AST)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern southEastPattern = Pattern.compile("S(?:OUTH)?E(?:AST)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern southPattern = Pattern.compile("S(?:OUTH)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern southWestPattern = Pattern.compile("S(?:OUTH)?W(?:EST)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern westPattern = Pattern.compile("W(?:EST)?", Pattern.CASE_INSENSITIVE);
+	private static Pattern northWestPattern = Pattern.compile("N(?:ORTH)?W(?:EST)?", Pattern.CASE_INSENSITIVE);
 
 	/**
 	 * Enum list of supported directions.

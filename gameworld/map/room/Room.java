@@ -1,14 +1,11 @@
 package fireengine.gameworld.map.room;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.logging.Level;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -33,6 +30,7 @@ import fireengine.gameworld.map.exception.MapExceptionRoomNull;
 import fireengine.gameworld.map.exit.RoomExit;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
+import fireengine.util.IDSequenceGenerator;
 import fireengine.util.MyLogger;
 
 /*
@@ -67,7 +65,6 @@ public class Room {
 //	private static ArrayList<Room> roomList = new ArrayList<>();
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
@@ -146,25 +143,20 @@ public class Room {
 	@Transient
 	private ArrayList<Player> playerList;
 
+	@SuppressWarnings("unused")
 	private Room() {
-		synchronized (playerList) {
-			playerList = new ArrayList<>();
-		}
+		playerList = new ArrayList<>();
 	}
 
 	public Room(GameMap map, Coordinate coord) {
 		this();
+		id = IDSequenceGenerator.getNextID("Room");
 		this.map = map;
 		this.coord = coord;
 	}
 
 	public int getId() {
 		return id;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(int id) {
-		this.id = id;
 	}
 
 	public GameMap getMap() {
@@ -229,7 +221,7 @@ public class Room {
 		}
 
 		if (player instanceof Player) {
-			synchronized (playerList) {
+			synchronized (this) {
 				if (!playerList.contains(player)) {
 					playerList.add((Player) player);
 				}
@@ -281,7 +273,9 @@ public class Room {
 	/**
 	 * Sends to listeners of room, without any exclusion.
 	 *
-	 * @see Room#sendToRoomExcluding(ClientConnectionOutput, Character)
+	 * <p>
+	 * See {@link Room#sendToRoomExcluding(ClientConnectionOutput, Character)}
+	 * </p>
 	 *
 	 * @param output
 	 */
@@ -441,15 +435,65 @@ public class Room {
 		return false;
 	}
 
+	/**
+	 * To take away, do not use database (or Hibernate) generated id in hashing (can
+	 * in comparing). Note that is OK to set a static hashCode (if nothing else),
+	 * even if it has a negative impact in performance somewhat. It is more
+	 * important to retain a same hashCode return during the lifetime of the object.
+	 * Need to specify a proper equals for persisted classes (that will not change
+	 * over time with normal modifiable fields).
+	 * <p>
+	 * Notes from: https://vladmihalcea.com/hibernate-facts-equals-and-hashcode/
+	 * </p>
+	 * <p>
+	 * We can’t use an auto-incrementing database id in the hashCode method since
+	 * the transient and the attached object versions will no longer be located in
+	 * the same hashed bucket.
+	 * </p>
+	 * <p>
+	 * We can’t rely on the default Object equals and hashCode implementations since
+	 * two entities loaded in two different persistence contexts will end up as two
+	 * different Java objects, therefore breaking the all-states equality rule.
+	 * </p>
+	 * <p>
+	 * So, if Hibernate uses the equality to uniquely identify an Object, for its
+	 * whole lifetime, we need to find the right combination of properties
+	 * satisfying this requirement. So, the business key must be set from the very
+	 * moment we are creating the Entity and then never change it.
+	 * </p>
+	 * <p>
+	 * Also see this from the 'net: The purpose of the hashCode() method is to
+	 * provide a numeric representation of an object's contents so as to provide an
+	 * alternate mechanism to loosely identify it. By default the hashCode() returns
+	 * an integer that represents the internal memory address of the object.
+	 * </p>
+	 * <p>
+	 * Also see:
+	 * </p>
+	 * <p>
+	 * https://thoughts-on-java.org/ultimate-guide-to-implementing-equals-and-hashcode-with-hibernate/
+	 * </p>
+	 * <p>
+	 * https://vladmihalcea.com/the-best-way-to-implement-equals-hashcode-and-tostring-with-jpa-and-hibernate/
+	 * </p>
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 7;
-		result = prime * result + id;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = (prime * result) + getId();
 		return result;
 	}
 
+	/**
+	 * A proper custom implementation of equals is requires for correct
+	 * JPA/Hibernate persisting.
+	 * 
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -459,17 +503,10 @@ public class Room {
 		if (getClass() != obj.getClass())
 			return false;
 		Room other = (Room) obj;
-		if (id != other.getId())
-			return false;
-		MyLogger.log(Level.WARNING,
-				"Room: When comparing rooms with equals, object was not of same instance but had the same id."
-						+ " StackTrace: " + Arrays.toString(Thread.currentThread().getStackTrace()));
-		if (name == null) {
-			if (other.getName() != null)
-				return false;
-		} else if (!name.equals(other.getName()))
-			return false;
-		return true;
+		if (this.getId() == other.getId()) {
+			return true;
+		}
+		return false;
 	}
 
 	/**

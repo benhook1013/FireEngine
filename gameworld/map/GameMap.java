@@ -8,8 +8,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -31,6 +29,7 @@ import fireengine.gameworld.map.exit.RoomExit;
 import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
+import fireengine.util.IDSequenceGenerator;
 import fireengine.util.MyLogger;
 
 /*
@@ -56,27 +55,26 @@ import fireengine.util.MyLogger;
  *
  * @author Ben Hook
  */
-/**
- * @author Ben_Desktop
- *
- */
 @Entity
 @Table(name = "GAME_MAP")
 public class GameMap {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
 
+	/**
+	 * It is important this does not change during runtime as it is used in the
+	 * hashCode method.
+	 */
 	@Column(name = "NAME", nullable = false)
 	@NotNull
 	private String name;
 
 	// Example Hibernate mapping for 'Bidirectional @OneToMany'
 	// https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
-
 	// https://www.baeldung.com/hibernate-persisting-maps
+	// TODO Consider implementation to prevent multiple Rooms being in set Values.
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
 	@JoinTable(name = "COORD_ROOM_MAPPING", joinColumns = {
 			@JoinColumn(name = "gamemap", referencedColumnName = "id") }, inverseJoinColumns = {
@@ -88,12 +86,13 @@ public class GameMap {
 	@JoinColumn(name = "SPAWN_ROOM")
 	private Room spawnRoom;
 
+	@SuppressWarnings("unused")
 	private GameMap() {
-		rooms = new ConcurrentHashMap<Coordinate, Room>();
 	}
 
 	public GameMap(String name) {
-		this();
+		id = IDSequenceGenerator.getNextID("GameMap");
+		rooms = new ConcurrentHashMap<Coordinate, Room>();
 		this.name = name;
 	}
 
@@ -101,17 +100,8 @@ public class GameMap {
 		return this.id;
 	}
 
-	@SuppressWarnings("unused")
-	private void setId(int id) {
-		this.id = id;
-	}
-
 	public String getName() {
 		return this.name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public Room getSpawnRoom() {
@@ -121,7 +111,7 @@ public class GameMap {
 	public Room getSpawnRoomOrCentre() {
 		Room returnRoom = this.spawnRoom;
 		if (returnRoom == null) {
-			returnRoom = getRoom(new Coordinate(0, 0, 0));
+			returnRoom = getRoom(new Coordinate(this, 0, 0, 0));
 		}
 
 		return returnRoom;
@@ -304,7 +294,7 @@ public class GameMap {
 					Direction.oppositeDirection(direction).toString(), otherRoom.getName()));
 		}
 
-		RoomExit newExit = new RoomExit();
+		RoomExit newExit = new RoomExit(true);
 		// TODO If fails to set exit, delete partway created exit.
 		room.setExit(direction, newExit);
 		otherRoom.setExit(Direction.oppositeDirection(direction), newExit);
@@ -395,7 +385,9 @@ public class GameMap {
 	 * @param radius Number of rooms in each direction to display
 	 * @return ClientConnectionOutput with appended display map lines
 	 */
-	public static ClientConnectionOutput displayMap(ClientConnectionOutput output, Room room, int radius) {
+	public static ClientConnectionOutput displayMap(Room room, int radius) {
+		ClientConnectionOutput output = new ClientConnectionOutput();
+
 		class Line_Builder {
 			public ClientConnectionOutput buildLines(ClientConnectionOutput output, GameMap gameMap, int lineX,
 					int lineY, int lineZ, int lineSize) {
@@ -405,7 +397,7 @@ public class GameMap {
 
 				for (int i = lineX - lineSize; i <= (lineX + lineSize); i++) {
 					Room foundRoom;
-					foundRoom = gameMap.getRoom(new Coordinate(i, lineY, lineZ));
+					foundRoom = gameMap.getRoom(new Coordinate(room.getMap(), i, lineY, lineZ));
 
 					if (foundRoom == null) {
 						lineTop = lineTop + "     ";
@@ -484,10 +476,6 @@ public class GameMap {
 
 		GameMap gameMap = room.getMap();
 
-		if (output == null) {
-			output = new ClientConnectionOutput();
-		}
-
 		output.newLine();
 		output.addPart(String.format("Map around \"%s\" %s with radius %s", room.getName(), room.getCoord().toString(),
 				radius), null, null);
@@ -508,7 +496,7 @@ public class GameMap {
 		int otherX = xAdjustDirection(coord.getX(), direction);
 		int otherY = yAdjustDirection(coord.getY(), direction);
 		int otherZ = zAdjustDirection(coord.getZ(), direction);
-		return new Coordinate(otherX, otherY, otherZ);
+		return new Coordinate(room.getMap(), otherX, otherY, otherZ);
 	}
 
 	/**
@@ -661,5 +649,43 @@ public class GameMap {
 					"GameMap: zAdjustDirection missing case for direction " + direction.toString() + ".");
 		}
 		}
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 7;
+		result = (prime * result) + getId();
+		return result;
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * 
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GameMap other = (GameMap) obj;
+		if (this.getId() == other.getId()) {
+			return true;
+		}
+		return false;
 	}
 }

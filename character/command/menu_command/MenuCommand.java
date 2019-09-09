@@ -1,6 +1,6 @@
 package fireengine.character.command.menu_command;
 
-import fireengine.character.command.CommandInfo;
+import fireengine.character.command.Command;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -19,7 +19,7 @@ import fireengine.character.command.CommandInfo;
  *    limitations under the License.
  */
 
-public abstract class MenuCommand extends CommandInfo {
+public abstract class MenuCommand extends Command {
 	protected MenuCommand() {
 		super();
 	}

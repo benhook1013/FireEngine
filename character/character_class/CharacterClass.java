@@ -1,22 +1,8 @@
 package fireengine.character.character_class;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.logging.Level;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
-import fireengine.character.character_class.skillset.Skillset;
-import fireengine.util.ConfigLoader;
-import fireengine.util.MyClassLoader;
-import fireengine.util.MyLogger;
+import fireengine.gameworld.map.GameMap;
+import fireengine.gameworld.map.room.Room;
+import fireengine.util.IDSequenceGenerator;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -35,44 +21,49 @@ import fireengine.util.MyLogger;
  *    limitations under the License.
  */
 
-@Entity
-@Table(name = "CHAR_CLASS")
+//@Entity
+//@Table(name = "CHAR_CLASS")
 public class CharacterClass {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID", nullable = false)
-	@NotNull
+//	@Id
+//	@Column(name = "ID", nullable = false)
+//	@NotNull
 	private int id;
-
-	@Column(name = "NAME", nullable = false)
-	@NotNull
+//
+//	@Column(name = "NAME", nullable = false)
+//	@NotNull
 	protected String className;
 
-	@Transient
-	private static MyClassLoader classLoader;
+//	@Transient
+//	private static MyClassLoader classLoader;
 
-	@Transient
-	protected static ArrayList<Class<Skillset>> skillsetClassList;
+//	@Transient
+//	protected static ArrayList<Class<Skillset>> skillsetClassList;
 
-	@Transient
-	protected ArrayList<Skillset> skillsetList;
+//	@Transient
+//	protected ArrayList<Skillset> skillsetList;
 
-	@SuppressWarnings("unchecked")
-	public static void loadSkillsets() throws ClassNotFoundException {
-		classLoader = new MyClassLoader();
+//	@SuppressWarnings("unchecked")
+//	public static void loadSkillsets() throws ClassNotFoundException {
+//		classLoader = new MyClassLoader();
+//
+//		String skillsetNameString = ConfigLoader.getSetting("charClassSkillsetList");
+//		ArrayList<String> skillsetNameArray = new ArrayList<>();
+//		Collections.addAll(skillsetNameArray, skillsetNameString.split(";"));
+//
+//		skillsetClassList = new ArrayList<>();
+//		for (String skillsetName : skillsetNameArray) {
+//			MyLogger.log(Level.INFO, String.format("CharacterClass: skillset '%s'.", skillsetName));
+//			skillsetClassList.add((Class<Skillset>) classLoader.loadClass(skillsetName));
+//		}
+//	}
 
-		String skillsetNameString = ConfigLoader.getSetting("charClassSkillsetList");
-		ArrayList<String> skillsetNameArray = new ArrayList<>();
-		Collections.addAll(skillsetNameArray, skillsetNameString.split(";"));
-
-		skillsetClassList = new ArrayList<>();
-		for (String skillsetName : skillsetNameArray) {
-			MyLogger.log(Level.INFO, String.format("CharacterClass: skillset '%s'.", skillsetName));
-			skillsetClassList.add((Class<Skillset>) classLoader.loadClass(skillsetName));
-		}
+	@SuppressWarnings("unused")
+	private CharacterClass() {
 	}
 
-	public CharacterClass() {
+	// Placeholder to stop unnecessarily using up an ID/
+	public CharacterClass(Boolean bool) {
+		id = IDSequenceGenerator.getNextID("CharacterClass");
 		className = "Novice";
 	}
 
@@ -80,19 +71,53 @@ public class CharacterClass {
 		return id;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
 	public String getClassName() {
 		return className;
 	}
 
-	public void setClassName(String name) {
-		this.className = name;
+//	public void setClassName(String name) {
+//		this.className = name;
+//	}
+
+//	protected void addSkillset(Skillset skillset) {
+//		skillsetList.add(skillset);
+//	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 7;
+		result = (prime * result) + getId();
+		return result;
 	}
 
-	protected void addSkillset(Skillset skillset) {
-		skillsetList.add(skillset);
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * 
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GameMap other = (GameMap) obj;
+		if (this.getId() == other.getId()) {
+			return true;
+		}
+		return false;
 	}
 }

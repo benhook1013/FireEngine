@@ -2,13 +2,13 @@ package fireengine.character.condition;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import fireengine.character.condition.exception.ManaExceptionZeroMana;
+import fireengine.gameworld.map.room.Room;
+import fireengine.util.IDSequenceGenerator;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -31,7 +31,6 @@ import fireengine.character.condition.exception.ManaExceptionZeroMana;
 @Table(name = "CHAR_MANA")
 public class Mana {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
@@ -46,18 +45,13 @@ public class Mana {
 
 	public Mana(int mana) {
 		synchronized (this) {
+			id = IDSequenceGenerator.getNextID("Mana");
 			this.mana = mana;
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private int getId() {
 		return id;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(int id) {
-		this.id = id;
 	}
 
 	public int getMana(int maxMana) {
@@ -131,5 +125,42 @@ public class Mana {
 
 			removeMana(maxMana, removeMana);
 		}
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * 
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 7;
+		result = (prime * result) + getId();
+		return result;
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Mana other = (Mana) obj;
+		if (getId() != other.getId())
+			return true;
+		return false;
 	}
 }

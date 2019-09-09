@@ -3,8 +3,6 @@ package fireengine.character.condition;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -13,6 +11,9 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+
+import fireengine.gameworld.map.room.Room;
+import fireengine.util.IDSequenceGenerator;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -31,12 +32,11 @@ import org.hibernate.annotations.CascadeType;
  *    limitations under the License.
  */
 
-// TODO Do not need seperate condition class for PC vs NPC
+// TODO Do not need separate condition class for PC vs NPC
 @Entity
 @Table(name = "CONDITION_PLAYER")
 public class ConditionPlayer extends Condition {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "ID", nullable = false)
 	@NotNull
 	private int id;
@@ -59,25 +59,19 @@ public class ConditionPlayer extends Condition {
 	@NotNull
 	private Mana mana;
 
+	@SuppressWarnings("unused")
 	private ConditionPlayer() {
-		super();
 	}
 
-	public ConditionPlayer(int level) {
-		this();
-		setLevel(new Level(level));
+	public ConditionPlayer(Boolean bool) {
+		id = IDSequenceGenerator.getNextID("ConditionPlayer");
+		setLevel(new Level(1));
 		setHealth(new Health(this.level.getMaxStat()));
 		setMana(new Mana(this.level.getMaxStat()));
 	}
 
-	@SuppressWarnings("unused")
 	private int getId() {
 		return id;
-	}
-
-	@SuppressWarnings("unused")
-	private void setId(int id) {
-		this.id = id;
 	}
 
 	private void setLevel(Level level) {
@@ -141,5 +135,42 @@ public class ConditionPlayer extends Condition {
 	@Override
 	public int getCurrentMana() {
 		return mana.getMana(getLevel().getMaxStat());
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * 
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 7;
+		result = (prime * result) + getId();
+		return result;
+	}
+
+	/**
+	 * Custom implementation requires for proper JPA/Hibernate function.
+	 * <p>
+	 * See relevant information or both hashCode and equals in
+	 * {@link Room#hashCode()}
+	 * </p>
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ConditionPlayer other = (ConditionPlayer) obj;
+		if (getId() != other.getId())
+			return true;
+		return false;
 	}
 }

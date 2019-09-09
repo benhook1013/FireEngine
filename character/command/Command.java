@@ -1,5 +1,9 @@
 package fireengine.character.command;
 
+import java.util.regex.Pattern;
+
+import fireengine.character.command.exception.CommandExceptionNoPattern;
+
 /*
  *    Copyright 2019 Ben Hook
  *    Command.java
@@ -17,7 +21,34 @@ package fireengine.character.command;
  *    limitations under the License.
  */
 
+/**
+ * Basic object representing a command chosen.
+ * 
+ * <p>
+ * Subclass must override getPattern() to return subclass specific Pattern. If
+ * not, will cause runtime Exception to let known that it needs to be overrided
+ * (Java workaround).
+ * </p>
+ * 
+ * @author Ben Hook
+ */
 public abstract class Command {
 	protected Command() {
+	}
+
+	/**
+	 * Returns the pattern to match to select this Command. Must be overrided in
+	 * Subclass else will get throw Exception when being called during runtime.
+	 * 
+	 * @return pattern to match to select this Command
+	 * @throws CommandExceptionNoPattern throws error if is not overrided in
+	 *                                   subclass
+	 */
+	public Pattern getPattern() throws CommandExceptionNoPattern {
+		throw new CommandExceptionNoPattern("Command: Subclass has not overwritten pattern.");
+	}
+
+	protected static Pattern compilePattern(String text) {
+		return Pattern.compile(text, Pattern.CASE_INSENSITIVE);
 	}
 }

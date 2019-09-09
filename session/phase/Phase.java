@@ -27,8 +27,8 @@ import mud_game.session.phase.PhaseLogin;
  *
  * @author Ben Hook
  */
+// TODO Change to Abstract Class
 public interface Phase {
-
 	/**
 	 * Set the {@link Session} and {@link PhaseManager} for the Phase.
 	 *

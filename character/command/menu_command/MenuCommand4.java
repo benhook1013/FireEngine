@@ -1,5 +1,7 @@
 package fireengine.character.command.menu_command;
 
+import java.util.regex.Pattern;
+
 /*
  *    Copyright 2019 Ben Hook
  *    MenuCommand4.java
@@ -18,7 +20,13 @@ package fireengine.character.command.menu_command;
  */
 
 public class MenuCommand4 extends MenuCommand {
+	private static Pattern pattern = compilePattern("4");
+
 	public MenuCommand4() {
 		super();
+	}
+
+	public Pattern getPattern() {
+		return pattern;
 	}
 }

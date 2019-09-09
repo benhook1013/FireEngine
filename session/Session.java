@@ -26,6 +26,7 @@ import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnection;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.client_io.ClientIOColour;
+import fireengine.client_io.ClientIOColour.COLOURS;
 import fireengine.client_io.exception.ClientConnectionException;
 import fireengine.main.FireEngineMain;
 import fireengine.session.phase.PhaseManager;
@@ -67,7 +68,7 @@ public class Session {
 			// thread.
 			sessionFuture = FireEngineMain.sessionExecutor.submit(new Callable<Integer>() {
 				@Override
-				public Integer call() throws Exception {
+				public Integer call() {
 					try {
 						ccon.setupConnection(sess);
 					} catch (ClientConnectionException e) {
@@ -82,15 +83,15 @@ public class Session {
 					closing = false;
 					closed = false;
 					phaseManager = new PhaseManager();
-					phaseManager.setSession(sess, null);
+					phaseManager.setSession(sess);
 					try {
 						phaseManager.setWelcomePhase();
-					} catch (InstantiationException | IllegalAccessException e) {
+					} catch (Exception e) {
 						MyLogger.log(Level.SEVERE,
 								"Session: Error thrown while trying to phaseManager.setWelcomePhase().", e);
 						send(new ClientConnectionOutput(
 								"Error trying to take you to the welcome screen, you may want to notify a God out of game.",
-								null, null));
+								COLOURS.RED, null));
 						end();
 					}
 					ccon.acceptInput();
@@ -165,7 +166,7 @@ public class Session {
 		phaseManager.disconnect();
 		try {
 			phaseManager.setWelcomePhase();
-		} catch (InstantiationException | IllegalAccessException e) {
+		} catch (Exception e) {
 			MyLogger.log(Level.SEVERE,
 					"Session: Error thrown while trying to phaseManager.setWelcomePhase() in disconnect().", e);
 			send(new ClientConnectionOutput("Error occured: This has been logged and will be reviewed by a developer.",

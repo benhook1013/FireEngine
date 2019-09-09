@@ -23,6 +23,11 @@ package fireengine.util;
  * @author Ben Hook
  */
 public abstract class StringUtils {
+	// TODO clean, trim etc
+	public static String cleanInput(String text) {
+		return text;
+	}
+
 	/**
 	 * Ensures first character is upper case and rest of String is lower case.
 	 *
@@ -41,7 +46,7 @@ public abstract class StringUtils {
 	 * @param string String to format
 	 * @return formatted String
 	 */
-	public static String sentance(String string) {
+	public static String sentence(String string) {
 		string = string.substring(0, 1).toUpperCase() + string.substring(1);
 		String periodTest = string.substring(string.length() - 1, string.length());
 		if (!periodTest.equals(".")) {

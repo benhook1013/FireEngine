@@ -72,7 +72,7 @@ public class GameWorld {
 		if (mainMap.getSpawnRoom() == null) {
 			MyLogger.log(Level.SEVERE, String
 					.format("GameWorld: Spawn room not found for GameMap %s, creating spawn room.", mainMap.getName()));
-			Room spawnRoom = mainMap.createRoom(new Coordinate(0, 0, 0));
+			Room spawnRoom = mainMap.createRoom(new Coordinate(mainMap, 0, 0, 0));
 			spawnRoom.setName("The Lounge");
 			spawnRoom.setDescription(
 					"Around the location you see a comfortable setee, a cosy fire, and a darkwood bar 'manned' by a robotic server.");
@@ -83,6 +83,7 @@ public class GameWorld {
 		if (Player.findCharacter("Admin") == null) {
 			Player.createCharacter("Admin", "adminpass");
 			Player.findCharacter("Admin").getSettings().setMapEditor(true);
+			Player.findCharacter("Admin").getSettings().setAdmin(true);
 			Player.saveCharacter(Player.findCharacter("Admin"));
 		}
 	}

@@ -27,7 +27,7 @@ import mud_game.session.phase.PhaseWelcome;
  *
  * @author Ben Hook
  */
-public class PhaseManager implements Phase {
+public class PhaseManager {
 	Session sess;
 	private Phase phase;
 
@@ -38,11 +38,9 @@ public class PhaseManager implements Phase {
 	}
 
 	/**
-	 * @see fireengine.session.phase.Phase#setSession(fireengine.session.Session,
-	 *      fireengine.session.phase.PhaseManager)
+	 * 
 	 */
-	@Override
-	public void setSession(Session session, PhaseManager phaseManager) {
+	public void setSession(Session session) {
 		sess = session;
 	}
 
@@ -54,6 +52,9 @@ public class PhaseManager implements Phase {
 
 	/**
 	 * Assigns a phase to the {@link PhaseManager}.
+	 * 
+	 * TODO Review this with a better idea, as its messy that the call stack has the
+	 * old phase as caller after new phase set on PhaseManager.
 	 *
 	 * @param phase phase to set current
 	 */
@@ -67,17 +68,19 @@ public class PhaseManager implements Phase {
 	/**
 	 *
 	 *
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @throws Exception
 	 */
-	public void setWelcomePhase() throws InstantiationException, IllegalAccessException {
+	public void setWelcomePhase() throws Exception {
 		Phase welcomePhaseInstance;
 
-		welcomePhaseInstance = welcomePhaseClass.newInstance();
+		try {
+			welcomePhaseInstance = welcomePhaseClass.getConstructor().newInstance();
+		} catch (Exception e) {
+			throw e;
+		}
 		setPhase(welcomePhaseInstance);
 	}
 
-	@Override
 	public void acceptInput(String input) {
 		phase.acceptInput(input);
 	}
@@ -85,7 +88,6 @@ public class PhaseManager implements Phase {
 	/**
 	 * Used to disconnect and return to {@link PhaseWelcome}.
 	 */
-	@Override
 	public void disconnect() {
 		phase.disconnect();
 		phase = null;
@@ -94,7 +96,6 @@ public class PhaseManager implements Phase {
 	/**
 	 * Closes current {@link Phase} and closes PhaseManager.
 	 */
-	@Override
 	public void close() {
 		phase.close();
 		phase = null;

@@ -1,11 +1,13 @@
 package fireengine.character;
 
+import java.util.Set;
+
 import fireengine.character.character_class.CharacterClass;
-import fireengine.character.command.CommandAction;
 import fireengine.character.condition.Condition;
 import fireengine.character.condition.ConditionPlayer;
+import fireengine.character.exception.CharacterExceptionNullRoom;
 import fireengine.character.player.Player;
-import fireengine.character.player.exception.PlayerExceptionNullRoom;
+import fireengine.character.skillset.Skillset;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.GameMap;
 import fireengine.gameworld.map.room.Room;
@@ -36,8 +38,6 @@ public abstract class Character {
 
 	public abstract int getId();
 
-	protected abstract void setId(int id);
-
 	public abstract String getName();
 
 	public abstract void setName(String name);
@@ -46,17 +46,21 @@ public abstract class Character {
 
 	public abstract void setCharClass(CharacterClass charClass);
 
+	public abstract Set<Skillset> getSkillsetList();
+
+	public abstract void refreshSkillsetList();
+
 	public abstract Condition getCondition();
 
 	public abstract void setCondition(ConditionPlayer condition);
 
 	public abstract Room getRoom();
 
-	public abstract void setRoom(Room room) throws PlayerExceptionNullRoom;
+	public abstract void setRoom(Room room) throws CharacterExceptionNullRoom;
 
 	public abstract void acceptInput(String text);
 
-	public abstract void acceptInput(CommandAction command);
+	public abstract void sendInputOutput(ClientConnectionOutput output);
 
 	public abstract void sendToListeners(ClientConnectionOutput output);
 
@@ -82,19 +86,22 @@ public abstract class Character {
 		}
 	}
 
-	public static boolean checkMapEditorPrivs(Character character) {
-		if (character instanceof Player) {
-			if (!((Player) character).getSettings().isMapEditor()) {
-				character.sendToListeners(
-						new ClientConnectionOutput("You don't have GameMap Editor privileges!", null, null));
-				return false;
-			} else {
-				return true;
-			}
-		} else {
+	public static boolean checkMapEditorPrivs(Player character) {
+		if (!((Player) character).getSettings().isMapEditor()) {
 			character.sendToListeners(
-					new ClientConnectionOutput("Only player characters can create exits, duh!", null, null));
+					new ClientConnectionOutput("You don't have GameMap Editor privileges!", null, null));
 			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public static boolean checkAdminPrivs(Player character) {
+		if (!((Player) character).getSettings().isAdmin()) {
+			character.sendToListeners(new ClientConnectionOutput("You don't have Admin privileges!", null, null));
+			return false;
+		} else {
+			return true;
 		}
 	}
 }

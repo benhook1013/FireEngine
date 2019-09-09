@@ -246,7 +246,7 @@ public class MyLogger {
 //			at fireengine.gameworld.map.GameMap.getRoom(GameMap.java:119)
 //			at fireengine.gameworld.map.GameMap.createRoom(GameMap.java:181)
 //			at fireengine.gameworld.map.GameMap.createRoom(GameMap.java:233)
-//			at fireengine.character.command.character_comand.map_editor.CreateRoom.doAction(CreateRoom.java:51)
+//			at fireengine.character.command.action.map_editor.CreateRoom.doAction(CreateRoom.java:51)
 //			at fireengine.character.player.Player.acceptInput(Player.java:227)
 //			at fireengine.character.player.Player.acceptInput(Player.java:214)
 //			at mud_game.session.phase.PhaseInWorld.acceptInput(PhaseInWorld.java:54)

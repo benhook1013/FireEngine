@@ -1,5 +1,7 @@
 package fireengine.character.command.menu_command;
 
+import java.util.regex.Pattern;
+
 /*
  *    Copyright 2019 Ben Hook
  *    MenuCommandBack.java
@@ -18,7 +20,13 @@ package fireengine.character.command.menu_command;
  */
 
 public class MenuCommandBack extends MenuCommand {
+	private static Pattern pattern = compilePattern("(?:0|BACK)");
+
 	public MenuCommandBack() {
 		super();
+	}
+
+	public Pattern getPattern() {
+		return pattern;
 	}
 }
