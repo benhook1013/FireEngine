@@ -1,9 +1,9 @@
 package fireengine.gameworld.map;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +31,8 @@ import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
 import fireengine.util.IDSequenceGenerator;
 import fireengine.util.MyLogger;
+
+import java.util.stream.Collectors;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -157,6 +159,18 @@ public class GameMap {
 		return rooms.size();
 	}
 
+	public Coordinate getCoord(Room room) {
+		List<Coordinate> foundList = rooms.entrySet().stream().filter(entry -> room.equals(entry.getValue()))
+				.map(Map.Entry::getKey).collect(Collectors.toList());
+		if (foundList.size() > 1) {
+			MyLogger.log(Level.WARNING, "GameMap: getCoord(Room) returned more than one matching Coordiante.");
+		}
+		if (foundList.size() < 1) {
+			return null;
+		}
+		return foundList.get(0);
+	}
+
 	/**
 	 * Attempts to create a {@link Room} at the specified coordinates.
 	 *
@@ -175,7 +189,7 @@ public class GameMap {
 
 		Room newRoom = null;
 		try {
-			newRoom = Room.createRoom(this, coord);
+			newRoom = Room.createRoom(this);
 		} catch (MapExceptionRoomNull e) {
 			MyLogger.log(Level.SEVERE,
 					String.format(

@@ -74,12 +74,6 @@ public class Room {
 	@NotNull
 	private GameMap map;
 
-	@OneToOne(fetch = FetchType.EAGER)
-	@Cascade(CascadeType.ALL)
-	@JoinColumn(name = "COORD", nullable = false)
-	@NotNull
-	private Coordinate coord;
-
 	@Column(name = "NAME")
 	@NotNull
 	private String name;
@@ -148,11 +142,10 @@ public class Room {
 		playerList = new ArrayList<>();
 	}
 
-	public Room(GameMap map, Coordinate coord) {
+	public Room(GameMap map) {
 		this();
 		id = IDSequenceGenerator.getNextID("Room");
 		this.map = map;
-		this.coord = coord;
 	}
 
 	public int getId() {
@@ -172,15 +165,7 @@ public class Room {
 	 * @return the Room's Coordinate
 	 */
 	public Coordinate getCoord() {
-		return coord;
-	}
-
-	/**
-	 * @param coord the Coordinate to set
-	 */
-	@SuppressWarnings("unused")
-	private void setCoord(Coordinate coord) {
-		this.coord = coord;
+		return map.getCoord(this);
 	}
 
 	public String getName() {
@@ -519,9 +504,8 @@ public class Room {
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static Room createRoom(GameMap map, Coordinate coord)
-			throws MapExceptionRoomNull, CheckedHibernateException {
-		Room newRoom = new Room(map, coord);
+	public static Room createRoom(GameMap map) throws MapExceptionRoomNull, CheckedHibernateException {
+		Room newRoom = new Room(map);
 		return newRoom;
 	}
 
