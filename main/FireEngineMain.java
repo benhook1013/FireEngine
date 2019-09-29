@@ -115,7 +115,7 @@ public class FireEngineMain {
 
 		MyLogger.log(Level.INFO, "FireEngineMain: Bootstrapping FireEngine!");
 
-		serverName = ConfigLoader.getSetting("serverName"); // TODO This is not used for anything yet.
+		serverName = ConfigLoader.getSetting("serverName");
 		telnetAddress = ConfigLoader.getSetting("serverIP");
 		telnetPort = Integer.parseInt(ConfigLoader.getSetting("telnetPort"));
 
@@ -239,6 +239,9 @@ public class FireEngineMain {
 					e);
 			sessionExecutor.shutdownNow();
 		}
+		
+		Player.saveAllCharacters();
+		
 		if (hibSessFactory != null) {
 			hibSessFactory.close();
 		}

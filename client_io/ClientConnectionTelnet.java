@@ -96,9 +96,9 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 */
 	@Override
 	public void writeToConnection(ClientConnectionOutput output, boolean ansi) {
-		synchronized (sendList) {
+		synchronized (this) {
 			while ((!(sendList.size() >= SEND_LIMIT)) && output.hasNextLine()) {
-				String string = parseOutput(output, ansi);
+				String string = ClientConnectionTelnet.parseOutput(output, ansi);
 				sendList.add(ByteBuffer.wrap(string.getBytes()));
 				output.nextLine();
 			}
@@ -114,7 +114,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 * @param ansi   whether to format output with colour or not
 	 * @return Telnet colour formatted string
 	 */
-	private String parseOutput(ClientConnectionOutput output, boolean ansi) {
+	private static String parseOutput(ClientConnectionOutput output, boolean ansi) {
 		String string = "";
 
 		while (output.hasNextPart()) {
@@ -123,10 +123,10 @@ public class ClientConnectionTelnet implements ClientConnection {
 
 			if (ansi) {
 				if (colourFG != null) {
-					string = string + parseOutputColour(colourFG, true);
+					string = string + ClientConnectionTelnet.parseOutputColour(colourFG, true);
 				}
 				if (colourBG != null) {
-					string = string + parseOutputColour(colourBG, false);
+					string = string + ClientConnectionTelnet.parseOutputColour(colourBG, false);
 				}
 			}
 			string = string + output.getText();
@@ -139,7 +139,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 
 			output.nextPart();
 		}
-		MyLogger.log(Level.INFO, "parseOutput output: '" + string + "'");
+		MyLogger.log(Level.FINE, "parseOutput output: '" + string + "'");
 		string = string + EOL;
 		return string;
 	}
@@ -153,7 +153,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 * @param isFG   Where to get code for FG or BG colouring
 	 * @return Telnet colour code
 	 */
-	private String parseOutputColour(ClientIOColour.COLOURS colour, boolean isFG) {
+	private static String parseOutputColour(ClientIOColour.COLOURS colour, boolean isFG) {
 		String code = null;
 
 		switch (colour) {
@@ -312,7 +312,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 * @return a {@link ByteBuffer} of the next line of output to send
 	 */
 	public ByteBuffer writeFromConnection() {
-		synchronized (sendList) {
+		synchronized (this) {
 			if (!sendList.isEmpty()) {
 				return sendList.get(0);
 			} else {
@@ -342,7 +342,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 * </p>
 	 */
 	public void finishedWrite() {
-		synchronized (sendList) {
+		synchronized (this) {
 			sendList.remove(0);
 
 			if (shutdown) {
@@ -359,7 +359,9 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 */
 	@Override
 	public void acceptInput() {
-		acceptInput = true;
+		synchronized (this) {
+			acceptInput = true;
+		}
 	}
 
 	/**
@@ -367,7 +369,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 */
 	@Override
 	public void refuseInput() {
-		synchronized (recieveList) {
+		synchronized (this) {
 			acceptInput = false;
 			recieveList.clear();
 		}
@@ -381,23 +383,23 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 * @param string String of input from client
 	 */
 	public void readToConnection(String string) {
-		if (string.length() > FireEngineMain.CLIENT_IO_INPUT_MAX_LENGTH) {
-			MyLogger.log(Level.WARNING,
-					"ClientConnectionTelnet: Input recieved exceeded maximum input length; input dropped.");
+		synchronized (this) {
+			if (string.length() > FireEngineMain.CLIENT_IO_INPUT_MAX_LENGTH) {
+				MyLogger.log(Level.WARNING,
+						"ClientConnectionTelnet: Input recieved exceeded maximum input length; input dropped.");
+				return;
+			}
 
-			return;
-		}
-
-		synchronized (recieveList) {
 			if (!acceptInput) {
 				return;
 			}
-			MyLogger.log(Level.INFO, "readToConnection: '" + string + "'");
+			MyLogger.log(Level.FINE, "readToConnection: '" + string + "'");
 			if (!(recieveList.size() >= RECIEVE_LIMIT)) {
 				recieveList.add(string);
 			}
+
+			sess.notifyInput();
 		}
-		sess.notifyInput();
 	}
 
 	/**
@@ -407,20 +409,21 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 * @param c char to be read in to ClientConnectionTelnet
 	 */
 	public void readToConnectionPart(char c) {
-		if ((c == '\r') | (c == '\n')) {
+		synchronized (this) {
+			if ((c == '\r') | (c == '\n')) {
 
-			if (sb.length() > 0) {
-				readToConnection(sb.toString());
-				sb = new StringBuilder();
+				if (sb.length() > 0) {
+					readToConnection(sb.toString());
+					sb = new StringBuilder();
+				}
+			} else if (c == '\b') {
+				if (sb.length() > 0) {
+					sb.replace(sb.length() - 1, sb.length(), "");
+				}
+			} else {
+				sb.append(c);
 			}
-		} else if (c == '\b') {
-			if (sb.length() > 0) {
-				sb.replace(sb.length() - 1, sb.length(), "");
-			}
-		} else {
-			sb.append(c);
 		}
-
 	}
 
 	/**
@@ -429,7 +432,7 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 */
 	@Override
 	public String readFromConnection() {
-		synchronized (recieveList) {
+		synchronized (this) {
 			if (!recieveList.isEmpty()) {
 				return recieveList.remove(0);
 			} else {
@@ -444,7 +447,9 @@ public class ClientConnectionTelnet implements ClientConnection {
 	 */
 	@Override
 	public void shutdown() {
-		shutdown = true;
+		synchronized (this) {
+			shutdown = true;
+		}
 	}
 
 	// TODO Believe this should notify or close the attached Session as to not leave

@@ -82,7 +82,7 @@ public class RoomExit {
 		if (getClass() != obj.getClass())
 			return false;
 		RoomExit other = (RoomExit) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

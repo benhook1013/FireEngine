@@ -1,6 +1,7 @@
 package fireengine.client_io;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 /*
@@ -57,7 +58,7 @@ public class ClientConnectionOutput {
 	 */
 	public ClientConnectionOutput(String text) {
 		this(1);
-		addPart(text, null, null);
+		addPart(text);
 	}
 
 	/**
@@ -86,11 +87,23 @@ public class ClientConnectionOutput {
 	}
 
 	/**
-	 * Adds a new line to the output. Can be used to add black lines for
+	 * Adds a new line to the output. Can be used to add blank lines for
 	 * presentation reasons.
 	 */
 	public void newLine() {
-		lineList.add(new Client_Connection_Output_Line());
+		synchronized (this) {
+			lineList.add(new Client_Connection_Output_Line());
+		}
+	}
+
+	public void newLine(Boolean addToStart) {
+		synchronized (this) {
+			if (addToStart == true) {
+				lineList.add(0, new Client_Connection_Output_Line());
+			} else {
+				lineList.add(new Client_Connection_Output_Line());
+			}
+		}
 	}
 
 	/**
@@ -99,7 +112,15 @@ public class ClientConnectionOutput {
 	 * @param text text to add to client output
 	 */
 	public void addPart(String text) {
-		addPart(text, null, null);
+		synchronized (this) {
+			addPart(text, null, null);
+		}
+	}
+
+	public void addPart(String text, Boolean addToStart) {
+		synchronized (this) {
+			addPart(text, null, null, true);
+		}
 	}
 
 	/**
@@ -111,24 +132,86 @@ public class ClientConnectionOutput {
 	 * @param colourBG background colour of added text
 	 */
 	public void addPart(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG) {
-		if (lineList.size() == 0) {
-			newLine();
-		}
-		lineList.get(lineList.size() - 1).addPart(text, colourFG, colourBG);
+		addPart(text, colourFG, colourBG, false);
 	}
 
-	public void addOutput(ClientConnectionOutput copyOutput) {
-		Iterator<Client_Connection_Output_Line> iter = copyOutput.lineList.iterator();
-		while (iter.hasNext()) {
-			Client_Connection_Output_Line line = iter.next();
-			for (fireengine.client_io.ClientConnectionOutput.Client_Connection_Output_Line.Client_Connection_Output_Part part : line
-					.getParts()) {
-				this.addPart(part.getText(), part.getColourFG(), part.getColourBG());
+	public void addPart(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG,
+			Boolean addToStart) {
+		synchronized (this) {
+			if (lineList.size() == 0) {
+				newLine();
 			}
-			if (iter.hasNext()) {
-				this.newLine();
+
+			int addPosition;
+			if (addToStart == true) {
+				addPosition = 0;
+				lineList.get(addPosition).addPart(text, colourFG, colourBG, true);
+			} else {
+				addPosition = lineList.size() - 1;
+				lineList.get(addPosition).addPart(text, colourFG, colourBG, false);
 			}
 		}
+	}
+
+	/**
+	 * Adds output to the end of host output. Calls
+	 * {@link ClientConnectionOutput#addOutput(ClientConnectionOutput, Boolean)}
+	 * with addToStart as false.
+	 * 
+	 * @param copyOutput
+	 */
+	public void addOutput(ClientConnectionOutput copyOutput) {
+		synchronized (this) {
+			addOutput(copyOutput, false);
+		}
+	}
+
+	/**
+	 * Does a deep copy to avoid passed output being changed, and changing the
+	 * copied output after the fact.
+	 * <p>
+	 * Can add the passed output to the start of host output.
+	 * </p>
+	 * <p>
+	 * Will add passed output to end of current last host output line if not adding
+	 * to start. Add blank line to end of passed output if you want output on a new
+	 * line.
+	 * </p>
+	 * 
+	 * @param copyOutput
+	 * @param addToStart
+	 */
+	public void addOutput(ClientConnectionOutput copyOutput, Boolean addToStart) {
+		synchronized (this) {
+			if (addToStart == true) {
+				Collections.reverse(copyOutput.lineList);
+				Iterator<Client_Connection_Output_Line> iter = copyOutput.lineList.iterator();
+				while (iter.hasNext()) {
+					Client_Connection_Output_Line line = iter.next();
+					Collections.reverse(line.partList);
+					for (fireengine.client_io.ClientConnectionOutput.Client_Connection_Output_Line.Client_Connection_Output_Part part : line
+							.getParts()) {
+						this.addPart(part.getText(), part.getColourFG(), part.getColourBG(), true);
+					}
+					if (iter.hasNext()) {
+						this.newLine(true);
+					}
+				}
+			} else {
+				Iterator<Client_Connection_Output_Line> iter = copyOutput.lineList.iterator();
+				while (iter.hasNext()) {
+					Client_Connection_Output_Line line = iter.next();
+					for (fireengine.client_io.ClientConnectionOutput.Client_Connection_Output_Line.Client_Connection_Output_Part part : line
+							.getParts()) {
+						this.addPart(part.getText(), part.getColourFG(), part.getColourBG());
+					}
+					if (iter.hasNext()) {
+						this.newLine();
+					}
+				}
+			}
+		}
+
 	}
 
 	/**
@@ -138,10 +221,12 @@ public class ClientConnectionOutput {
 	 * @return Boolean indicating if more lines in client output to send, or not
 	 */
 	public boolean hasNextLine() {
-		if (!lineList.isEmpty()) {
-			return true;
-		} else {
-			return false;
+		synchronized (this) {
+			if (!lineList.isEmpty()) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 	}
 
@@ -152,14 +237,16 @@ public class ClientConnectionOutput {
 	 * @return Boolean indicating if more parts to send on current line, or not
 	 */
 	public boolean hasNextPart() {
-		if (hasNextLine()) {
-			if (lineList.get(0).hasNextPart()) {
-				return true;
+		synchronized (this) {
+			if (hasNextLine()) {
+				if (lineList.get(0).hasNextPart()) {
+					return true;
+				} else {
+					return false;
+				}
 			} else {
 				return false;
 			}
-		} else {
-			return false;
 		}
 	}
 
@@ -169,7 +256,9 @@ public class ClientConnectionOutput {
 	 * @return String of text for current part of current line
 	 */
 	public String getText() {
-		return lineList.get(0).getText();
+		synchronized (this) {
+			return lineList.get(0).getText();
+		}
 	}
 
 	/**
@@ -179,7 +268,9 @@ public class ClientConnectionOutput {
 	 * @return colour of foreground of current part of current line
 	 */
 	public ClientIOColour.COLOURS getColourFG() {
-		return lineList.get(0).getColourFG();
+		synchronized (this) {
+			return lineList.get(0).getColourFG();
+		}
 	}
 
 	/**
@@ -189,15 +280,19 @@ public class ClientConnectionOutput {
 	 * @return colour of background of current part of current line
 	 */
 	public ClientIOColour.COLOURS getColourBG() {
-		return lineList.get(0).getColourBG();
+		synchronized (this) {
+			return lineList.get(0).getColourBG();
+		}
 	}
 
 	/**
 	 * Used by the sending client IO to move on to next part of the line.
 	 */
 	public void nextPart() {
-		if (hasNextLine()) {
-			lineList.get(0).nextPart();
+		synchronized (this) {
+			if (hasNextLine()) {
+				lineList.get(0).nextPart();
+			}
 		}
 	}
 
@@ -205,8 +300,10 @@ public class ClientConnectionOutput {
 	 * Used by the sending client IO to move on to next line of the output object.
 	 */
 	public void nextLine() {
-		if (hasNextLine()) {
-			lineList.remove(0);
+		synchronized (this) {
+			if (hasNextLine()) {
+				lineList.remove(0);
+			}
 		}
 	}
 
@@ -222,8 +319,13 @@ public class ClientConnectionOutput {
 			partList = new ArrayList<>();
 		}
 
-		public void addPart(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG) {
-			partList.add(new Client_Connection_Output_Part(text, colourFG, colourBG));
+		public void addPart(String text, ClientIOColour.COLOURS colourFG, ClientIOColour.COLOURS colourBG,
+				Boolean addToStart) {
+			if (addToStart == true) {
+				partList.add(0, new Client_Connection_Output_Part(text, colourFG, colourBG));
+			} else {
+				partList.add(new Client_Connection_Output_Part(text, colourFG, colourBG));
+			}
 		}
 
 		public boolean hasNextPart() {

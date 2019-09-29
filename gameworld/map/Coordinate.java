@@ -1,16 +1,23 @@
 package fireengine.gameworld.map;
 
+import java.util.logging.Level;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Transaction;
+
+import fireengine.gameworld.map.exception.MapExceptionCoordinateNull;
+import fireengine.gameworld.map.exception.MapExceptionRoomNull;
 import fireengine.gameworld.map.room.Room;
+import fireengine.main.FireEngineMain;
+import fireengine.util.CheckedHibernateException;
 import fireengine.util.IDSequenceGenerator;
+import fireengine.util.MyLogger;
 
 @Entity
 @Table(name = "COORDINATE")
@@ -24,10 +31,10 @@ public class Coordinate {
 	 * Used for making the equals function unique, as multiple maps can have the
 	 * same z,y,z coordinate filled.
 	 */
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "MAP", nullable = false)
-	@NotNull
-	private GameMap map;
+//	@ManyToOne(fetch = FetchType.EAGER)
+//	@JoinColumn(name = "MAP", nullable = false)
+//	@NotNull
+//	private GameMap map;
 
 	@Column(name = "X", nullable = false)
 	@NotNull
@@ -41,25 +48,34 @@ public class Coordinate {
 	@NotNull
 	private int z;
 
-	@SuppressWarnings("unused")
 	private Coordinate() {
 	}
 
-	public Coordinate(GameMap map, int x, int y, int z) {
+	private Coordinate(GameMap map, int x, int y, int z) {
+		this();
 		id = IDSequenceGenerator.getNextID("Coordinate");
-		this.map = map;
+//		this.map = map;
 		this.x = x;
 		this.y = y;
 		this.z = z;
+//		try {
+//			saveCoord(this);
+//		} catch (MapExceptionRoomNull e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (CheckedHibernateException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 
 	public int getId() {
 		return id;
 	}
 
-	public GameMap getMap() {
-		return map;
-	}
+//	public GameMap getMap() {
+//		return map;
+//	}
 
 	/**
 	 * @return the x position
@@ -135,7 +151,7 @@ public class Coordinate {
 		if (getClass() != obj.getClass())
 			return false;
 		Coordinate other = (Coordinate) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}
@@ -143,5 +159,89 @@ public class Coordinate {
 	@Override
 	public String toString() {
 		return String.format("(%s, %s, %s)", x, y, z);
+	}
+
+	public static Coordinate createCoord(GameMap map, int x, int y, int z) throws CheckedHibernateException {
+		Coordinate newCoord = new Coordinate(map, x, y, z);
+		try {
+			saveCoord(newCoord);
+		} catch (MapExceptionCoordinateNull e) {
+			MyLogger.log(Level.SEVERE,
+					"Coordinate: Coordinate null error on save while creating new Coordinate. Should not happen.");
+			return null;
+		}
+		return newCoord;
+	}
+
+	/**
+	 * Saves/persists the {@link Coordinate} into the database. Required as the
+	 * cascade on the GameMaps map only cascades to the rooms Map's value.
+	 *
+	 * @param coord
+	 * @throws MapExceptionRoomNull
+	 * @throws CheckedHibernateException
+	 * @throws MapExceptionCoordinateNull
+	 */
+	public static void saveCoord(Coordinate coord) throws CheckedHibernateException, MapExceptionCoordinateNull {
+		if (coord == null) {
+			throw new MapExceptionCoordinateNull("Coordinate: Tried to saveCoord on a null Coordinate.");
+		}
+
+		org.hibernate.Session hibSess = null;
+		Transaction tx = null;
+
+		try {
+			hibSess = FireEngineMain.hibSessFactory.openSession();
+			tx = hibSess.beginTransaction();
+
+			hibSess.saveOrUpdate(coord);
+
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw new CheckedHibernateException("Room: Hibernate error while trying to saveCoord.", e);
+		} finally {
+			if (hibSess != null) {
+				hibSess.close();
+			}
+		}
+	}
+
+	/**
+	 * Deletes the {@link Coordinate} from the database. Required as the cascade on
+	 * the GameMaps map only cascades to the rooms Map's value.
+	 *
+	 * @param coord
+	 * @throws MapExceptionRoomNull
+	 * @throws CheckedHibernateException
+	 * @throws MapExceptionCoordinateNull
+	 */
+	public static void deleteCoord(Coordinate coord) throws CheckedHibernateException, MapExceptionCoordinateNull {
+		if (coord == null) {
+			throw new MapExceptionCoordinateNull("Coordinate: Tried to deleteCoordf on a null Coordinate.");
+		}
+
+		org.hibernate.Session hibSess = null;
+		Transaction tx = null;
+
+		try {
+			hibSess = FireEngineMain.hibSessFactory.openSession();
+			tx = hibSess.beginTransaction();
+
+			hibSess.delete(coord);
+
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			throw new CheckedHibernateException("Room: Hibernate error while trying to deleteCoord.", e);
+		} finally {
+			if (hibSess != null) {
+				hibSess.close();
+			}
+		}
 	}
 }

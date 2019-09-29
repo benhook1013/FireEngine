@@ -5,7 +5,6 @@ import java.util.Set;
 import fireengine.character.character_class.CharacterClass;
 import fireengine.character.condition.Condition;
 import fireengine.character.condition.ConditionPlayer;
-import fireengine.character.exception.CharacterExceptionNullRoom;
 import fireengine.character.player.Player;
 import fireengine.character.skillset.Skillset;
 import fireengine.client_io.ClientConnectionOutput;
@@ -54,13 +53,24 @@ public abstract class Character {
 
 	public abstract void setCondition(ConditionPlayer condition);
 
+	public abstract Boolean isInWorld();
+
+	/**
+	 * If Character isInWorld, then return the room.
+	 * 
+	 * <p>
+	 * Will return null if Character is not in world.
+	 * </p>
+	 * 
+	 * @return
+	 */
 	public abstract Room getRoom();
 
-	public abstract void setRoom(Room room) throws CharacterExceptionNullRoom;
+	public abstract void setRoom(Room room);
 
 	public abstract void acceptInput(String text);
 
-	public abstract void sendInputOutput(ClientConnectionOutput output);
+	protected abstract void sendOutput(ClientConnectionOutput output);
 
 	public abstract void sendToListeners(ClientConnectionOutput output);
 
@@ -76,11 +86,18 @@ public abstract class Character {
 
 	public abstract int getMaxMana();
 
+	/**
+	 * If Character isInWorld, then return the GameMap.
+	 * 
+	 * <p>
+	 * Will return null if Character is not in world.
+	 * </p>
+	 * 
+	 * @return GameMap that Character is currently in.
+	 */
 	public GameMap getMap() {
-		Room room = getRoom();
-
-		if (room != null) {
-			return room.getMap();
+		if (isInWorld()) {
+			return getRoom().getMap();
 		} else {
 			return null;
 		}

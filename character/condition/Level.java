@@ -258,7 +258,7 @@ public class Level {
 		if (getClass() != obj.getClass())
 			return false;
 		Coordinate other = (Coordinate) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

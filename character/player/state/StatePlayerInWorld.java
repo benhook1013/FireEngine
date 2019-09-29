@@ -4,11 +4,13 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fireengine.character.Character;
 import fireengine.character.command.exception.CommandExceptionNoPattern;
 import fireengine.character.skillset.Skillset;
 import fireengine.character.skillset.Skillset.SkillsetCategory;
 import fireengine.character.skillset.exception.SkillsetExceptionLackExperience;
 import fireengine.client_io.ClientConnectionOutput;
+import fireengine.gameworld.map.room.Room;
 import fireengine.util.MyLogger;
 
 /*
@@ -29,18 +31,37 @@ import fireengine.util.MyLogger;
  */
 
 public class StatePlayerInWorld implements StatePlayer {
-	fireengine.character.Character character;
+	final Character character;
+	Room room;
 
-	public StatePlayerInWorld(fireengine.character.Character character) {
+	public StatePlayerInWorld(Character character, Room room) {
 		this.character = character;
 		this.character.refreshSkillsetList();
+		this.room = room;
+	}
+
+	public Room getRoom() {
+		synchronized (this) {
+			return room;
+		}
+	}
+
+	public void setRoom(Room room) {
+		synchronized (this) {
+			Room oldRoom = this.room;
+			this.room = room;
+
+			oldRoom.removeCharacter(character);
+
+			this.room.addCharacter(character);
+		}
 	}
 
 	@Override
 	public ClientConnectionOutput acceptInput(String text) {
 		ClientConnectionOutput result;
 		for (Skillset skillset : character.getSkillsetList()) {
-			result = checkSkillset(text, skillset);
+			result = matchSkillsetAction(text, skillset);
 			if (result != null) {
 				return result;
 			}
@@ -57,7 +78,7 @@ public class StatePlayerInWorld implements StatePlayer {
 	 * @return
 	 * @throws SkillsetExceptionLackExperience
 	 */
-	private ClientConnectionOutput checkSkillset(String text, Skillset skillset) {
+	private ClientConnectionOutput matchSkillsetAction(String text, Skillset skillset) {
 		Matcher matcher;
 		Pattern pattern;
 		ClientConnectionOutput output;

@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import fireengine.character.Character;
 import fireengine.character.command.action.Action;
-import fireengine.character.exception.CharacterExceptionNullRoom;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.Direction.DIRECTION;
@@ -77,15 +76,7 @@ public class Move extends Action {
 			// Anything blocking movement goes here //
 
 			// Actual moving //
-			try {
-				character.setRoom(toRoom);
-			} catch (CharacterExceptionNullRoom e) {
-				MyLogger.log(Level.WARNING,
-						"Character: CharacterExceptionNullRoom during move AFTER null check happened.");
-				return output;
-			}
-			currentRoom.removeCharacter(character);
-			toRoom.addCharacter(character);
+			character.setRoom(toRoom);
 
 			// Post move output //
 			currentRoom.sendToRoomExcluding(new ClientConnectionOutput(

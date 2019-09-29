@@ -103,7 +103,7 @@ public class PlayerSetting {
 		if (getClass() != obj.getClass())
 			return false;
 		PlayerSetting other = (PlayerSetting) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

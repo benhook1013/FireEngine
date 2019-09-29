@@ -169,7 +169,7 @@ public class ConditionPlayer extends Condition {
 		if (getClass() != obj.getClass())
 			return false;
 		ConditionPlayer other = (ConditionPlayer) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

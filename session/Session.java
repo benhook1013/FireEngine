@@ -26,7 +26,6 @@ import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnection;
 import fireengine.client_io.ClientConnectionOutput;
 import fireengine.client_io.ClientIOColour;
-import fireengine.client_io.ClientIOColour.COLOURS;
 import fireengine.client_io.exception.ClientConnectionException;
 import fireengine.main.FireEngineMain;
 import fireengine.session.phase.PhaseManager;
@@ -39,7 +38,7 @@ import mud_game.session.phase.PhaseWelcome;
  * @author Ben Hook
  */
 public class Session {
-	private static ArrayList<Session> sessionList = new ArrayList<>();
+	private final static ArrayList<Session> sessionList = new ArrayList<>();
 	private Session sess;
 	private ClientConnection ccon;
 	private PhaseManager phaseManager;
@@ -84,16 +83,8 @@ public class Session {
 					closed = false;
 					phaseManager = new PhaseManager();
 					phaseManager.setSession(sess);
-					try {
-						phaseManager.setWelcomePhase();
-					} catch (Exception e) {
-						MyLogger.log(Level.SEVERE,
-								"Session: Error thrown while trying to phaseManager.setWelcomePhase().", e);
-						send(new ClientConnectionOutput(
-								"Error trying to take you to the welcome screen, you may want to notify a God out of game.",
-								COLOURS.RED, null));
-						end();
-					}
+
+					phaseManager.setWelcomePhase();
 					ccon.acceptInput();
 					return 0;
 				}
@@ -121,7 +112,9 @@ public class Session {
 		synchronized (this) {
 			if (sessionFuture != null) {
 				if (!sessionFuture.isDone()) {
-					MyLogger.log(Level.INFO, "notifyInput WAITING");
+					// Indicates that input is received while prior input still being processed
+					// (such as when many commands received in quick succession).
+					MyLogger.log(Level.FINE, "notifyInput WAITING");
 					return;
 				}
 			}
@@ -164,15 +157,6 @@ public class Session {
 	 */
 	public void disconnect() {
 		phaseManager.disconnect();
-		try {
-			phaseManager.setWelcomePhase();
-		} catch (Exception e) {
-			MyLogger.log(Level.SEVERE,
-					"Session: Error thrown while trying to phaseManager.setWelcomePhase() in disconnect().", e);
-			send(new ClientConnectionOutput("Error occured: This has been logged and will be reviewed by a developer.",
-					null, null));
-			end();
-		}
 	}
 
 	/**
@@ -180,7 +164,7 @@ public class Session {
 	 * Will lead to the Session telling the {@link ClientConnection} to respond once
 	 * writing out is finished, allowing the Session to close down.
 	 */
-	private void end() {
+	public void end() {
 		ccon.refuseInput();
 		closing = true;
 		notifyInput();
@@ -222,15 +206,18 @@ public class Session {
 	private void close() {
 		synchronized (this) {
 			phaseManager.close();
+
 			if (ccon != null) {
 				ccon.close();
 				ccon = null;
 			}
+
 			sessionFuture = null;
 			sess = null;
-		}
-		synchronized (sessionList) {
-			sessionList.remove(this);
+
+			synchronized (sessionList) {
+				sessionList.remove(this);
+			}
 		}
 	}
 

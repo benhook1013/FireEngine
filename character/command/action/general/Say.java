@@ -42,7 +42,9 @@ public class Say extends Action {
 	public ClientConnectionOutput doAction(Character character, String sayText) {
 		ClientConnectionOutput output = new ClientConnectionOutput();
 
-		output.addPart(character.getName() + " says, \"" + sayText + "\"", null, null);
+		output.addPart(String.format("You say, \"%s\"", sayText), null, null);
+		character.getRoom().sendToRoomExcluding(
+				new ClientConnectionOutput(String.format("%s says, \"%s\"", character.getName(), sayText)), character);
 
 		return output;
 	}

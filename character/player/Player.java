@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -35,7 +36,7 @@ import fireengine.character.player.state.StatePlayerInWorld;
 import fireengine.character.skillset.General;
 import fireengine.character.skillset.Skillset;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.map.Direction.DIRECTION;
+import fireengine.gameworld.map.Direction;
 import fireengine.gameworld.map.room.Room;
 import fireengine.main.FireEngineMain;
 import fireengine.session.Session;
@@ -89,6 +90,7 @@ public class Player extends Character {
 	@Transient
 	private CharacterClass charClass;
 
+	// TODO This doesnt look right.
 	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "PLAYER_ID")
@@ -96,6 +98,13 @@ public class Player extends Character {
 
 	@Transient
 	private StatePlayer playerState;
+
+	/**
+	 * Last room a player occupied to save for next login.
+	 */
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "LAST_ROOM")
+	private Room lastRoom;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@Cascade(CascadeType.ALL)
@@ -106,17 +115,17 @@ public class Player extends Character {
 	@Transient
 	private Session session;
 
-	// TODO Load room on character load.
 	@Transient
-	private Room room;
+	private final List<Player> listenerList;
 
 	// TODO Periodic check for attached session, if not, protect or remove Player.
 
 	private Player() {
 		charClass = new CharacterClass(true);
+		listenerList = new ArrayList<Player>();
 	}
 
-	public Player(String name, String password) {
+	public Player(String name, String password, Room spawnRoom) {
 		this();
 		id = IDSequenceGenerator.getNextID("Player");
 		settings = new PlayerSetting(true);
@@ -125,6 +134,7 @@ public class Player extends Character {
 		refreshSkillsetList();
 		this.name = name;
 		this.password = password;
+		lastRoom = spawnRoom;
 	}
 
 	@Override
@@ -216,77 +226,152 @@ public class Player extends Character {
 	}
 
 	@Override
-	public Room getRoom() {
-		synchronized (room) {
-			return room;
+	public Boolean isInWorld() {
+		if (playerState instanceof StatePlayerInWorld) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
 	@Override
-	public void setRoom(Room room) throws CharacterExceptionNullRoom {
-		synchronized (room) {
+	public Room getRoom() {
+		synchronized (this) {
+			if (isInWorld()) {
+				return ((StatePlayerInWorld) playerState).getRoom();
+			} else {
+				return null;
+			}
+		}
+	}
+
+	@Override
+	public void setRoom(Room room) {
+		synchronized (this) {
 			if (room == null) {
-				throw new CharacterExceptionNullRoom("Player: Player tried to be sent to null room.");
+				MyLogger.log(Level.SEVERE, "Player: Tried to setRoom with a null room.",
+						new CharacterExceptionNullRoom("Player: Tried to setRoom with a null room."));
+				return;
 			}
 
-			if (this.room != null) {
-				this.room.removeCharacter(this);
-			}
+			lastRoom = room;
 
-			this.room = room;
-			this.room.addCharacter(this);
+			if (isInWorld()) {
+				((StatePlayerInWorld) playerState).setRoom(room);
+			}
 		}
 	}
 
 	@Override
 	public void acceptInput(String text) {
-		text = StringUtils.cleanInput(text);
-		ClientConnectionOutput actionOutput = playerState.acceptInput(text);
-		sendInputOutput(actionOutput);
+		ClientConnectionOutput actionOutput;
+		synchronized (this) {
+			text = StringUtils.cleanInput(text);
+			actionOutput = playerState.acceptInput(text);
+		}
+		sendToListeners(actionOutput);
 	}
 
 	/**
 	 * Debatable this is necessary. Might be required later. Can add in prompt lines
 	 * etc here.
+	 * <p>
+	 * Returns output generated from an input command.
+	 * </p>
 	 */
 	@Override
-	public void sendInputOutput(ClientConnectionOutput output) {
-		sendToListeners(output);
+	protected void sendOutput(ClientConnectionOutput output) {
+		if (session == null) {
+			MyLogger.log(Level.FINE, "Player: Tried to send output to character '" + name + "' but session was null.");
+			return;
+		}
+
+		output.newLine();
+		// TODO String.format this
+		output.addPart(
+				String.format("%d/%dh, %d/%dm - ", getCurrentHealth(), getMaxHealth(), getCurrentMana(), getMaxMana()));
+		output.newLine();
+
+		session.send(output);
 	}
 
 	@Override
 	public void sendToListeners(ClientConnectionOutput output) {
-		if (session != null) {
-			output.newLine();
-			output.addPart(
-					getCurrentHealth() + "/" + getMaxHealth() + "h, " + getCurrentMana() + "/" + getMaxMana() + "m - ",
-					null, null);
-			output.newLine();
-			session.send(output);
-		} else {
-			MyLogger.log(Level.FINE,
-					"Player: Tried to send output to character '" + name + "' but no session was attached.");
+		sendOutput(new ClientConnectionOutput(output));
+
+		if (listenerList.size() > 0) {
+			ClientConnectionOutput listenerOutput = new ClientConnectionOutput(output);
+
+//			listenerOutput.addPart(String.format("Sent to %s: ", this.getName()), true);
+
+//			ClientConnectionOutput prependOutput = new ClientConnectionOutput(
+//					String.format("Sent to %s: ", this.getName()));
+//			prependOutput.newLine();
+//			listenerOutput.addOutput(prependOutput, true);
+
+			// Inserts new line at start of output and adds text to that new line
+			listenerOutput.newLine(true);
+			listenerOutput.addPart(String.format("Sent to %s: ", this.getName()), true);
+
+			for (Player listener : listenerList) {
+				if (listener.getListeners().contains(this)) {
+					MyLogger.log(Level.WARNING, String.format(
+							"Player: sendToListeners was going to send output to a Player that is listened to by this Player, causing a circular loop."
+									+ " Aborting sending %s's output to %s.",
+							this.getName(), listener.getName()));
+				} else {
+					listener.sendToListeners(new ClientConnectionOutput(listenerOutput));
+				}
+			}
 		}
 	}
 
 	/**
-	 * Used to connect a {@link Session} to the {@link Player}.
-	 *
-	 * @throws CharacterExceptionNullRoom
+	 * Adds another Player to receive output text sent to this player.
+	 * 
+	 * @param addPlayer other player to start eavesdropping
 	 */
-	public void connect(Session sess) throws CharacterExceptionNullRoom {
-		synchronized (room) {
-			connect(sess, this.room);
+	public void addListener(Player addPlayer) {
+		synchronized (listenerList) {
+			listenerList.add(addPlayer);
 		}
 	}
+
+	/**
+	 * Removes another Player receiving output text sent to this player.
+	 * 
+	 * @param removePlayer other player to stop eavesdropping
+	 */
+	public void removeListener(Player removePlayer) {
+		synchronized (listenerList) {
+			listenerList.remove(removePlayer);
+		}
+	}
+
+	public List<Player> getListeners() {
+		return listenerList;
+	}
+
+//	/**
+//	 * Used to connect a {@link Session} to the {@link Player}.
+//	 *
+//	 * @throws CharacterExceptionNullRoom
+//	 */
+//	public void connect(Session sess) throws CharacterExceptionNullRoom {
+//		synchronized (room) {
+//			connect(sess, this.room);
+//		}
+//	}
 
 	/**
 	 * Used to connect a {@link Session} to the {@link Player}, and entering the
 	 * {@link Room} specified.
-	 *
+	 * 
+	 * @param sess
+	 * @param room
 	 * @throws CharacterExceptionNullRoom
 	 */
-	public void connect(Session sess, Room room) throws CharacterExceptionNullRoom {
+	public void connect(Session sess) throws CharacterExceptionNullRoom {
 		if (this.session != null) {
 			this.session.send(
 					new ClientConnectionOutput("Disconnecting; another session has connected to this character."));
@@ -295,33 +380,31 @@ public class Player extends Character {
 
 		setSession(sess);
 
-		try {
-			setRoom(room);
-		} catch (CharacterExceptionNullRoom e) {
-			sess.send(new ClientConnectionOutput("Failed to enter world."));
-			setSession(null);
-			throw new CharacterExceptionNullRoom("Player: Player tried to do enter world with null room.", e);
-		}
-
 		if (playerState instanceof StatePlayerInWorld) {
-			room.sendToRoom(new ClientConnectionOutput(getName() + " eyes light up and starts moving again."));
+			getRoom().sendToRoomExcluding(
+					new ClientConnectionOutput(String.format("%s's eyes light up and starts moving again.", getName())),
+					this);
 		} else {
-			playerState = new StatePlayerInWorld(this);
+			playerState = new StatePlayerInWorld(this, lastRoom);
+			getRoom().sendToRoomExcluding(new ClientConnectionOutput(String.format(
+					"%s arrives from without following a divine herald, who gives a curt nod and shoots off to some other task.",
+					getName())), this);
 		}
 
-		sendInputOutput(new Look().doAction(this, (DIRECTION) null));
+		sendToListeners(new Look().doAction(this, (Direction.DIRECTION) null));
 	}
 
 	/**
 	 * Used to disconnect a {@link Session} from the {@link Player}.
 	 */
+	// TODO Timer to force logout.
 	public void disconnect() {
 		setSession(null);
-		Room room = getRoom();
-		if (room != null) {
-			room.sendToRoom(new ClientConnectionOutput(getName() + " slows down and appears frozen in time."));
+		if (isInWorld()) {
+			getRoom().sendToRoomExcluding(
+					new ClientConnectionOutput(String.format("%s slows down and appears frozen in time.", getName())),
+					this);
 		}
-		// TODO Timer to force logout.
 	}
 
 	@Override
@@ -362,75 +445,86 @@ public class Player extends Character {
 		return condition.getMaxMana();
 	}
 
-	public static Player findCharacter(String name) throws CheckedHibernateException {
-		name = StringUtils.capitalise(name);
+	public static Player findCharacter(String name) {
+		synchronized (playerList) {
+			name = StringUtils.capitalise(name);
 
-		for (Player foundPlayer : playerList) {
-			if (foundPlayer.getName().equals(name)) {
-				return foundPlayer;
-			}
-		}
-
-		org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
-		Transaction tx = null;
-		Player loadedPlayer = null;
-
-		try {
-			tx = hibSess.beginTransaction();
-
-			Query<?> query = hibSess.createQuery("FROM Player WHERE NAME = :name");
-			query.setParameter("name", name);
-
-			List<?> players = query.list();
-			tx.commit();
-
-			if (players.isEmpty()) {
-				return null;
-			} else {
-				if (players.size() > 1) {
-					MyLogger.log(Level.WARNING, "Player: Multiple DB results for player name.");
+			for (Player foundPlayer : playerList) {
+				if (foundPlayer.getName().equals(name)) {
+					return foundPlayer;
 				}
-				loadedPlayer = (Player) players.get(0);
-				addPlayerList(loadedPlayer);
-
-				return loadedPlayer;
 			}
 
-		} catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
+			org.hibernate.Session hibSess = FireEngineMain.hibSessFactory.openSession();
+			Transaction tx = null;
+			Player loadedPlayer = null;
+
+			try {
+				tx = hibSess.beginTransaction();
+
+				Query<?> query = hibSess.createQuery("FROM Player WHERE NAME = :name");
+				query.setParameter("name", name);
+
+				List<?> players = query.list();
+				tx.commit();
+
+				if (players.isEmpty()) {
+					return null;
+				} else {
+					if (players.size() > 1) {
+						MyLogger.log(Level.WARNING, "Player: Multiple DB results for player name.");
+					}
+					loadedPlayer = (Player) players.get(0);
+					addPlayerList(loadedPlayer);
+
+					return loadedPlayer;
+				}
+
+			} catch (HibernateException e) {
+				if (tx != null) {
+					tx.rollback();
+				}
+				MyLogger.log(Level.WARNING, "Player: Hibernate error while trying to findCharacter.", e);
+				return null;
+			} finally {
+				hibSess.close();
 			}
-			throw new CheckedHibernateException("Player: Hibernate error while trying to findCharacter.", e);
-		} finally {
-			hibSess.close();
 		}
 	}
 
 	public static void addPlayerList(Player player) {
-		for (Player listPlayer : playerList) {
-			if (listPlayer == player) {
-				return;
+		synchronized (playerList) {
+			for (Player listPlayer : playerList) {
+				if (listPlayer.equals(player)) {
+					return;
+				}
 			}
+			playerList.add(player);
 		}
-		playerList.add(player);
 	}
 
 	public static void removePlayerList(Player player) {
-		for (Player listPlayer : playerList) {
-			if (listPlayer == player) {
-				playerList.remove(listPlayer);
-				return;
+		synchronized (playerList) {
+			for (Player listPlayer : playerList) {
+				if (listPlayer.equals(player)) {
+					playerList.remove(listPlayer);
+					return;
+				}
 			}
 		}
 	}
 
 	public static ArrayList<Player> getPlayerList() {
-		return playerList;
+		synchronized (playerList) {
+			return playerList;
+		}
 	}
 
 	public static void sendToAllPlayers(ClientConnectionOutput output) {
-		for (Player player : playerList) {
-			player.sendToListeners(output);
+		synchronized (playerList) {
+			for (Player player : playerList) {
+				player.sendToListeners(output);
+			}
 		}
 	}
 
@@ -444,9 +538,10 @@ public class Player extends Character {
 		return true;
 	}
 
-	public static Player createCharacter(String name, String password) throws CheckedHibernateException {
+	public static Player createCharacter(String name, String password, Room spawnRoom)
+			throws CheckedHibernateException {
 		name = StringUtils.capitalise(name);
-		Player newPlayer = new Player(name, password);
+		Player newPlayer = new Player(name, password, spawnRoom);
 
 		saveCharacter(newPlayer);
 		return Player.findCharacter(name);
@@ -471,6 +566,19 @@ public class Player extends Character {
 		} finally {
 			if (hibSess != null) {
 				hibSess.close();
+			}
+		}
+	}
+
+	public static void saveAllCharacters() {
+		synchronized (playerList) {
+			for (Player player : playerList) {
+				try {
+					saveCharacter(player);
+				} catch (CheckedHibernateException e) {
+					MyLogger.log(Level.SEVERE, String.format(
+							"Player: Hibernate exception while trying to saveCharater on %s.", player.getName()), e);
+				}
 			}
 		}
 	}
@@ -551,7 +659,7 @@ public class Player extends Character {
 		if (getClass() != obj.getClass())
 			return false;
 		Player other = (Player) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

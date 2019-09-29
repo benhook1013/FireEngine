@@ -45,7 +45,7 @@ public class IDSequenceGenerator implements Comparable<IDSequenceGenerator> {
 	private static Set<IDSequenceGenerator> genList = new TreeSet<IDSequenceGenerator>();
 
 	@Transient
-	private static Object lock = new Object();
+	private final static Object lock = new Object();
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -221,7 +221,7 @@ public class IDSequenceGenerator implements Comparable<IDSequenceGenerator> {
 		if (getClass() != obj.getClass())
 			return false;
 		IDSequenceGenerator other = (IDSequenceGenerator) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

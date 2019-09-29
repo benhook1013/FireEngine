@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import fireengine.client_io.ClientConnectionOutput;
+import fireengine.gameworld.map.exception.MapExceptionCoordinateNull;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionExitExists;
 import fireengine.gameworld.map.exception.MapExceptionExitRoomNull;
@@ -78,11 +79,12 @@ public class GameMap {
 	// https://vladmihalcea.com/the-best-way-to-map-a-onetomany-association-with-jpa-and-hibernate/
 	// https://www.baeldung.com/hibernate-persisting-maps
 	// TODO Consider implementation to prevent multiple Rooms being in set Values.
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinTable(name = "COORD_ROOM_MAPPING", joinColumns = {
-			@JoinColumn(name = "gamemap", referencedColumnName = "id") }, inverseJoinColumns = {
-					@JoinColumn(name = "room", referencedColumnName = "id") })
-	@MapKeyJoinColumn(name = "coord")
+	// To be noted, when Hibernate
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JoinTable(name = "COORD_ROOM_MAPPING", 
+	joinColumns = {@JoinColumn(name = "GAMEMAP", referencedColumnName = "id") }, 
+	inverseJoinColumns = {@JoinColumn(name = "ROOM", referencedColumnName = "id") })
+	@MapKeyJoinColumn(name = "COORDINATE")
 	private Map<Coordinate, Room> rooms;
 
 	@OneToOne(fetch = FetchType.EAGER)
@@ -134,7 +136,8 @@ public class GameMap {
 	 * @param x x coordinate of room to find
 	 * @return {@link Room} at specified coordinates
 	 */
-	public Room getRoom(Coordinate coord) {
+	@SuppressWarnings("unused")
+	private Room getRoom(Coordinate coord) {
 		MyLogger.log(Level.FINER,
 				String.format("GameMap: getRoom(%s, %s, %s).", coord.getX(), coord.getY(), coord.getZ()));
 		return rooms.get(coord);
@@ -216,34 +219,26 @@ public class GameMap {
 
 	/**
 	 * Attempts to create a {@link Room} at the specified coordinates.
-	 *
 	 * 
+	 * @param x
+	 * @param y
+	 * @param z
 	 * @return room created
 	 * @throws MapExceptionRoomExists    room already exists at provided coordinates
 	 * @throws CheckedHibernateException hibernate error
 	 */
-	public Room createRoom(Coordinate coord) throws MapExceptionRoomExists, CheckedHibernateException {
-		Room foundRoom = getRoom(coord);
+	public Room createRoom(int x, int y, int z) throws MapExceptionRoomExists, CheckedHibernateException {
+		Room foundRoom = getRoom(x, y, z);
 		if (foundRoom != null) {
-			throw new MapExceptionRoomExists(
-					String.format("GameMap: createRoom found room already at designated coordinates (%s, %s, %s).",
-							coord.getX(), coord.getY(), coord.getZ()));
+			throw new MapExceptionRoomExists(String
+					.format("GameMap: createRoom found room already at designated coordinates (%d, %d, %d).", x, y, z));
 		}
 
 		Room newRoom = null;
-		try {
-			newRoom = Room.createRoom(this);
-		} catch (MapExceptionRoomNull e) {
-			MyLogger.log(Level.SEVERE,
-					String.format(
-							"GameMap: Weird error, MapExceptionRoomNull while trying to Room.createRoom (%s, %s, %s).",
-							coord.getX(), coord.getY(), coord.getZ()),
-					e);
-			newRoom = null; // Just to make sure room to be saved isn't returned without being saved
-							// properly.
-			return newRoom;
-		}
-		rooms.put(coord, newRoom);
+		newRoom = Room.createRoom(this);
+
+		Coordinate newCoord = Coordinate.createCoord(this, x, y, z);
+		rooms.put(newCoord, newRoom);
 		saveMap(this);
 
 		return newRoom;
@@ -269,7 +264,7 @@ public class GameMap {
 		int otherY = yAdjustDirection(coord.getY(), direction);
 		int otherZ = zAdjustDirection(coord.getZ(), direction);
 
-		createRoom(new Coordinate(this, otherX, otherY, otherZ));
+		createRoom(otherX, otherY, otherZ);
 	}
 
 	/**
@@ -282,8 +277,8 @@ public class GameMap {
 	 * @throws MapExceptionRoomNull      no room found at supplied coordinates
 	 * @throws CheckedHibernateException hibernate exception
 	 */
-	public void deleteRoom(Coordinate coord) throws CheckedHibernateException, MapExceptionRoomNull {
-		Room foundRoom = getRoom(coord);
+	public void deleteRoom(int x, int y, int z) throws CheckedHibernateException, MapExceptionRoomNull {
+		Room foundRoom = getRoom(x, y, z);
 
 		if (foundRoom == null) {
 			throw new MapExceptionRoomNull("GameMap: Tried to deleteRoom but found no room at supplied Coordinate.");
@@ -302,7 +297,18 @@ public class GameMap {
 			}
 		}
 
-		rooms.remove(coord);
+		Coordinate coord = getCoord(foundRoom);
+		try {
+			rooms.remove(coord);
+		} catch (NullPointerException e) {
+			MyLogger.log(Level.WARNING,
+					"GameMap: Null Coordinate when trying to remove Coordinate/Room entry from rooms Map.", e);
+		}
+		try {
+			Coordinate.deleteCoord(coord);
+		} catch (MapExceptionCoordinateNull e) {
+			MyLogger.log(Level.WARNING, "GameMap: Coordinate null when trying to Hibernate delete the Coordinate.", e);
+		}
 		saveMap(this);
 	}
 
@@ -326,7 +332,7 @@ public class GameMap {
 		int otherY = yAdjustDirection(coord.getY(), direction);
 		int otherZ = zAdjustDirection(coord.getZ(), direction);
 
-		deleteRoom(getCoord(otherX, otherY, otherZ));
+		deleteRoom(otherX, otherY, otherZ);
 	}
 
 	/**
@@ -395,7 +401,7 @@ public class GameMap {
 		room.setExit(direction, null);
 		otherRoom.setExit(Direction.oppositeDirection(direction), null);
 
-//		saveMap(this); // Probably unnecessary
+		saveMap(this);
 	}
 
 	/**
@@ -405,9 +411,7 @@ public class GameMap {
 	 * @return new gamemap if successful
 	 * @throws CheckedHibernateException hibernate exception
 	 */
-	public static GameMap createMap(String name, int initialZDimension, int initialYDimension, int initialXDimension,
-			int incrementZDimension, int incrementYDimension, int incrementXDimension)
-			throws CheckedHibernateException {
+	public static GameMap createMap(String name) throws CheckedHibernateException {
 		GameMap newMap = new GameMap(name);
 
 		saveMap(newMap);

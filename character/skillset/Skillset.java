@@ -194,7 +194,7 @@ public abstract class Skillset implements Comparable<Skillset> {
 		if (getClass() != obj.getClass())
 			return false;
 		Skillset other = (Skillset) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

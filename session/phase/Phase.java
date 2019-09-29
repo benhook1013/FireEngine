@@ -23,19 +23,24 @@ import mud_game.session.phase.PhaseLogin;
  */
 
 /**
- * Interface for phases of the {@link Session}, handled by {@link PhaseManager}.
+ * Superclass for phases of the {@link Session}, handled by
+ * {@link PhaseManager}.
  *
  * @author Ben Hook
  */
-// TODO Change to Abstract Class
-public interface Phase {
-	/**
-	 * Set the {@link Session} and {@link PhaseManager} for the Phase.
-	 *
-	 * @param session
-	 * @param phaseManager
-	 */
-	public void setSession(Session session, PhaseManager phaseManager);
+public abstract class Phase {
+	protected Session sess;
+	protected PhaseManager phaseManager;
+
+//	/**
+//	 * Set the {@link Session} and {@link PhaseManager} for the Phase.
+//	 *
+//	 * @param session
+//	 * @param phaseManager
+//	 */
+//	public abstract void setSession(Session session, PhaseManager phaseManager);
+
+	public abstract void startPhase();
 
 	/**
 	 * Passes input into the relevant Session phase, such as {@link PhaseLogin} to
@@ -44,17 +49,10 @@ public interface Phase {
 	 *
 	 * @param input String input passed into Phase for processing.
 	 */
-	public void acceptInput(String input);
+	public abstract void acceptInput(String input);
 
 	/**
-	 * Used in the process of disconnecting the {@link Session} from the
-	 * {@link Player}.
+	 * Used in the process of closing off the {@link Session}.
 	 */
-	public void disconnect();
-
-	/**
-	 * Used in the process of closing off the {@link Session} and/or
-	 * {@link PhaseManager}.
-	 */
-	public void close();
+	public abstract void close();
 }

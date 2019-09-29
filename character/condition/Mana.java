@@ -159,7 +159,7 @@ public class Mana {
 		if (getClass() != obj.getClass())
 			return false;
 		Mana other = (Mana) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

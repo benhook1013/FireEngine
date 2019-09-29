@@ -6,13 +6,10 @@ import fireengine.character.Character;
 import fireengine.character.command.Command;
 import fireengine.character.command.action.general.player_action.PlayerAction;
 import fireengine.character.command.action.general.player_action.admin.AdminAction;
-import fireengine.character.exception.CharacterExceptionNullRoom;
+import fireengine.character.exception.CharacterExceptionNotInWorld;
 import fireengine.character.player.Player;
 import fireengine.client_io.ClientConnectionOutput;
-import fireengine.gameworld.GameWorld;
-import fireengine.gameworld.map.room.Room;
 import fireengine.util.MyLogger;
-import fireengine.util.StackTraceUtils;
 
 /*
  *    Copyright 2019 Ben Hook
@@ -52,13 +49,11 @@ public abstract class Action extends Command {
 		ClientConnectionOutput output = new ClientConnectionOutput();
 
 		if (character == null) {
-			MyLogger.log(Level.SEVERE, "Action: Null Character passed to constructor." + " StackTrace: "
-					+ StackTraceUtils.getStackTrace());
+			MyLogger.log(Level.SEVERE, "Action: Null Character passed to constructor.", new Exception());
 			return output;
 		}
 		if (matcher == null) {
-			MyLogger.log(Level.SEVERE,
-					"Action: Null Matcher passed to constructor." + " StackTrace: " + StackTraceUtils.getStackTrace());
+			MyLogger.log(Level.SEVERE, "Action: Null Matcher passed to constructor.", new Exception());
 			return output;
 		}
 
@@ -84,30 +79,12 @@ public abstract class Action extends Command {
 			}
 		}
 
-		try {
-			if (character.getRoom() == null) {
-				throw new CharacterExceptionNullRoom(
-						"Action: Player tried to do action " + this.getClass().getName() + " with no room.");
-			}
-		} catch (CharacterExceptionNullRoom e) {
-			output.addPart("You are trying to do an action without being in any room!", null, null);
-			output.addPart("We will try and move you somewhere...", null, null);
-			MyLogger.log(Level.WARNING, "Action: CharacterExceptionNullRoom error when trying to acceptInput.", e);
-
-			Room sendRoom = GameWorld.getMainMap().getSpawnRoomOrCentre();
-
-			if (sendRoom != null) {
-				try {
-					character.setRoom(sendRoom);
-				} catch (CharacterExceptionNullRoom e1) {
-					MyLogger.log(Level.WARNING, "Action: Null error when trying to send null room character to origin.",
-							e);
-					return output;
-				}
-			} else {
-				MyLogger.log(Level.WARNING, "Action: Cannot find origin room to send null room character to.", e);
-				return output;
-			}
+		if (!character.isInWorld()) {
+			MyLogger.log(Level.WARNING,
+					String.format("Action: Character '%s' tried to do action while not in world.", character.getName()),
+					new CharacterExceptionNotInWorld(String.format(
+							"Action: Character '%s' tried to do action while not in world.", character.getName())));
+			return output;
 		}
 
 		output.addOutput(doAction(character, matcher));
@@ -115,9 +92,10 @@ public abstract class Action extends Command {
 	}
 
 	/**
-	 * The player side way of doing the 'thing' that this Action does. Takes a
+	 * The Player enacted way of doing the 'thing' that this Action does. Takes a
 	 * matcher. An Action should implementation a same-name method taking only
-	 * arguments it needs, for use to be directly called by game for NPC action etc.
+	 * arguments it needs (specific not Matcher), for use to be directly called by
+	 * game for NPC action etc.
 	 * 
 	 * @return The output
 	 */

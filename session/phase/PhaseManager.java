@@ -1,8 +1,12 @@
 package fireengine.session.phase;
 
+import java.util.logging.Level;
+
+import fireengine.client_io.ClientConnectionOutput;
 import fireengine.session.Session;
 import fireengine.util.ConfigLoader;
 import fireengine.util.MyClassLoader;
+import fireengine.util.MyLogger;
 import mud_game.session.phase.PhaseWelcome;
 
 /*
@@ -38,7 +42,7 @@ public class PhaseManager {
 	}
 
 	/**
-	 * 
+	 * @param session
 	 */
 	public void setSession(Session session) {
 		sess = session;
@@ -61,22 +65,26 @@ public class PhaseManager {
 	public void setPhase(Phase phase) {
 		synchronized (this) {
 			this.phase = phase;
-			this.phase.setSession(sess, this);
+			this.phase.startPhase();
 		}
 	}
 
 	/**
 	 *
 	 *
-	 * @throws Exception
 	 */
-	public void setWelcomePhase() throws Exception {
+	public void setWelcomePhase() {
 		Phase welcomePhaseInstance;
 
 		try {
-			welcomePhaseInstance = welcomePhaseClass.getConstructor().newInstance();
+			welcomePhaseInstance = welcomePhaseClass.getConstructor(Session.class, PhaseManager.class).newInstance(sess,
+					this);
 		} catch (Exception e) {
-			throw e;
+			MyLogger.log(Level.SEVERE, "PhaseManager: Error thrown while trying to phaseManager.setWelcomePhase().", e);
+			sess.send(new ClientConnectionOutput(
+					"Error occured: This has been logged and will be reviewed by a developer.", null, null));
+			sess.end();
+			return;
 		}
 		setPhase(welcomePhaseInstance);
 	}
@@ -86,18 +94,23 @@ public class PhaseManager {
 	}
 
 	/**
-	 * Used to disconnect and return to {@link PhaseWelcome}.
+	 * Used to disconnect from a potential player, close current Phase, and return
+	 * to {@link PhaseWelcome}.
 	 */
 	public void disconnect() {
-		phase.disconnect();
-		phase = null;
+		if (phase != null) {
+			phase.close();
+		}
+
+		setWelcomePhase();
 	}
 
 	/**
 	 * Closes current {@link Phase} and closes PhaseManager.
 	 */
 	public void close() {
-		phase.close();
+		disconnect();
+
 		phase = null;
 		sess = null;
 	}

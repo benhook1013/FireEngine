@@ -39,6 +39,7 @@ public class Look extends Action {
 		super();
 	}
 
+	@Override
 	public ClientConnectionOutput doAction(Character character, Matcher matcher) {
 		ClientConnectionOutput output = new ClientConnectionOutput();
 
@@ -49,7 +50,7 @@ public class Look extends Action {
 			direction = Direction.parseDirection(directionText);
 
 			if (direction == null) {
-				output.addPart("Could not parse '" + directionText + "' into a direction.", null, null);
+				output.addPart(String.format("Could not parse '%s' into a direction.", directionText), null, null);
 				return output;
 			}
 		}

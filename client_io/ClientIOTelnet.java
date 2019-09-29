@@ -448,17 +448,20 @@ public class ClientIOTelnet extends Thread {
 		synchronized (keyList) {
 			for (SelectItem selItem : keyList) {
 				if (ccon == selItem.getCcon()) {
-//					MyLogger.log(Level.INFO, "FOUND SAME CCON!!!!!!!!");
 					if (selItem.getKey() == SelectionKey.OP_READ) {
 						if (key == SelectionKey.OP_READ) {
 							MyLogger.log(Level.FINER, "Ignoring queue for READ when already queue for READ.");
 							return;
 						} else if (key == SelectionKey.OP_WRITE) {
+							// READ is default state, allow queue for WRITE as that indicated we have
+							// something to send.
 							MyLogger.log(Level.FINER, "Allowing queue for WRITE when already queue for READ.");
 							break;
 						}
 					} else if (selItem.getKey() == SelectionKey.OP_WRITE) {
 						if (key == SelectionKey.OP_READ) {
+							// If already queued for WRITE, means we should have something to send, which
+							// upon finished sending, will automatically queue for READ.
 							MyLogger.log(Level.FINER, "Ignoring queue for READ when already queue for WRITE.");
 							return;
 						} else if (key == SelectionKey.OP_WRITE) {

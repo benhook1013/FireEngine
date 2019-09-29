@@ -51,7 +51,7 @@ public class Map extends Action {
 
 	public ClientConnectionOutput doAction(Character character, int size) {
 		ClientConnectionOutput output = new ClientConnectionOutput();
-		output.addPart("You look around and see...", null, null);
+		output.addPart("You cast your gaze to the nearby area see...", null, null);
 
 		Room room = character.getRoom();
 

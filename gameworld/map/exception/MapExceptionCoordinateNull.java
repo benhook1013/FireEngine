@@ -1,10 +1,8 @@
-package fireengine.util;
-
-import java.util.Arrays;
+package fireengine.gameworld.map.exception;
 
 /*
  *    Copyright 2019 Ben Hook
- *    StackTraceUtils.java
+ *    MapExceptionRoomNull.java
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -19,13 +17,18 @@ import java.util.Arrays;
  *    limitations under the License.
  */
 
-/**
- * Class containing custom/toolbox type StackTrace related functions.
- *
- * @author Ben Hook
- */
-public abstract class StackTraceUtils {
-	public static String getStackTrace() {
-		return Arrays.toString(Thread.currentThread().getStackTrace());
+public class MapExceptionCoordinateNull extends MapException {
+	private static final long serialVersionUID = 1L;
+
+	public MapExceptionCoordinateNull(String message) {
+		super(message);
+	}
+
+	public MapExceptionCoordinateNull(Throwable throwable) {
+		super(throwable);
+	}
+
+	public MapExceptionCoordinateNull(String message, Throwable throwable) {
+		super(message, throwable);
 	}
 }

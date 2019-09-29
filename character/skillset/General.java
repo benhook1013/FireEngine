@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import fireengine.character.command.action.general.*;
 import fireengine.character.command.action.general.player_action.QuitGame;
 import fireengine.character.command.action.general.player_action.admin.Shutdown;
+import fireengine.character.command.action.general.player_action.admin.Watch;
 import fireengine.character.command.action.general.player_action.map_editor.CreateExit;
 import fireengine.character.command.action.general.player_action.map_editor.CreateRoom;
 import fireengine.character.command.action.general.player_action.map_editor.DestroyExit;
@@ -70,6 +71,7 @@ public class General extends Skillset {
 		addCategory(mapEditorCategory);
 
 		SkillsetCategory adminCategory = new SkillsetCategory("Admin only");
+		adminCategory.addSkillEntry(0, new Watch());
 		adminCategory.addSkillEntry(0, new Shutdown());
 		addCategory(adminCategory);
 	}
@@ -116,7 +118,7 @@ public class General extends Skillset {
 		if (getClass() != obj.getClass())
 			return false;
 		General other = (General) obj;
-		if (getId() != other.getId())
+		if (getId() == other.getId())
 			return true;
 		return false;
 	}

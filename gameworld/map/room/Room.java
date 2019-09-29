@@ -14,8 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Transaction;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import fireengine.character.Character;
@@ -28,7 +26,6 @@ import fireengine.gameworld.map.Direction.DIRECTION;
 import fireengine.gameworld.map.exception.MapExceptionDirectionNotSupported;
 import fireengine.gameworld.map.exception.MapExceptionRoomNull;
 import fireengine.gameworld.map.exit.RoomExit;
-import fireengine.main.FireEngineMain;
 import fireengine.util.CheckedHibernateException;
 import fireengine.util.IDSequenceGenerator;
 import fireengine.util.MyLogger;
@@ -75,7 +72,6 @@ public class Room {
 	private GameMap map;
 
 	@Column(name = "NAME")
-	@NotNull
 	private String name;
 
 	@Column(name = "DESCRIPTION")
@@ -135,9 +131,8 @@ public class Room {
 	private RoomExit northWestExit;
 
 	@Transient
-	private ArrayList<Player> playerList;
+	private final ArrayList<Player> playerList;
 
-	@SuppressWarnings("unused")
 	private Room() {
 		playerList = new ArrayList<>();
 	}
@@ -226,7 +221,8 @@ public class Room {
 	 */
 	public void removeCharacter(Character player) {
 		if (player.getRoom() == this) {
-			MyLogger.log(Level.WARNING, "Room: removeCharacter from room that is still Character's current room.");
+			MyLogger.log(Level.WARNING, "Room: removeCharacter from room that is still Character's current room.",
+					new Exception());
 		}
 
 		if (player instanceof Player) {
@@ -272,17 +268,18 @@ public class Room {
 	 * Sends to listeners of the room, apart from notPlayer, if one is specified.
 	 * Currently only {@link Player}s inside the room.
 	 *
-	 * @param output    Output to be sent.
-	 * @param notPlayer Player, if specified, to be excluded from output.
+	 * @param output          Output to be sent.
+	 * @param ignoreCharacter Character, if specified, to be excluded from receiving
+	 *                        output
 	 */
 	public void sendToRoomExcluding(ClientConnectionOutput output, Character ignoreCharacter) {
 		synchronized (playerList) {
 			for (Player player : playerList) {
 				if (ignoreCharacter == null) {
-					player.sendToListeners(new ClientConnectionOutput(output));
+					player.sendToListeners(output);
 				} else {
-					if (!(player == ignoreCharacter)) {
-						player.sendToListeners(new ClientConnectionOutput(output));
+					if (!(player.equals(ignoreCharacter))) {
+						player.sendToListeners(output);
 					}
 				}
 			}
@@ -294,7 +291,7 @@ public class Room {
 	 * {@link fireengine.gameworld.map.Direction.DIRECTION}.
 	 *
 	 * @param direction
-	 * @return
+	 * @return RoomExit for specified direction, or null if not set
 	 * @throws MapExceptionDirectionNotSupported
 	 */
 	public RoomExit getExit(Direction.DIRECTION direction) throws MapExceptionDirectionNotSupported {
@@ -394,7 +391,10 @@ public class Room {
 					"Room: setExit missing case for direction " + direction.toString() + ".");
 		}
 		}
-		saveRoom(this);
+//		saveRoom(this);
+		// Temporarily removed the above as the below should cascade down and save the
+		// change.
+		GameMap.saveMap(map);
 	}
 
 	/**
@@ -426,7 +426,7 @@ public class Room {
 	 * even if it has a negative impact in performance somewhat. It is more
 	 * important to retain a same hashCode return during the lifetime of the object.
 	 * Need to specify a proper equals for persisted classes (that will not change
-	 * over time with normal modifiable fields).
+	 * over time with normally modifiable fields).
 	 * <p>
 	 * Notes from: https://vladmihalcea.com/hibernate-facts-equals-and-hashcode/
 	 * </p>
@@ -488,9 +488,8 @@ public class Room {
 		if (getClass() != obj.getClass())
 			return false;
 		Room other = (Room) obj;
-		if (this.getId() == other.getId()) {
+		if (this.getId() == other.getId())
 			return true;
-		}
 		return false;
 	}
 
@@ -499,47 +498,51 @@ public class Room {
 	 * etc; use the room creation in the {@link GameMap} class.
 	 *
 	 * Creates new {@link Room} at specified coordinates and returns new room.
+	 * 
+	 * TODO This should not be needed and can be remove in future once everything is
+	 * proven working. Saving GameMap will cascade to room Map value which is the
+	 * Room.
 	 *
 	 * @return
 	 * @throws MapExceptionRoomNull
 	 * @throws CheckedHibernateException
 	 */
-	public static Room createRoom(GameMap map) throws MapExceptionRoomNull, CheckedHibernateException {
+	public static Room createRoom(GameMap map) throws CheckedHibernateException {
 		Room newRoom = new Room(map);
 		return newRoom;
 	}
 
-	/**
-	 * Saves/persists the {@link Room} into the database.
-	 *
-	 * @param room
-	 * @throws MapExceptionRoomNull
-	 * @throws CheckedHibernateException
-	 */
-	public static void saveRoom(Room room) throws MapExceptionRoomNull, CheckedHibernateException {
-		if (room == null) {
-			throw new MapExceptionRoomNull("Room: Tried to saveRoom on a null room.");
-		}
-
-		org.hibernate.Session hibSess = null;
-		Transaction tx = null;
-
-		try {
-			hibSess = FireEngineMain.hibSessFactory.openSession();
-			tx = hibSess.beginTransaction();
-
-			hibSess.saveOrUpdate(room);
-
-			tx.commit();
-		} catch (HibernateException e) {
-			if (tx != null) {
-				tx.rollback();
-			}
-			throw new CheckedHibernateException("Room: Hibernate error while trying to saveRoom.", e);
-		} finally {
-			if (hibSess != null) {
-				hibSess.close();
-			}
-		}
-	}
+//	/**
+//	 * Saves/persists the {@link Room} into the database.
+//	 *
+//	 * @param room
+//	 * @throws MapExceptionRoomNull
+//	 * @throws CheckedHibernateException
+//	 */
+//	public static void saveRoom(Room room) throws MapExceptionRoomNull, CheckedHibernateException {
+//		if (room == null) {
+//			throw new MapExceptionRoomNull("Room: Tried to saveRoom on a null room.");
+//		}
+//
+//		org.hibernate.Session hibSess = null;
+//		Transaction tx = null;
+//
+//		try {
+//			hibSess = FireEngineMain.hibSessFactory.openSession();
+//			tx = hibSess.beginTransaction();
+//
+//			hibSess.saveOrUpdate(room);
+//
+//			tx.commit();
+//		} catch (HibernateException e) {
+//			if (tx != null) {
+//				tx.rollback();
+//			}
+//			throw new CheckedHibernateException("Room: Hibernate error while trying to saveRoom.", e);
+//		} finally {
+//			if (hibSess != null) {
+//				hibSess.close();
+//			}
+//		}
+//	}
 }
