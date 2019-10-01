@@ -583,6 +583,10 @@ public class Player extends Character {
 		}
 	}
 
+	/**
+	 * @return ClientConnectionOutput representing all players, or null if no players exist
+	 * @throws CheckedHibernateException
+	 */
 	public static ClientConnectionOutput getAllPlayerInfo() throws CheckedHibernateException {
 		org.hibernate.Session hibSess = null;
 		Transaction tx = null;
