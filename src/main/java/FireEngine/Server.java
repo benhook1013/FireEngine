@@ -4,7 +4,7 @@
 package FireEngine;
 
 /**
- * @author Ben_Desktop
+ * @author Ben Hook
  *
  */
 public class Server {
